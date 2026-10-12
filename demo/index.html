@@ -36,6 +36,9 @@
 <script src="../reference/duck_cast_art.js"></script>
 <script src="../reference/duck_council_art.js"></script>
 <script src="../reference/duck_tribunal_art.js"></script>
+<script src="../src/audio/event_audio.js"></script>
+<script src="../src/audio/score_council.js"></script>
+<script src="../src/audio/score_tribunal.js"></script>
 <script src="../src/duck_scene_core.js"></script>
 <script src="../src/council_scene.js"></script>
 <script src="../src/tribunal_scene.js"></script>
@@ -51,7 +54,7 @@
     TribunalScene.REGISTERS.forEach(function (r) { register.add(new Option(r, r)); });
 
     reduced.onchange = function () { document.body.classList.toggle('safe-mode', reduced.checked); };
-    function reset() { if (scene) scene.close(); out.textContent = ''; }
+    function reset() { EventAudio.unlock(); if (scene) scene.close(); out.textContent = ''; }
 
     playCouncil.onclick = function () {
         reset();

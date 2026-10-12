@@ -9,6 +9,8 @@ crisis is on screen.
 
 Status: ✅ animated · 🔨 in progress · ⬜ not started
 
+Every event gets its own scene, its own synthesised score and effects (`src/audio/`), and its own viewable page.
+
 ---
 
 ## 1. Duck events

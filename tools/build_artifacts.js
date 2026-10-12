@@ -11,7 +11,7 @@ const js = p => {
 };
 
 const ART = js('reference/duck_cast_art.js') + js('reference/duck_council_art.js') + js('reference/duck_tribunal_art.js')
-          + js('src/duck_scene_core.js');
+          + js('src/audio/event_audio.js') + js('src/duck_scene_core.js');
 const CSS = read('src/duck_scenes.css');
 
 const PAGE_CSS = `
@@ -31,29 +31,48 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .ctl .out { color: var(--ok); }
 .stagehost { position: relative; flex: 1; display: flex; min-height: 620px; }
 .stagehost > .dks { flex: 1; }
+.gate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 16px; text-align: center; }
+.gate h2 { margin: 0; font-size: clamp(20px, 4vw, 30px); letter-spacing: 8px; color: var(--accent); }
+.gate p { margin: 0; max-width: 34rem; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
+.gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 `;
 
-function page({ title, scene, controls, script, note }) {
+function page({ title, scene, score, accent, blurb, controls, script, note }) {
     return `<title>${title}</title>
 <style>${PAGE_CSS}
+:root { --accent: ${accent}; }
 ${CSS}</style>
 <div class="viewer">
   <div class="ctl">
     <h1>${title.toUpperCase()}</h1>
     ${controls}
-    <div class="grp"><label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+      <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
     <span class="out" id="out" aria-live="polite"></span>
     <div class="note">${note}</div>
   </div>
-  <div class="stagehost" id="host"></div>
+  <div class="stagehost" id="host">
+    <div class="gate"><h2>${title.toUpperCase()}</h2><p>${blurb}</p>
+      <button id="go" type="button">▶ PLAY WITH SOUND</button></div>
+  </div>
 </div>
-${ART}${js(scene)}<script>
+${ART}${js(score)}${js(scene)}<script>
 var host = document.getElementById('host'), out = document.getElementById('out'), scene = null;
-document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); start(); };
+var begun = false;
+function begin() { begun = true; EventAudio.unlock(); start(); }
+document.getElementById('go').onclick = begin;
+document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); if (begun) start(); };
+var snd = document.getElementById('snd');
+snd.onclick = function () {
+    var m = !EventAudio.isMuted();
+    EventAudio.setMuted(m);
+    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.setAttribute('aria-pressed', String(!m));
+};
 var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
                stats: { totalPlaytimeMs: 40 * 60000, itemsBought: 64 }, eps: 5e9, voidBranch: { a: 1, b: 1 }, _sporeHappiness: 12 };
 ${script}
-start();
 </script>
 `;
 }
@@ -61,6 +80,9 @@ start();
 const council = page({
     title: 'Ducky Council',
     scene: 'src/council_scene.js',
+    score: 'src/audio/score_council.js',
+    accent: '#e8c547',
+    blurb: 'Five ducks read your record into the minutes, argue about it, vote with placards and award a grade. Its own chamber march, a voice for each member, a fanfare for each grade.',
     note: 'Click anywhere to hurry a line along, or SKIP to jump to the verdict. "Sample operator" is graded by the real scoring: 84,000 clicks, 6 prestiges, 3.2e14 energy, 6 buildings, 22% instability.',
     controls: `<div class="grp"><label for="grade">Grade</label><select id="grade"><option value="">Sample operator</option></select>
       <button id="replay" type="button">▶ Replay</button></div>`,
@@ -74,13 +96,16 @@ function start() {
         onRuling: function (g) { out.textContent = 'Reward applied: ' + CouncilScene.VERDICTS[g].rewardDesc; } });
     scene.done.then(function () { out.textContent = 'Judgement accepted. Press Replay to watch again.'; });
 }
-gradeSel.onchange = start;
-document.getElementById('replay').onclick = start;`
+gradeSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
 });
 
 const tribunal = page({
     title: 'Duck Tribunal',
     scene: 'src/tribunal_scene.js',
+    score: 'src/audio/score_tribunal.js',
+    accent: '#8f9fd6',
+    blurb: 'The bench charges you by how you play, holds a hearing and stamps a sentence that fits the charge. Organ, timpani and a different score for each register.',
     note: 'The sentence follows the charge. Register sets who speaks and the colour of the room. Click anywhere to hurry a line along, or SKIP to jump to the sentence.',
     controls: `<div class="grp"><label for="charge">Charge</label><select id="charge"></select>
       <label for="register">Register</label><select id="register"></select>
@@ -101,8 +126,8 @@ function start() {
         out.textContent = r.action === 'banish' ? 'Banished to Omega. Anti-Energy taxed until dismissed.' : 'Sentence accepted: ' + TribunalScene.SENTENCES[r.verdict].fx + '.';
     });
 }
-chargeSel.onchange = regSel.onchange = start;
-document.getElementById('replay').onclick = start;`
+chargeSel.onchange = regSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
 });
 
 fs.mkdirSync(path.join(ROOT, 'artifacts'), { recursive: true });

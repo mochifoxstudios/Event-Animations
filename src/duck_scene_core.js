@@ -78,7 +78,7 @@
                     return function () { clearTimeout(t); };
                 });
             },
-            type: function (el, text, msPerChar) {
+            type: function (el, text, msPerChar, onChar) {
                 text = String(text || '');
                 return step(function (done) {
                     if (fast || !text) { el.textContent = text; setTimeout(done, 0); return null; }
@@ -87,6 +87,7 @@
                     var iv = setInterval(function () {
                         i += 1;
                         el.textContent = text.slice(0, i);
+                        if (onChar && /[A-Za-z0-9]/.test(text.charAt(i - 1))) onChar();
                         if (i >= text.length) { clearInterval(iv); done(); }
                     }, msPerChar || 18);
                     return function () { clearInterval(iv); el.textContent = text; };
@@ -100,13 +101,21 @@
     };
 
     /* ── SOUND ───────────────────────────────────────────────────────────────
-       The game's soundtrack owns every sound (music.js). A scene only names the
-       moment; `opts.sound` decides what plays. Default: the gavel, which the
-       soundtrack already has. */
-    D.soundFn = function (opts) {
-        if (opts && typeof opts.sound === 'function') return opts.sound;
-        return function (name) {
-            try { if (name === 'gavel' && window.GameSound) GameSound.play('sfx:gavel'); } catch (e) {}
+       Each event has its own score (src/audio/score_*.js) played through
+       EventAudio. `opts.audio === false` silences a scene; `opts.sound(name)`,
+       if given, is told about every effect as well (the game's own hook). */
+    D.audio = function (opts, score) {
+        opts = opts || {};
+        var au = (opts.audio !== false && window.EventAudio && score) ? EventAudio.session(score) : null;
+        var hook = typeof opts.sound === 'function' ? opts.sound : null;
+        return {
+            cue: function (name) { if (au) au.cue(name); },
+            sfx: function (name) {
+                if (au) au.sfx.apply(null, arguments);
+                if (hook) { try { hook.apply(null, arguments); } catch (e) {} }
+            },
+            voice: function (seat) { if (au) au.voice(seat); },
+            stop: function () { if (au) au.stop(); }
         };
     };
 
@@ -168,7 +177,8 @@
         if (kind === 'speech') s.el.classList.add('dks-talking');
         if (kind === 'action') D.replay(s.el, 'dks-gesture');
         if (opts.log) opts.log((who ? who + ': ' : '') + text);
-        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18)).then(function () {
+        var onChar = (kind === 'speech' && opts.voice) ? function () { opts.voice(idx); } : null;
+        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
             s.el.classList.remove('dks-talking');
             var hold = opts.hold != null ? opts.hold : Math.min(2400, 650 + text.length * 13);
             return dir.wait(hold);
@@ -193,7 +203,7 @@
     };
 
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
-    D.shell = function (host, cls, dir) {
+    D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
         if (D.reduced()) root.classList.add('dks-reduced');
         root.setAttribute('role', 'dialog');
@@ -210,6 +220,7 @@
 
         skipBtn.addEventListener('click', function (e) { e.stopPropagation(); dir.fastForward(); });
         root.addEventListener('click', function (e) { if (!e.target.closest('button')) dir.skip(); });
+        root.addEventListener('pointerdown', function () { if (window.EventAudio) EventAudio.unlock(); });
         function onKey(e) {
             if (!root.isConnected) { document.removeEventListener('keydown', onKey, true); return; }
             if (e.target && /^(BUTTON|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
@@ -223,7 +234,7 @@
             root: root,
             log: function (line) { var d = D.h('div'); d.textContent = line; log.appendChild(d); },
             done: function () { skipBtn.hidden = true; hint.style.display = 'none'; },
-            close: function () { dir.kill(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
+            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
         };
     };
 

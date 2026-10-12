@@ -187,14 +187,16 @@
        play(host, opts) → { done: Promise<{ action: 'accept'|'banish', verdict }>, close() }
        opts.judgement   from judge(); computed from opts.state / window.state if absent
        opts.caseNo      shown on the docket (default: the run number, or 0015)
-       opts.sound       (name) => void: 'gavel' 'stamp' 'tick' */
+       opts.audio       false to silence the scene (music and effects come from TribunalScore)
+       opts.sound       (name, ...) => void, told about every effect (optional game hook) */
     function play(host, opts) {
         opts = opts || {};
         var j = opts.judgement || judge(opts.state || window.state);
         var sentence = SENTENCES[j.verdict];
-        var sound = D.soundFn(opts);
+        var au = D.audio(opts, window.TribunalScore);
+        var sound = au.sfx;
         var dir = D.director();
-        var shell = D.shell(host, 'dks-tribunal', dir);
+        var shell = D.shell(host, 'dks-tribunal', dir, au);
         var root = shell.root;
         root.setAttribute('aria-label', 'Duck Tribunal');
         root.dataset.register = j.register;
@@ -251,28 +253,34 @@
         var done = (async function () {
             /* 1 · ALL RISE — three knocks, and the silent one is already there */
             root.classList.add('dks-on-in');
+            au.cue('allrise');
             await dir.type(caption, 'ALL RISE', 40);
-            for (var k = 0; k < 3; k++) { sound('gavel'); D.replay(stage, 'dks-shake'); await dir.wait(320); }
+            for (var k = 0; k < 3; k++) { sound('knock'); D.replay(stage, 'dks-shake'); await dir.wait(320); }
             await dir.wait(300);
 
             /* 2 · CONVENE */
             root.classList.remove('dks-pre');
             root.classList.add('dks-convene');
+            [[2, 0], [1, 90], [3, 180], [0, 270]].forEach(function (a) {
+                setTimeout(function () { if (!dir.isFast()) sound('rise', a[0]); }, a[1]);
+            });
             caption.textContent = '';
             await dir.wait(1000);
 
             /* 3 · CHARGE */
             docket.classList.add('dks-on');
+            sound('docket');
             await dir.wait(450);
             var chargeStamp = D.h('span', 'dks-stamp', D.esc(j.charge));
             docket.querySelector('.dks-charge-slot').appendChild(chargeStamp);
-            sound('stamp');
+            sound('stamp', 'charge');
             log('Charge: ' + j.charge + '. ' + j.exhibit);
             await dir.wait(350);
             await dir.type(docket.querySelector('.ev'), j.exhibit, 16);
             await dir.wait(700);
 
             /* 4 · HEARING */
+            au.cue('hearing_' + j.register);
             var seated = {};
             var lastSpeaker = 2, lastName = 'THE BENCH';
             for (var i = 0; i < lines.length; i++) {
@@ -286,7 +294,8 @@
                 }
                 var seat = seatFor(p.who, seated);
                 if (seat !== SILENT) { lastSpeaker = seat; lastName = p.who; }
-                await D.say(dir, seats, seat, p.who, p.text, p.kind, { log: log, still: still });
+                if (seat === SILENT) sound('squeak');
+                await D.say(dir, seats, seat, p.who, p.text, p.kind, { log: log, still: still, voice: au.voice });
             }
             D.hush(seats);
             D.look(seats, null);
@@ -294,6 +303,7 @@
             /* 5 · CONFER */
             caption.innerHTML = 'THE BENCH CONFERS<span class="dks-confer-dots"><i></i><i></i><i></i><i></i><i></i></span>';
             root.classList.add('dks-confer');
+            au.cue('confer');
             seats[0].el.classList.remove('dks-look-left');
             seats[1].el.classList.remove('dks-look-left');
             seats[3].el.classList.add('dks-look-left');
@@ -307,7 +317,7 @@
                 seats[mm[0]].text.textContent = mm[1];
                 seats[mm[0]].bubble.classList.add('dks-murmur');
                 D.replay(seats[mm[0]].bubble, 'dks-on');
-                sound('tick');
+                sound('murmur', mm[0]);
                 await dir.wait(800);
             }
             D.hush(seats);
@@ -320,17 +330,20 @@
             root.classList.add('dks-rule');
             seats[ruler].el.classList.add('dks-ruling');
             var gavel = D.gavel(seats[ruler]);
+            au.cue(null);
             await dir.wait(450);
             D.replay(gavel, 'dks-strike');
             await dir.wait(160);
             sound('gavel');
+            sound('sentence', j.verdict);
             D.replay(stage, 'dks-shake');
             D.replay(flash, 'dks-on');
-            await D.say(dir, seats, ruler, lastSpeaker === ruler ? lastName : 'THE BENCH', j.ruling, 'speech', { log: log, still: [0, 1, 2, 3, 4], noLook: true, hold: 300 });
+            setTimeout(function () { au.cue('after'); }, 2200);
+            await D.say(dir, seats, ruler, lastSpeaker === ruler ? lastName : 'THE BENCH', j.ruling, 'speech', { log: log, still: [0, 1, 2, 3, 4], noLook: true, hold: 300, voice: au.voice });
             docket.querySelector('.dks-sentence').classList.add('dks-on');
             var sStamp = D.h('span', 'dks-stamp sentence', D.esc(sentence.title));
             docket.querySelector('.dks-sentence-slot').appendChild(sStamp);
-            sound('stamp');
+            sound('stamp', 'sentence');
             log('Sentence: ' + sentence.title + ' — ' + sentence.fx);
             await dir.wait(700);
 

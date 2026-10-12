@@ -236,7 +236,8 @@
        opts.evaluation  { grade, score, rows } — from evaluate()
        opts.grade       force a grade (demo / QA); rows are kept, score is shown as-is
        opts.onRuling    (grade) => void, called at the gavel — apply the reward here
-       opts.sound       (name) => void: 'gavel' 'tick' 'vote' 'verdict_good' 'verdict_bad'
+       opts.audio       false to silence the scene (music and effects come from CouncilScore)
+       opts.sound       (name, ...) => void, told about every effect (optional game hook)
        opts.onMemberClick (i) => void — e.g. RubberIII.onDuckCardClick */
     function play(host, opts) {
         opts = opts || {};
@@ -245,9 +246,10 @@
         var score = opts.grade ? clampToBand(ev.score, grade) : ev.score;
         var v = VERDICTS[grade];
         var votes = VOTES[grade];
-        var sound = D.soundFn(opts);
+        var au = D.audio(opts, window.CouncilScore);
+        var sound = au.sfx;
         var dir = D.director();
-        var shell = D.shell(host, 'dks-council', dir);
+        var shell = D.shell(host, 'dks-council', dir, au);
         var root = shell.root;
         root.setAttribute('aria-label', 'The Ducky Council — emergency session');
         root.dataset.grade = grade;
@@ -334,15 +336,22 @@
         var done = (async function () {
             /* 1 · CONVENE */
             root.classList.add('dks-on-in');
+            au.cue('convene');
             await dir.wait(500);
             root.classList.remove('dks-pre');
             root.classList.add('dks-convene');
+            /* each arrival sounds when it lands — the same delays as the CSS */
+            [[1, 120], [3, 220], [2, 300], [4, 500], [0, 680]].forEach(function (a) {
+                setTimeout(function () { if (!dir.isFast()) sound('enter', a[0]); }, a[1] + 250);
+            });
             await dir.wait(1500);
             strike();
-            await D.say(dir, seats, CHAIR, NAMES[CHAIR], 'Order. The Council is in session.', 'speech', { log: log, hold: 500 });
+            await D.say(dir, seats, CHAIR, NAMES[CHAIR], 'Order. The Council is in session.', 'speech', { log: log, hold: 500, voice: au.voice });
 
             /* 2 · LEDGER */
             ledger.classList.add('dks-on');
+            au.cue('ledger');
+            sound('panel');
             seats[MALLARD].el.classList.add('dks-talking');
             D.look(seats, MALLARD, [ABSTAINER]);
             for (var r = 0; r < ev.rows.length; r++) {
@@ -350,8 +359,8 @@
                 await dir.wait(170);
                 var row = ev.rows[r];
                 var pips = rowEls[r].querySelectorAll('.dks-pip');
-                if (row.pts > 0) for (var k = 0; k < row.pts; k++) { pips[k].classList.add('lit'); sound('tick'); await dir.wait(120); }
-                if (row.pts < 0) for (var n = 0; n < -row.pts; n++) { pips[row.max + n].classList.add('lit'); sound('tick'); await dir.wait(120); }
+                if (row.pts > 0) for (var k = 0; k < row.pts; k++) { pips[k].classList.add('lit'); sound('tick', r * 2 + k); au.voice(MALLARD); await dir.wait(120); }
+                if (row.pts < 0) for (var n = 0; n < -row.pts; n++) { pips[row.max + n].classList.add('lit'); sound('tick_neg'); await dir.wait(120); }
                 log(row.label + ': ' + row.value + ' (' + (row.pts >= 0 ? '+' : '') + row.pts + ')');
                 await dir.wait(220);
             }
@@ -359,6 +368,7 @@
             await dir.wait(400);
 
             /* 3 · DEBATE */
+            au.cue('debate');
             for (var i = 0; i < v.deliberation.length; i++) {
                 var p = parse(v.deliberation[i]);
                 if (p.kind === 'caption' || p.seat < 0) {
@@ -369,12 +379,13 @@
                     continue;
                 }
                 var still = p.seat === ABSTAINER ? [] : [ABSTAINER];
-                await D.say(dir, seats, p.seat, p.who, p.text + (p.aside ? ' ' + p.aside : ''), p.kind, { log: log, still: still, cps: 16 });
+                await D.say(dir, seats, p.seat, p.who, p.text + (p.aside ? ' ' + p.aside : ''), p.kind, { log: log, still: still, cps: 16, voice: au.voice });
             }
             D.hush(seats);
             D.look(seats, null);
 
             /* 4 · VOTE */
+            au.cue('vote');
             await dir.type(caption, 'THE COUNCIL WILL NOW VOTE', 14);
             await dir.wait(350);
             for (var j = 0; j < 5; j++) {
@@ -383,6 +394,7 @@
                     /* a first: the bench turns to watch him */
                     D.look(seats, ABSTAINER, [ABSTAINER]);
                     caption.textContent = 'THE ABSTAINER IS VOTING';
+                    sound('abstainer_votes');
                     await dir.wait(900);
                 }
                 raise(j, vote);
@@ -394,6 +406,7 @@
 
             /* 5 · RULING */
             caption.textContent = '';
+            au.cue(null);
             strike();
             if (typeof opts.onRuling === 'function') { try { opts.onRuling(grade); } catch (e) {} }
             track.classList.add('dks-on');
@@ -402,7 +415,11 @@
             bands.querySelectorAll('.dks-band').forEach(function (b) { b.classList.toggle('dks-hit', b.dataset.grade === grade); });
             verdict.classList.add('dks-on');
             root.classList.add('dks-grade-' + grade);
-            sound(ORDER.indexOf(grade) >= 3 ? 'verdict_good' : 'verdict_bad');
+            sound('ruling_' + grade);
+            sound('medal');
+            if (grade === 'platinum') setTimeout(function () { sound('sigil'); }, 900);
+            if (grade === 'quacked') setTimeout(function () { sound('feather'); }, 1600);
+            setTimeout(function () { au.cue(ORDER.indexOf(grade) >= 3 ? 'after_good' : 'after_bad'); }, 2400);
             log('RULING: ' + v.label + ' — ' + v.rewardDesc);
             var lineEls = verdict.querySelectorAll('.dks-lines div');
             for (var l = 0; l < lineEls.length; l++) { lineEls[l].classList.add('dks-on'); await dir.wait(420); }
@@ -431,7 +448,7 @@
             }
             var card = D.h('div', 'dks-placard ' + cls + (j === RUBBER ? ' upside' : ''), vote);
             seats[j].prop.appendChild(card);
-            sound('vote');
+            sound('vote', vote, j);
         }
 
         function countUp(el, target) {
@@ -442,6 +459,7 @@
                     k += 1;
                     var val = Math.round(from + (target - from) * (k / steps));
                     el.textContent = 'SCORE ' + val;
+                    sound('score', k);
                     if (k >= steps || dir.isFast()) { clearInterval(iv); el.textContent = 'SCORE ' + target; resolve(); }
                 }, 1100 / steps);
             }).then(function () { return dir.wait(250); });

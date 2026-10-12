@@ -12,6 +12,8 @@ Two full-screen scenes that replace how both duck events are presented. They reu
 | `src/duck_scene_core.js` | `DuckScene`: pacing, skip, bench, speech bubbles, gavel |
 | `src/council_scene.js` | `CouncilScene.play / evaluate / gathering` |
 | `src/tribunal_scene.js` | `TribunalScene.play / judge` |
+| `src/audio/event_audio.js` | `EventAudio`: synth engine, sequencer, voices |
+| `src/audio/score_*.js` | Each event's music, effects and voices |
 
 Load order: the three art files, then `duck_scene_core.js`, then the two scenes.
 
@@ -104,10 +106,24 @@ bubble helpers are unused.
   pointing at `.dks` instead. You could also mount the scene in a child element, but then the old markup stays on screen.
 - **Overlay styling:** the scenes paint their own background. If `.event-stage` adds padding or a card frame, set it to
   `padding: 0` for these two overlays.
-- **Sound:** the scenes name moments rather than playing sounds: `gavel`, `tick`, `vote`, `stamp`, `verdict_good`,
-  `verdict_bad`. Only `gavel` is wired by default, because it's the only one confirmed to exist (`sfx:gavel`).
-  The music director already switches to the duck cues from `GlobalEventQueue` / `DuckyCouncil.isActive()`.
+- **Sound:** see the Sound section above. The scenes bring their own music, so `music.js`'s duck cues are held while they play.
 - **`DuckyCouncil.isActive()`:** `music.js` reads it, so `_active` must stay true until `dismiss()`, which the code above does.
+
+---
+
+## Sound — every event has its own score
+
+All sound is synthesised in the browser by `src/audio/event_audio.js` (Web Audio, no files). Each event brings a score:
+
+| | Ducky Council (`score_council.js`) | Duck Tribunal (`score_tribunal.js`) |
+|---|---|---|
+| Music | F major chamber march, 100 bpm: harpsichord, tuba, one ambitious brass player | D minor courtroom, 66 bpm: organ, timpani, low drone |
+| Cues by beat | convene (oom-pah march) → ledger (ticking clock, walking bass) → debate (wandering bassoon line) → vote (snare roll over a held chord) → after (warm or deflated) | all rise (organ swell) → hearing, one per register (Sentencers: heavy brass and a wrong semitone · Bureaucrats: typewriter, pizzicato, desk bell · Philosophers: choir and bells) → confer (heartbeat, climbing ostinato) → after |
+| Rulings | A fanfare per grade: Platinum (fanfare, cymbal, bell cascade) down to Quacked (sad trombone) | A timpani roll into an orchestral hit; GUILTY adds a dissonant cluster |
+| Effects | Gavel, footsteps per arrival, Rubber III's squeaky glide, the Abstainer's faint chime, ledger pips rising in pitch, placards (approve chime / reject buzz / abstain thud), score count, medal, sigil shimmer, falling feather | Knocks, judges rising, docket swish, both stamps, murmurs while conferring, the Silent One's squeak, flash |
+| Voices | Each member babbles while their line types: the Chairman booms, Mallard is nasal, Rubber III squeaks, the Senator is mid-range, the Abstainer has no voice | Same five bodies |
+
+In the game, a scene's session holds `GameMusic` (`'event-audio'`) so the soundtrack director goes quiet while the scene plays, and releases it on close. It follows Settings: sound off silences it; the Music and Effects sliders scale it (call `EventAudio.refresh()` when they change). Load `event_audio.js` and both score files before the scenes. Pass `audio: false` to `play()` to run a scene silent.
 
 ---
 

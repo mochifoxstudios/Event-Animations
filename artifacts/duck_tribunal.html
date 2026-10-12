@@ -16,7 +16,13 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .ctl .out { color: var(--ok); }
 .stagehost { position: relative; flex: 1; display: flex; min-height: 620px; }
 .stagehost > .dks { flex: 1; }
+.gate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 16px; text-align: center; }
+.gate h2 { margin: 0; font-size: clamp(20px, 4vw, 30px); letter-spacing: 8px; color: var(--accent); }
+.gate p { margin: 0; max-width: 34rem; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
+.gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 
+:root { --accent: #8f9fd6; }
 /* ═══════════════════════════════════════════════════════════════════════════
    duck_scenes.css — THE DUCKY COUNCIL and THE DUCK TRIBUNAL, staged.
 
@@ -496,11 +502,15 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     <div class="grp"><label for="charge">Charge</label><select id="charge"></select>
       <label for="register">Register</label><select id="register"></select>
       <button id="replay" type="button">▶ Replay</button></div>
-    <div class="grp"><label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+      <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
     <span class="out" id="out" aria-live="polite"></span>
     <div class="note">The sentence follows the charge. Register sets who speaks and the colour of the room. Click anywhere to hurry a line along, or SKIP to jump to the sentence.</div>
   </div>
-  <div class="stagehost" id="host"></div>
+  <div class="stagehost" id="host">
+    <div class="gate"><h2>DUCK TRIBUNAL</h2><p>The bench charges you by how you play, holds a hearing and stamps a sentence that fits the charge. Organ, timpani and a different score for each register.</p>
+      <button id="go" type="button">▶ PLAY WITH SOUND</button></div>
+  </div>
 </div>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1194,6 +1204,343 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 </script>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
+   event_audio.js — the sound engine every event scene plays through.
+
+   Everything is synthesised with Web Audio: no files, nothing to load. An event
+   brings a SCORE (see score_*.js):
+     score.bpm          tempo of its music
+     score.cues[name]   (A, t, step, bar) => schedule notes for one 16th-note step
+     score.sfx[name]    (A, t, ...args)   => a one-shot sound effect
+     score.voices[i]    a member's speaking voice (babble while their text types)
+
+   A scene opens a session:  var au = EventAudio.session(score)
+     au.cue('debate')     switch music; takes effect on the next beat
+     au.sfx('gavel')      play an effect now
+     au.voice(seat)       one syllable of that member's voice
+     au.stop()            fade the music out and release the game's music
+
+   In the game: while a session runs it holds GameMusic ('event-audio'), so the
+   soundtrack director goes quiet instead of playing on top, and it follows
+   Settings (sound on/off, Music and Effects sliders).
+   Browsers only allow sound after a click — EventAudio.unlock() from any click.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    var ctx = null, master, musicBus, sfxBus, verbIn, noiseBuf;
+    var userMuted = false;
+    var VOL = { music: 0.5, sfx: 0.85 };
+
+    function mf(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+    function prefs() {
+        var p = { on: true, music: 1, sfx: 1 };
+        try {
+            if (window.Settings && Settings._prefs) {
+                if (Settings._prefs.sound === false) p.on = false;
+                if (typeof Settings._prefs.musicVol === 'number') p.music = Settings._prefs.musicVol;
+                if (typeof Settings._prefs.sfxVol === 'number') p.sfx = Settings._prefs.sfxVol;
+            }
+        } catch (e) {}
+        return p;
+    }
+
+    function impulse(seconds) {
+        var rate = ctx.sampleRate, len = Math.floor(rate * seconds);
+        var buf = ctx.createBuffer(2, len, rate);
+        for (var c = 0; c < 2; c++) {
+            var d = buf.getChannelData(c);
+            for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6);
+        }
+        return buf;
+    }
+
+    function ensure() {
+        if (ctx) { if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} } return ctx; }
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        try { ctx = new AC(); } catch (e) { return null; }
+        var comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.005; comp.release.value = 0.2;
+        master = ctx.createGain();
+        master.connect(comp); comp.connect(ctx.destination);
+        musicBus = ctx.createGain(); musicBus.connect(master);
+        sfxBus = ctx.createGain(); sfxBus.connect(master);
+        var verb = ctx.createConvolver(); verb.buffer = impulse(2.8);
+        verbIn = ctx.createGain(); verbIn.gain.value = 0.32;
+        verbIn.connect(verb); verb.connect(master);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+        var nd = noiseBuf.getChannelData(0);
+        for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+        applyLevels();
+        return ctx;
+    }
+
+    function applyLevels() {
+        if (!ctx) return;
+        var p = prefs();
+        var on = p.on && !userMuted;
+        master.gain.setTargetAtTime(on ? 0.9 : 0, ctx.currentTime, 0.05);
+        musicBus.gain.setTargetAtTime(VOL.music * p.music, ctx.currentTime, 0.05);
+        sfxBus.gain.setTargetAtTime(VOL.sfx * p.sfx, ctx.currentTime, 0.05);
+    }
+
+    /* ── BUILDING BLOCKS ───────────────────────────────────────────────────── */
+    function out(bus, wet) {
+        var g = ctx.createGain();
+        g.connect(bus);
+        if (wet) { var s = ctx.createGain(); s.gain.value = wet; g.connect(s); s.connect(verbIn); }
+        return g;
+    }
+    function osc(type, freq, t, stop, dest) {
+        var o = ctx.createOscillator();
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        o.connect(dest); o.start(t); o.stop(stop);
+        return o;
+    }
+    function noise(t, stop, dest) {
+        var n = ctx.createBufferSource();
+        n.buffer = noiseBuf; n.loop = true;
+        n.connect(dest); n.start(t, Math.random() * 1.5); n.stop(stop);
+        return n;
+    }
+    function filt(type, freq, q) {
+        var f = ctx.createBiquadFilter();
+        f.type = type; f.frequency.value = freq; if (q != null) f.Q.value = q;
+        return f;
+    }
+    /* attack → peak, exponential decay to silence by `end` */
+    function perc(g, t, peak, attack, end) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(peak, t + attack);
+        g.gain.exponentialRampToValueAtTime(0.0001, end);
+    }
+    /* attack → sustain → release */
+    function sustain(g, t, peak, attack, dur, release) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(peak, t + attack);
+        g.gain.setValueAtTime(peak, t + Math.max(attack, dur));
+        g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(attack, dur) + release);
+    }
+
+    /* ── INSTRUMENTS — (t, midi, durSeconds, velocity 0..1, bus?) ──────────── */
+    function makeInstruments(defaultBus) {
+        var I = {};
+        function B(bus) { return bus || defaultBus(); }
+
+        I.pluck = function (t, m, dur, v, bus) {          // harpsichord-ish
+            var f = filt('lowpass', 3200); f.frequency.setValueAtTime(3600, t); f.frequency.exponentialRampToValueAtTime(700, t + 0.25);
+            var g = out(B(bus), 0.18); f.connect(g);
+            perc(g, t, 0.16 * v, 0.003, t + dur + 0.35);
+            osc('sawtooth', mf(m), t, t + dur + 0.4, f);
+            osc('square', mf(m) * 1.003, t, t + dur + 0.4, f);
+        };
+        I.bass = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 700);
+            var g = out(B(bus), 0.05); f.connect(g);
+            perc(g, t, 0.42 * v, 0.008, t + dur + 0.18);
+            osc('triangle', mf(m), t, t + dur + 0.2, f);
+            osc('sine', mf(m - 12), t, t + dur + 0.2, f);
+        };
+        I.brass = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 500, 2);
+            f.frequency.setValueAtTime(400, t);
+            f.frequency.linearRampToValueAtTime(600 + 2600 * v, t + 0.06);
+            f.frequency.exponentialRampToValueAtTime(900 + 900 * v, t + 0.3);
+            var g = out(B(bus), 0.25); f.connect(g);
+            sustain(g, t, 0.17 * v, 0.04, dur, 0.14);
+            [-6, 6].forEach(function (c) {
+                var o = osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 0.2, f);
+                if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo) * Math.pow(2, c / 1200), t + dur);
+            });
+        };
+        I.organ = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.4);
+            sustain(g, t, 0.08 * v, 0.09, dur, 0.4);
+            var lfo = ctx.createOscillator(), lg = ctx.createGain();
+            lfo.frequency.value = 5.2; lg.gain.value = 2.2; lfo.connect(lg); lfo.start(t); lfo.stop(t + dur + 0.5);
+            [[1, 1], [2, 0.5], [3, 0.3], [4, 0.22], [6, 0.1]].forEach(function (h) {
+                var hg = ctx.createGain(); hg.gain.value = h[1]; hg.connect(g);
+                var o = osc('sine', mf(m) * h[0], t, t + dur + 0.5, hg);
+                lg.connect(o.frequency);
+            });
+        };
+        I.pad = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 1100);
+            var g = out(B(bus), 0.6); f.connect(g);
+            sustain(g, t, 0.05 * v, Math.min(0.9, dur / 2), dur, 1.4);
+            [-9, 0, 9].forEach(function (c) { osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 1.5, f); });
+        };
+        I.choir = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.75);
+            sustain(g, t, 0.07 * v, Math.min(1.1, dur / 2), dur, 1.6);
+            [[700, 6], [1150, 8], [2600, 10]].forEach(function (fm, k) {
+                var bp = filt('bandpass', fm[0], fm[1]);
+                var fg = ctx.createGain(); fg.gain.value = [1, 0.6, 0.25][k];
+                bp.connect(fg); fg.connect(g);
+                [-7, 7].forEach(function (c) {
+                    var o = osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 1.7, bp);
+                    var l = ctx.createOscillator(), lg = ctx.createGain();
+                    l.frequency.value = 4.6 + c / 20; lg.gain.value = 3; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + dur + 1.7);
+                });
+            });
+        };
+        I.bell = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.5);
+            perc(g, t, 0.12 * v, 0.002, t + dur + 1.4);
+            var car = osc('sine', mf(m), t, t + dur + 1.5, g);
+            var mod = ctx.createOscillator(), mg = ctx.createGain();
+            mod.frequency.value = mf(m) * 3.5;
+            mg.gain.setValueAtTime(mf(m) * 2.2, t); mg.gain.exponentialRampToValueAtTime(1, t + 0.9);
+            mod.connect(mg); mg.connect(car.frequency); mod.start(t); mod.stop(t + dur + 1.5);
+        };
+        I.timp = function (t, m, v, bus) {
+            var g = out(B(bus), 0.35);
+            perc(g, t, 0.55 * v, 0.004, t + 1.1);
+            var o = osc('sine', mf(m) * 1.5, t, t + 1.2, g);
+            o.frequency.exponentialRampToValueAtTime(mf(m), t + 0.06);
+            var f = filt('lowpass', 900); var ng = out(B(bus), 0.2); f.connect(ng);
+            perc(ng, t, 0.18 * v, 0.002, t + 0.12); noise(t, t + 0.15, f);
+        };
+        I.kick = function (t, v, bus) {
+            var g = out(B(bus));
+            perc(g, t, 0.7 * v, 0.003, t + 0.32);
+            var o = osc('sine', 130, t, t + 0.35, g);
+            o.frequency.exponentialRampToValueAtTime(42, t + 0.12);
+        };
+        I.snare = function (t, v, bus) {
+            var f = filt('bandpass', 1900, 0.8); var g = out(B(bus), 0.15); f.connect(g);
+            perc(g, t, 0.26 * v, 0.002, t + 0.16); noise(t, t + 0.18, f);
+            var tg = out(B(bus)); perc(tg, t, 0.12 * v, 0.002, t + 0.08); osc('triangle', 190, t, t + 0.1, tg);
+        };
+        I.hat = function (t, v, bus) {
+            var f = filt('highpass', 7200); var g = out(B(bus)); f.connect(g);
+            perc(g, t, 0.12 * v, 0.001, t + 0.045); noise(t, t + 0.05, f);
+        };
+        I.cymbal = function (t, v, bus) {
+            var f = filt('highpass', 5200); var g = out(B(bus), 0.5); f.connect(g);
+            perc(g, t, 0.16 * v, 0.004, t + 2.2); noise(t, t + 2.3, f);
+        };
+        I.tick = function (t, freq, v, bus) {
+            var g = out(B(bus)); perc(g, t, 0.18 * v, 0.001, t + 0.05);
+            osc('sine', freq || 2200, t, t + 0.06, g);
+        };
+        /* a struck block of wood — gavels and knocks */
+        I.wood = function (t, v, size, bus) {
+            size = size || 1;
+            var g = out(B(bus), 0.35 * size);
+            perc(g, t, 0.6 * v, 0.001, t + 0.18 * size);
+            var o = osc('sine', 210 / size, t, t + 0.25 * size, g);
+            o.frequency.exponentialRampToValueAtTime(120 / size, t + 0.08);
+            var bp = filt('bandpass', 1300 / size, 3); var ng = out(B(bus), 0.25); bp.connect(ng);
+            perc(ng, t, 0.5 * v, 0.001, t + 0.05 * size); noise(t, t + 0.08, bp);
+        };
+        I.whoosh = function (t, dur, from, to, v, bus) {
+            var bp = filt('bandpass', from, 1.2);
+            bp.frequency.setValueAtTime(from, t); bp.frequency.exponentialRampToValueAtTime(to, t + dur);
+            var g = out(B(bus), 0.3); bp.connect(g);
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.2 * v, t + dur * 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            noise(t, t + dur + 0.05, bp);
+        };
+        /* a short vocal syllable: pitch swoop through a formant — the ducks talk in these */
+        I.syllable = function (t, p, v, bus) {
+            var dur = p.len || 0.075;
+            var f0 = p.f * (0.88 + Math.random() * 0.26);
+            var bp = filt('bandpass', p.formant || 1000, p.q || 2.5);
+            var g = out(B(bus), 0.12); bp.connect(g);
+            perc(g, t, (p.gain || 0.22) * v, 0.006, t + dur);
+            var o = osc(p.type || 'sawtooth', f0 * (p.up || 1.3), t, t + dur + 0.02, bp);
+            o.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur);
+            if (p.dry) { var dg = out(B(bus)); perc(dg, t, (p.gain || 0.22) * v * p.dry, 0.004, t + dur); var o2 = osc('sine', f0 * (p.up || 1.3), t, t + dur + 0.02, dg); o2.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur); }
+        };
+        return I;
+    }
+
+    /* ── A SESSION — one event on screen ─────────────────────────────────────── */
+    function session(score) {
+        var live = !!ensure();
+        var api = { cue: noop, sfx: noop, voice: noop, stop: noop, live: live };
+        if (!live) return api;
+        try { if (window.GameMusic && GameMusic.hold) GameMusic.hold('event-audio'); } catch (e) {}
+        applyLevels();
+
+        /* music runs through its own gain so a session can fade without touching the bus */
+        var mGain = ctx.createGain(); mGain.connect(musicBus);
+        var sGain = ctx.createGain(); sGain.connect(sfxBus);
+        var M = makeInstruments(function () { return mGain; });
+        var S = makeInstruments(function () { return sGain; });
+        var A = { music: M, fx: S, mf: mf, ctx: ctx };
+
+        var bpm = score.bpm || 90, stepDur = 60 / bpm / 4;
+        A.step = stepDur; A.beat = stepDur * 4; A.bar = stepDur * 16;
+        var cur = null, pending, step = 0, bar = 0, nextTime = 0, timer = null, stopped = false;
+        var lastVoice = 0;
+
+        function tick() {
+            if (stopped) return;
+            if (!nextTime || nextTime < ctx.currentTime - 0.2) nextTime = ctx.currentTime + 0.05;
+            while (nextTime < ctx.currentTime + 0.14) {
+                if (pending !== undefined && step % 4 === 0) {
+                    cur = pending; pending = undefined;
+                    if (step % 16 !== 0) { step = 0; }       // a new cue starts on its own downbeat
+                    bar = 0;
+                }
+                var fn = cur && score.cues[cur];
+                if (fn) { try { fn(A, nextTime, step % 16, bar); } catch (e) {} }
+                nextTime += stepDur;
+                step += 1;
+                if (step % 16 === 0) bar += 1;
+            }
+        }
+
+        api.cue = function (name) {
+            if (stopped) return;
+            pending = name || null;
+            if (!timer) { timer = setInterval(tick, 25); tick(); }
+        };
+        api.sfx = function (name) {
+            if (stopped) return;
+            var fn = score.sfx && score.sfx[name];
+            if (!fn) return;
+            var args = [A, ctx.currentTime + 0.01].concat([].slice.call(arguments, 1));
+            try { fn.apply(null, args); } catch (e) {}
+        };
+        api.voice = function (seat) {
+            if (stopped) return;
+            var p = score.voices && score.voices[seat];
+            if (!p) return;
+            var now = ctx.currentTime;
+            if (now - lastVoice < (p.gap || 0.085)) return;
+            lastVoice = now;
+            S.syllable(now + 0.005, p, 1);
+        };
+        api.stop = function () {
+            if (stopped) return;
+            stopped = true;
+            clearInterval(timer);
+            var t = ctx.currentTime;
+            mGain.gain.setValueAtTime(mGain.gain.value, t);
+            mGain.gain.linearRampToValueAtTime(0.0001, t + 0.8);
+            setTimeout(function () { try { mGain.disconnect(); sGain.disconnect(); } catch (e) {} }, 3500);
+            try { if (window.GameMusic && GameMusic.release) GameMusic.release('event-audio'); } catch (e) {}
+        };
+        return api;
+    }
+    function noop() {}
+
+    window.EventAudio = {
+        session: session,
+        unlock: function () { ensure(); },
+        setMuted: function (m) { userMuted = !!m; applyLevels(); },
+        isMuted: function () { return userMuted; },
+        refresh: applyLevels,                  // call after Settings' sound sliders change
+        mf: mf
+    };
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
    duck_scene_core.js — what the Council and the Tribunal share.
 
    · director()  paces a scene. Every wait and every typed line is a STEP, and a
@@ -1273,7 +1620,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                     return function () { clearTimeout(t); };
                 });
             },
-            type: function (el, text, msPerChar) {
+            type: function (el, text, msPerChar, onChar) {
                 text = String(text || '');
                 return step(function (done) {
                     if (fast || !text) { el.textContent = text; setTimeout(done, 0); return null; }
@@ -1282,6 +1629,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                     var iv = setInterval(function () {
                         i += 1;
                         el.textContent = text.slice(0, i);
+                        if (onChar && /[A-Za-z0-9]/.test(text.charAt(i - 1))) onChar();
                         if (i >= text.length) { clearInterval(iv); done(); }
                     }, msPerChar || 18);
                     return function () { clearInterval(iv); el.textContent = text; };
@@ -1295,13 +1643,21 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     };
 
     /* ── SOUND ───────────────────────────────────────────────────────────────
-       The game's soundtrack owns every sound (music.js). A scene only names the
-       moment; `opts.sound` decides what plays. Default: the gavel, which the
-       soundtrack already has. */
-    D.soundFn = function (opts) {
-        if (opts && typeof opts.sound === 'function') return opts.sound;
-        return function (name) {
-            try { if (name === 'gavel' && window.GameSound) GameSound.play('sfx:gavel'); } catch (e) {}
+       Each event has its own score (src/audio/score_*.js) played through
+       EventAudio. `opts.audio === false` silences a scene; `opts.sound(name)`,
+       if given, is told about every effect as well (the game's own hook). */
+    D.audio = function (opts, score) {
+        opts = opts || {};
+        var au = (opts.audio !== false && window.EventAudio && score) ? EventAudio.session(score) : null;
+        var hook = typeof opts.sound === 'function' ? opts.sound : null;
+        return {
+            cue: function (name) { if (au) au.cue(name); },
+            sfx: function (name) {
+                if (au) au.sfx.apply(null, arguments);
+                if (hook) { try { hook.apply(null, arguments); } catch (e) {} }
+            },
+            voice: function (seat) { if (au) au.voice(seat); },
+            stop: function () { if (au) au.stop(); }
         };
     };
 
@@ -1363,7 +1719,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         if (kind === 'speech') s.el.classList.add('dks-talking');
         if (kind === 'action') D.replay(s.el, 'dks-gesture');
         if (opts.log) opts.log((who ? who + ': ' : '') + text);
-        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18)).then(function () {
+        var onChar = (kind === 'speech' && opts.voice) ? function () { opts.voice(idx); } : null;
+        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
             s.el.classList.remove('dks-talking');
             var hold = opts.hold != null ? opts.hold : Math.min(2400, 650 + text.length * 13);
             return dir.wait(hold);
@@ -1388,7 +1745,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     };
 
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
-    D.shell = function (host, cls, dir) {
+    D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
         if (D.reduced()) root.classList.add('dks-reduced');
         root.setAttribute('role', 'dialog');
@@ -1405,6 +1762,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
         skipBtn.addEventListener('click', function (e) { e.stopPropagation(); dir.fastForward(); });
         root.addEventListener('click', function (e) { if (!e.target.closest('button')) dir.skip(); });
+        root.addEventListener('pointerdown', function () { if (window.EventAudio) EventAudio.unlock(); });
         function onKey(e) {
             if (!root.isConnected) { document.removeEventListener('keydown', onKey, true); return; }
             if (e.target && /^(BUTTON|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
@@ -1418,11 +1776,132 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             root: root,
             log: function (line) { var d = D.h('div'); d.textContent = line; log.appendChild(d); },
             done: function () { skipBtn.hidden = true; hint.style.display = 'none'; },
-            close: function () { dir.kill(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
+            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
         };
     };
 
     window.DuckScene = D;
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   score_tribunal.js — THE DUCK TRIBUNAL's music and sound.
+
+   A courtroom in D minor at 66 bpm: organ, timpani, a drone under everything.
+   The Council grades you; the Tribunal judges you, and it sounds like it.
+
+   CUES
+     allrise                organ chord swelling over a low drone
+     hearing_sentencers     heavy: low brass hits a semitone apart, timpani on
+                            the off-beat, a dissonant pad
+     hearing_bureaucrats    clerical: a typewriter, a pizzicato ostinato, a
+                            desk bell every two bars
+     hearing_philosophers   the yellow glow: a choir and slow bells
+     confer                 a heartbeat, and an ostinato that climbs
+     after                  the drone, and one bell
+   STINGERS  sentence(verdict) — the hit; GUILTY is crueller
+   EFFECTS   knock · gavel · rise(seat) · docket · stamp(kind) · flash · murmur(seat)
+   VOICES    the same five bodies as the Council. THE SILENT ONE (seat 4) has no
+             voice: its line is a squeak, played as an effect.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    /* Dm · Bb · Gm · A */
+    var PROG = [[38, 50, 53, 57], [34, 50, 53, 58], [31, 50, 55, 58], [33, 49, 52, 57]];
+
+    function common(A, t, s, bar, organ) {
+        var M = A.music, c = PROG[bar % 4];
+        if (s === 0 && bar % 2 === 0) { M.pad(t, 38, A.bar * 2, 0.8); M.pad(t, 45, A.bar * 2, 0.5); }
+        if (s === 0 && organ !== false) for (var k = 1; k < 4; k++) M.organ(t, c[k], A.bar * 0.95, 0.55);
+        if (s === 0) M.bass(t, c[0], A.bar * 0.9, 0.5);
+    }
+
+    var cues = {
+        allrise: function (A, t, s, bar) {
+            var M = A.music;
+            if (s === 0) {
+                M.pad(t, 26, A.bar, 0.9);
+                [50, 53, 57, 62].forEach(function (m) { M.organ(t, m, A.bar * 0.98, 0.7); });
+            }
+        },
+        hearing_sentencers: function (A, t, s, bar) {
+            var M = A.music;
+            common(A, t, s, bar);
+            if (s === 0) M.timp(t, 38, 0.8);
+            if (s === 10) M.timp(t, 38, 0.5);
+            if (s === 0) M.brass(t, 38, A.beat * 1.4, 0.55);
+            if (s === 6) M.brass(t, 39, A.beat, 0.45);                  // the semitone that should not be there
+            if (s === 0 && bar % 2 === 1) M.pad(t, 51, A.bar, 0.6);
+        },
+        hearing_bureaucrats: function (A, t, s, bar) {
+            var M = A.music;
+            common(A, t, s, bar, false);
+            if (Math.random() < 0.45) M.hat(t, 0.25 + Math.random() * 0.3);      // the typewriter
+            if (s % 2 === 0) M.pluck(t, [62, 65, 69, 65][(s >> 1) % 4], A.step * 1.5, 0.3);
+            if (s === 14 && bar % 2 === 1) M.bell(t, 84, 0.2, 0.45);              // ding
+            if (s === 0) M.timp(t, 38, 0.35);
+        },
+        hearing_philosophers: function (A, t, s, bar) {
+            var M = A.music;
+            common(A, t, s, bar, false);
+            if (s === 0) [50, 57, 62, 64].forEach(function (m) { M.choir(t, m, A.bar * 0.98, 0.7); });
+            if (s === 0 || s === 8) M.bell(t, [74, 76, 81, 79][(bar * 2 + (s >> 3)) % 4], 0.6, 0.35);
+        },
+        confer: function (A, t, s, bar) {
+            var M = A.music;
+            if (s === 0 || s === 8) M.kick(t, 0.8);                      // lub
+            if (s === 2 || s === 10) M.kick(t, 0.5);                     // dub
+            if (s % 2 === 0) M.pluck(t, (s % 4 === 0 ? 57 : 58) + bar, A.step, 0.25 + bar * 0.08);
+            if (s === 0) M.pad(t, 50 + bar, A.bar, 0.5 + bar * 0.15);
+        },
+        after: function (A, t, s, bar) {
+            var M = A.music;
+            if (s === 0 && bar % 2 === 0) M.pad(t, 38, A.bar * 2, 0.6);
+            if (s === 0 && bar % 2 === 1) M.bell(t, 69, 1, 0.25);
+        }
+    };
+
+    var sfx = {
+        knock: function (A, t) { A.fx.wood(t, 1, 1.4); A.fx.timp(t, 26, 0.35); },
+        gavel: function (A, t) { A.fx.wood(t, 1, 1); A.fx.wood(t + 0.02, 0.5, 1.7); },
+        rise: function (A, t, seat) { A.fx.whoosh(t, 0.45, 300, 1200, 0.35); if (VOICES[seat]) A.fx.syllable(t + 0.35, VOICES[seat], 0.5); },
+        docket: function (A, t) { A.fx.whoosh(t, 0.4, 4000, 1500, 0.6); A.fx.wood(t + 0.38, 0.2, 2.2); },
+        stamp: function (A, t, kind) {
+            var F = A.fx;
+            F.kick(t, kind === 'sentence' ? 1 : 0.7);
+            F.wood(t, 0.7, 1.3);
+            F.whoosh(t, 0.12, 3000, 1200, 0.5);
+        },
+        flash: function (A, t) { A.fx.cymbal(t, 0.5); },
+        squeak: function (A, t) {                                       // THE SILENT ONE's only line
+            A.fx.syllable(t, { f: 1500, type: 'sine', formant: 2600, q: 1, up: 0.9, down: 1.25, len: 0.35, gain: 0.3, dry: 0.8 }, 1);
+        },
+        murmur: function (A, t, seat) {
+            var v = VOICES[seat]; if (!v) return;
+            var low = { f: v.f * 0.8, type: v.type, formant: v.formant * 0.8, q: v.q, up: 1.1, down: 0.9, len: 0.1, gain: v.gain * 0.5, dry: v.dry };
+            for (var k = 0; k < 3; k++) A.fx.syllable(t + k * 0.13, low, 0.7);
+        },
+        sentence: function (A, t, verdict) {
+            var F = A.fx;
+            for (var k = 0; k < 8; k++) F.timp(t + k * 0.05, 38, 0.25 + k * 0.08);    // the roll
+            var hit = t + 0.42;
+            [26, 38, 50, 53, 57].forEach(function (m) { F.brass(hit, m, 1.4, 0.9); });
+            if (verdict === 4) { F.brass(hit, 51, 1.4, 0.8); F.brass(hit, 56, 1.4, 0.7); } // GUILTY: the cluster
+            F.kick(hit, 1); F.cymbal(hit, 0.8); F.timp(hit, 38, 1);
+        }
+    };
+
+    var VOICES = [
+        { f: 120, type: 'square',   formant: 700,  q: 2,   up: 1.25, down: 0.75, len: 0.09, gain: 0.3 },
+        { f: 220, type: 'sawtooth', formant: 1500, q: 4,   up: 1.35, down: 0.85, len: 0.07, gain: 0.3 },
+        { f: 880, type: 'sine',     formant: 1900, q: 1,   up: 0.85, down: 1.4,  len: 0.06, gain: 0.22, dry: 0.7 },
+        { f: 170, type: 'triangle', formant: 1000, q: 2.5, up: 1.3,  down: 0.8,  len: 0.08, gain: 0.35 },
+        null
+    ];
+
+    window.TribunalScore = { bpm: 66, cues: cues, sfx: sfx, voices: VOICES };
 })();
 
 </script>
@@ -1616,14 +2095,16 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
        play(host, opts) → { done: Promise<{ action: 'accept'|'banish', verdict }>, close() }
        opts.judgement   from judge(); computed from opts.state / window.state if absent
        opts.caseNo      shown on the docket (default: the run number, or 0015)
-       opts.sound       (name) => void: 'gavel' 'stamp' 'tick' */
+       opts.audio       false to silence the scene (music and effects come from TribunalScore)
+       opts.sound       (name, ...) => void, told about every effect (optional game hook) */
     function play(host, opts) {
         opts = opts || {};
         var j = opts.judgement || judge(opts.state || window.state);
         var sentence = SENTENCES[j.verdict];
-        var sound = D.soundFn(opts);
+        var au = D.audio(opts, window.TribunalScore);
+        var sound = au.sfx;
         var dir = D.director();
-        var shell = D.shell(host, 'dks-tribunal', dir);
+        var shell = D.shell(host, 'dks-tribunal', dir, au);
         var root = shell.root;
         root.setAttribute('aria-label', 'Duck Tribunal');
         root.dataset.register = j.register;
@@ -1680,28 +2161,34 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         var done = (async function () {
             /* 1 · ALL RISE — three knocks, and the silent one is already there */
             root.classList.add('dks-on-in');
+            au.cue('allrise');
             await dir.type(caption, 'ALL RISE', 40);
-            for (var k = 0; k < 3; k++) { sound('gavel'); D.replay(stage, 'dks-shake'); await dir.wait(320); }
+            for (var k = 0; k < 3; k++) { sound('knock'); D.replay(stage, 'dks-shake'); await dir.wait(320); }
             await dir.wait(300);
 
             /* 2 · CONVENE */
             root.classList.remove('dks-pre');
             root.classList.add('dks-convene');
+            [[2, 0], [1, 90], [3, 180], [0, 270]].forEach(function (a) {
+                setTimeout(function () { if (!dir.isFast()) sound('rise', a[0]); }, a[1]);
+            });
             caption.textContent = '';
             await dir.wait(1000);
 
             /* 3 · CHARGE */
             docket.classList.add('dks-on');
+            sound('docket');
             await dir.wait(450);
             var chargeStamp = D.h('span', 'dks-stamp', D.esc(j.charge));
             docket.querySelector('.dks-charge-slot').appendChild(chargeStamp);
-            sound('stamp');
+            sound('stamp', 'charge');
             log('Charge: ' + j.charge + '. ' + j.exhibit);
             await dir.wait(350);
             await dir.type(docket.querySelector('.ev'), j.exhibit, 16);
             await dir.wait(700);
 
             /* 4 · HEARING */
+            au.cue('hearing_' + j.register);
             var seated = {};
             var lastSpeaker = 2, lastName = 'THE BENCH';
             for (var i = 0; i < lines.length; i++) {
@@ -1715,7 +2202,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 }
                 var seat = seatFor(p.who, seated);
                 if (seat !== SILENT) { lastSpeaker = seat; lastName = p.who; }
-                await D.say(dir, seats, seat, p.who, p.text, p.kind, { log: log, still: still });
+                if (seat === SILENT) sound('squeak');
+                await D.say(dir, seats, seat, p.who, p.text, p.kind, { log: log, still: still, voice: au.voice });
             }
             D.hush(seats);
             D.look(seats, null);
@@ -1723,6 +2211,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             /* 5 · CONFER */
             caption.innerHTML = 'THE BENCH CONFERS<span class="dks-confer-dots"><i></i><i></i><i></i><i></i><i></i></span>';
             root.classList.add('dks-confer');
+            au.cue('confer');
             seats[0].el.classList.remove('dks-look-left');
             seats[1].el.classList.remove('dks-look-left');
             seats[3].el.classList.add('dks-look-left');
@@ -1736,7 +2225,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 seats[mm[0]].text.textContent = mm[1];
                 seats[mm[0]].bubble.classList.add('dks-murmur');
                 D.replay(seats[mm[0]].bubble, 'dks-on');
-                sound('tick');
+                sound('murmur', mm[0]);
                 await dir.wait(800);
             }
             D.hush(seats);
@@ -1749,17 +2238,20 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             root.classList.add('dks-rule');
             seats[ruler].el.classList.add('dks-ruling');
             var gavel = D.gavel(seats[ruler]);
+            au.cue(null);
             await dir.wait(450);
             D.replay(gavel, 'dks-strike');
             await dir.wait(160);
             sound('gavel');
+            sound('sentence', j.verdict);
             D.replay(stage, 'dks-shake');
             D.replay(flash, 'dks-on');
-            await D.say(dir, seats, ruler, lastSpeaker === ruler ? lastName : 'THE BENCH', j.ruling, 'speech', { log: log, still: [0, 1, 2, 3, 4], noLook: true, hold: 300 });
+            setTimeout(function () { au.cue('after'); }, 2200);
+            await D.say(dir, seats, ruler, lastSpeaker === ruler ? lastName : 'THE BENCH', j.ruling, 'speech', { log: log, still: [0, 1, 2, 3, 4], noLook: true, hold: 300, voice: au.voice });
             docket.querySelector('.dks-sentence').classList.add('dks-on');
             var sStamp = D.h('span', 'dks-stamp sentence', D.esc(sentence.title));
             docket.querySelector('.dks-sentence-slot').appendChild(sStamp);
-            sound('stamp');
+            sound('stamp', 'sentence');
             log('Sentence: ' + sentence.title + ' — ' + sentence.fx);
             await dir.wait(700);
 
@@ -1790,7 +2282,17 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 </script>
 <script>
 var host = document.getElementById('host'), out = document.getElementById('out'), scene = null;
-document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); start(); };
+var begun = false;
+function begin() { begun = true; EventAudio.unlock(); start(); }
+document.getElementById('go').onclick = begin;
+document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); if (begun) start(); };
+var snd = document.getElementById('snd');
+snd.onclick = function () {
+    var m = !EventAudio.isMuted();
+    EventAudio.setMuted(m);
+    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.setAttribute('aria-pressed', String(!m));
+};
 var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
                stats: { totalPlaytimeMs: 40 * 60000, itemsBought: 64 }, eps: 5e9, voidBranch: { a: 1, b: 1 }, _sporeHappiness: 12 };
 
@@ -1809,7 +2311,6 @@ function start() {
         out.textContent = r.action === 'banish' ? 'Banished to Omega. Anti-Energy taxed until dismissed.' : 'Sentence accepted: ' + TribunalScene.SENTENCES[r.verdict].fx + '.';
     });
 }
-chargeSel.onchange = regSel.onchange = start;
-document.getElementById('replay').onclick = start;
-start();
+chargeSel.onchange = regSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;
 </script>
