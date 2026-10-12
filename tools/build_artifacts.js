@@ -38,9 +38,11 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 `;
 
-function page({ title, scene, score, accent, blurb, controls, script, note }) {
+function page({ title, scene, score, accent, blurb, controls, script, note, extraCss, extraInline, gateLabel }) {
     return `<title>${title}</title>
 <style>${PAGE_CSS}
+${extraCss ? read(extraCss) : ''}
+${extraInline || ''}
 :root { --accent: ${accent}; }
 ${CSS}</style>
 <div class="viewer">
@@ -54,7 +56,7 @@ ${CSS}</style>
   </div>
   <div class="stagehost" id="host">
     <div class="gate"><h2>${title.toUpperCase()}</h2><p>${blurb}</p>
-      <button id="go" type="button">▶ PLAY WITH SOUND</button></div>
+      <button id="go" type="button">${gateLabel || '▶ PLAY WITH SOUND'}</button></div>
   </div>
 </div>
 ${ART}${js(score)}${js(scene)}<script>
@@ -131,6 +133,76 @@ document.getElementById('replay').onclick = begin;`
 });
 
 fs.mkdirSync(path.join(ROOT, 'artifacts'), { recursive: true });
+const BOARD_CSS = `
+.board { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px; transition: filter 0.8s, opacity 0.8s; }
+.board.blur { filter: blur(7px); opacity: 0.55; }
+.board .hud { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; font-size: 12px; letter-spacing: 3px; color: var(--muted); }
+.board .hud b { display: block; font-size: 22px; letter-spacing: 2px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.board .acq { width: 170px; height: 170px; border-radius: 50%; border: 2px solid #ffcc55; background: radial-gradient(circle at 40% 35%, rgba(255,204,85,0.25), rgba(255,204,85,0.04) 70%); color: #ffcc55; font: inherit; font-weight: 900; font-size: 15px; letter-spacing: 5px; cursor: pointer; transition: transform 0.08s; }
+.board .acq:active { transform: scale(0.95); }
+.board .acq:disabled { opacity: 0.15; cursor: default; }
+.board .gens { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 8px; width: min(36rem, 100%); font-size: 11px; letter-spacing: 1px; color: var(--muted); }
+.board .gens div { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; }
+.board .tip { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-align: center; }
+.sceneLayer { position: absolute; inset: 0; display: flex; }
+.sceneLayer > .dks { flex: 1; }
+.sceneLayer[hidden] { display: none; }
+`;
+const existential = page({
+    title: 'Existential Crisis',
+    scene: 'src/existential_scene.js',
+    score: 'src/audio/score_existential.js',
+    extraCss: 'src/existential_scene.css',
+    extraInline: BOARD_CSS,
+    accent: '#c9c3e6',
+    gateLabel: '▶ OPEN THE BOARD',
+    blurb: 'At one million clicks the game stops and asks why. Four answers, each with a permanent mark. Click ACQUIRE to reach one million yourself.',
+    note: 'Hover an answer to preview its mark; press and hold to choose. After CONTINUE the board keeps the mark. VOID disables ACQUIRE for the rest of the run, as in the game.',
+    controls: `<div class="grp"><button id="trigger" type="button">⚡ Trigger now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+    script: `
+var clicks = 999990, crisis = false;
+var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b>4.21e15</b></span><span>EPS<b>3.10e13</b></span><span>TOTAL CLICKS<b id="tc">999,990</b></span></div>'
+  + '<button class="acq" id="acq" type="button">ACQUIRE</button>'
+  + '<div class="gens"><div><span>Cursor Farm</span><span>×412</span></div><div><span>Quantum Mill</span><span>×96</span></div><div><span>Void Siphon</span><span>×18</span></div></div>'
+  + '<div class="tip" id="tip">Click ACQUIRE. Something happens at 1,000,000.</div></div><div class="sceneLayer" id="layer" hidden></div>';
+var music = null;
+function start() {
+    if (scene) scene.close();
+    if (music) music.stop();
+    crisis = false; clicks = 999990; out.textContent = '';
+    host.innerHTML = BOARD;
+    music = EventAudio.session(ExistentialScore); music.cue('board');
+    document.getElementById('acq').onclick = function () {
+        if (crisis) return;
+        clicks++; music.sfx('click');
+        document.getElementById('tc').textContent = clicks.toLocaleString('en-US');
+        if (clicks >= 999996) trigger();
+    };
+}
+function trigger() {
+    if (!begun) begin();
+    if (crisis) return;
+    crisis = true;
+    if (music) { music.stop(); music = null; }
+    var board = document.getElementById('board'), layer = document.getElementById('layer');
+    board.classList.add('blur');
+    layer.hidden = false;
+    scene = ExistentialScene.play(layer, { state: { energy: 4.21e15 },
+        onChoose: function (p) { out.textContent = 'Chose ' + p.label + ': ' + p.gift; } });
+    scene.done.then(function (r) {
+        layer.hidden = true;
+        board.classList.remove('blur');
+        ExistentialScene.applyMark(board, r.key);
+        document.getElementById('tc').textContent = '1,000,000';
+        if (r.key === 'VOID') document.getElementById('acq').disabled = true;
+        document.getElementById('tip').textContent = r.path.markText + ' (Reset board to choose again.)';
+        crisis = true;
+    });
+}
+document.getElementById('trigger').onclick = function () { if (!begun) begin(); clicks = 999996; trigger(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/existential_crisis.html'), existential);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);

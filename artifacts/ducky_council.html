@@ -22,6 +22,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
 .gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 
+
+
 :root { --accent: #e8c547; }
 /* ═══════════════════════════════════════════════════════════════════════════
    duck_scenes.css — THE DUCKY COUNCIL and THE DUCK TRIBUNAL, staged.
@@ -1743,6 +1745,32 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         return g;
     };
 
+    /* ── CHOICES ─────────────────────────────────────────────────────────────
+       A row of decision buttons from data: [{ id, label, title?, alt? }].
+       show() reveals them and resolves with the id that was pressed. Any scene can
+       offer any number of decisions without new code. */
+    D.choices = function (parent, list) {
+        var row = D.h('div', 'dks-actions');
+        var btns = list.map(function (c) {
+            var b = D.h('button', 'dks-btn' + (c.alt ? ' dks-alt' : ''), D.esc(c.label));
+            b.type = 'button';
+            if (c.title) b.title = c.title;
+            b.hidden = true;
+            row.appendChild(b);
+            return b;
+        });
+        parent.appendChild(row);
+        return {
+            show: function () {
+                btns.forEach(function (b) { b.hidden = false; });
+                try { btns[0].focus({ preventScroll: true }); } catch (e) {}
+                return new Promise(function (resolve) {
+                    btns.forEach(function (b, i) { b.addEventListener('click', function () { resolve(list[i].id); }); });
+                });
+            }
+        };
+    };
+
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
     D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
@@ -2192,6 +2220,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
        opts.evaluation  { grade, score, rows } — from evaluate()
        opts.grade       force a grade (demo / QA); rows are kept, score is shown as-is
        opts.onRuling    (grade) => void, called at the gavel — apply the reward here
+       opts.verdicts    per-grade overrides of any VERDICTS field (new lines, labels, rewards)
+       opts.votes       per-grade vote lists, e.g. { gold: ['APPROVE', ...5] }
+       opts.opening     the Chairman's first line
+       opts.choices     decision buttons [{ id, label, title?, alt? }]; done resolves with the id
        opts.audio       false to silence the scene (music and effects come from CouncilScore)
        opts.sound       (name, ...) => void, told about every effect (optional game hook)
        opts.onMemberClick (i) => void — e.g. RubberIII.onDuckCardClick */
@@ -2200,8 +2232,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         var ev = opts.evaluation || evaluate(opts.state || window.state);
         var grade = opts.grade || ev.grade;
         var score = opts.grade ? clampToBand(ev.score, grade) : ev.score;
-        var v = VERDICTS[grade];
-        var votes = VOTES[grade];
+        /* any text can be replaced per grade: opts.verdicts.gold = { deliberation: [...], textLines: [...] } */
+        var v = Object.assign({}, VERDICTS[grade], (opts.verdicts || {})[grade]);
+        var votes = (opts.votes || {})[grade] || VOTES[grade];
         var au = D.audio(opts, window.CouncilScore);
         var sound = au.sfx;
         var dir = D.director();
@@ -2270,13 +2303,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         lower.appendChild(verdict);
         root.appendChild(lower);
 
-        /* actions */
-        var actions = D.h('div', 'dks-actions');
-        var accept = D.h('button', 'dks-btn', 'ACCEPT JUDGEMENT');
-        accept.type = 'button';
-        accept.hidden = true;
-        actions.appendChild(accept);
-        root.appendChild(actions);
+        /* decisions — data, like everything else: opts.choices = [{ id, label, title?, alt? }] */
+        var choices = D.choices(root, opts.choices || [{ id: 'accept', label: 'ACCEPT JUDGEMENT' }]);
 
         /* the old cards were clickable (RubberIII.onDuckCardClick) — keep that door open */
         if (typeof opts.onMemberClick === 'function') {
@@ -2302,7 +2330,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             });
             await dir.wait(1500);
             strike();
-            await D.say(dir, seats, CHAIR, NAMES[CHAIR], 'Order. The Council is in session.', 'speech', { log: log, hold: 500, voice: au.voice });
+            await D.say(dir, seats, CHAIR, NAMES[CHAIR], opts.opening || 'Order. The Council is in session.', 'speech', { log: log, hold: 500, voice: au.voice });
 
             /* 2 · LEDGER */
             ledger.classList.add('dks-on');
@@ -2382,11 +2410,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
             /* 6 · ACCEPT */
             shell.done();
-            accept.hidden = false;
-            try { accept.focus({ preventScroll: true }); } catch (e) {}
-            return new Promise(function (resolve) {
-                accept.addEventListener('click', function () { shell.close(); resolve('accept'); });
-            });
+            var action = await choices.show();
+            shell.close();
+            return action;
         })();
 
         function strike() {

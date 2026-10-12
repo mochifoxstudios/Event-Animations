@@ -22,6 +22,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
 .gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 
+
+
 :root { --accent: #8f9fd6; }
 /* ═══════════════════════════════════════════════════════════════════════════
    duck_scenes.css — THE DUCKY COUNCIL and THE DUCK TRIBUNAL, staged.
@@ -1744,6 +1746,32 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         return g;
     };
 
+    /* ── CHOICES ─────────────────────────────────────────────────────────────
+       A row of decision buttons from data: [{ id, label, title?, alt? }].
+       show() reveals them and resolves with the id that was pressed. Any scene can
+       offer any number of decisions without new code. */
+    D.choices = function (parent, list) {
+        var row = D.h('div', 'dks-actions');
+        var btns = list.map(function (c) {
+            var b = D.h('button', 'dks-btn' + (c.alt ? ' dks-alt' : ''), D.esc(c.label));
+            b.type = 'button';
+            if (c.title) b.title = c.title;
+            b.hidden = true;
+            row.appendChild(b);
+            return b;
+        });
+        parent.appendChild(row);
+        return {
+            show: function () {
+                btns.forEach(function (b) { b.hidden = false; });
+                try { btns[0].focus({ preventScroll: true }); } catch (e) {}
+                return new Promise(function (resolve) {
+                    btns.forEach(function (b, i) { b.addEventListener('click', function () { resolve(list[i].id); }); });
+                });
+            }
+        };
+    };
+
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
     D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
@@ -2095,6 +2123,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
        play(host, opts) → { done: Promise<{ action: 'accept'|'banish', verdict }>, close() }
        opts.judgement   from judge(); computed from opts.state / window.state if absent
        opts.caseNo      shown on the docket (default: the run number, or 0015)
+       opts.lines       replace the hearing's dialogue ('NAME: "text"', '(action)', '[stage direction]')
+       opts.choices     replace the decision buttons: [{ id, label, title?, alt? }] — resolves { action: id }
+       opts.judgement   may carry any charge / exhibit / ruling text (see judge())
        opts.audio       false to silence the scene (music and effects come from TribunalScore)
        opts.sound       (name, ...) => void, told about every effect (optional game hook) */
     function play(host, opts) {
@@ -2108,7 +2139,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         var root = shell.root;
         root.setAttribute('aria-label', 'Duck Tribunal');
         root.dataset.register = j.register;
-        var lines = DIALOGUES[j.register] || DIALOGUES.philosophers;
+        var lines = opts.lines || DIALOGUES[j.register] || DIALOGUES.philosophers;
 
         root.appendChild(D.h('div', 'dks-eyebrow', '// TRIBUNAL CONVENED'));
         root.appendChild(D.h('div', 'dks-title', 'DUCK TRIBUNAL'));
@@ -2145,15 +2176,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         lower.appendChild(docket);
         root.appendChild(lower);
 
-        var actions = D.h('div', 'dks-actions');
-        var accept = D.h('button', 'dks-btn', 'ACCEPT SENTENCE');
-        var banish = D.h('button', 'dks-btn dks-alt', 'BANISH TO OMEGA');
-        accept.type = banish.type = 'button';
-        banish.title = 'No energy cost · shifts the burden to your Omega grid';
-        accept.hidden = banish.hidden = true;
-        actions.appendChild(accept);
-        actions.appendChild(banish);
-        root.appendChild(actions);
+        var choices = D.choices(root, opts.choices || [
+            { id: 'accept', label: 'ACCEPT SENTENCE' },
+            { id: 'banish', label: 'BANISH TO OMEGA', alt: true, title: 'No energy cost · shifts the burden to your Omega grid' }
+        ]);
 
         var log = shell.log;
         var still = [SILENT];
@@ -2257,12 +2283,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
             /* 7 · THE PLAYER'S ONE CHOICE */
             shell.done();
-            accept.hidden = banish.hidden = false;
-            try { accept.focus({ preventScroll: true }); } catch (e) {}
-            return new Promise(function (resolve) {
-                accept.addEventListener('click', function () { shell.close(); resolve({ action: 'accept', verdict: j.verdict, judgement: j }); });
-                banish.addEventListener('click', function () { shell.close(); resolve({ action: 'banish', verdict: j.verdict, judgement: j }); });
-            });
+            var action = await choices.show();
+            shell.close();
+            return { action: action, verdict: j.verdict, judgement: j };
         })();
 
         return { done: done, close: shell.close };

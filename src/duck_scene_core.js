@@ -202,6 +202,32 @@
         return g;
     };
 
+    /* ── CHOICES ─────────────────────────────────────────────────────────────
+       A row of decision buttons from data: [{ id, label, title?, alt? }].
+       show() reveals them and resolves with the id that was pressed. Any scene can
+       offer any number of decisions without new code. */
+    D.choices = function (parent, list) {
+        var row = D.h('div', 'dks-actions');
+        var btns = list.map(function (c) {
+            var b = D.h('button', 'dks-btn' + (c.alt ? ' dks-alt' : ''), D.esc(c.label));
+            b.type = 'button';
+            if (c.title) b.title = c.title;
+            b.hidden = true;
+            row.appendChild(b);
+            return b;
+        });
+        parent.appendChild(row);
+        return {
+            show: function () {
+                btns.forEach(function (b) { b.hidden = false; });
+                try { btns[0].focus({ preventScroll: true }); } catch (e) {}
+                return new Promise(function (resolve) {
+                    btns.forEach(function (b, i) { b.addEventListener('click', function () { resolve(list[i].id); }); });
+                });
+            }
+        };
+    };
+
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
     D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');

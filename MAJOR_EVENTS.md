@@ -9,7 +9,7 @@ crisis is on screen.
 
 Status: ✅ animated · 🔨 in progress · ⬜ not started
 
-Every event gets its own scene, its own synthesised score and effects (`src/audio/`), and its own viewable page.
+Every event gets its own scene, its own synthesised score and effects (`src/audio/`), and its own viewable page. Text, decisions and sound are data: see `docs/CUSTOMIZING.md`.
 
 ---
 
@@ -17,14 +17,14 @@ Every event gets its own scene, its own synthesised score and effects (`src/audi
 
 | Event | Status | Trigger | What happens |
 |---|---|---|---|
-| **Ducky Council** (`DuckyCouncil`) | ✅ scene built, see `docs/DUCK_SCENES.md` | 20 min into a game, then every 1–3 h; "the ducks are gathering" warning 30 s before | Scores clicks, prestiges, energy, city size, instability → grades Platinum…Quacked. Five ducks argue, then vote. Platinum = ×8 income for 5 min + 3 fragments |
-| **Duck Tribunal** (`DuckTribunal`) | ✅ scene built, see `docs/DUCK_SCENES.md` | Once per run, 20 min in | Courtroom, speech bubbles over stalls. Charges you by play style, deliberates, sentences you. **Sentence now follows the charge** (was a random roll) |
+| **Ducky Council** (`DuckyCouncil`) | ✅ [page](https://claude.ai/artifact/HHEUhtckLdBPEXdy6rjQnm) · `docs/DUCK_SCENES.md` | 20 min into a game, then every 1–3 h; "the ducks are gathering" warning 30 s before | Scores clicks, prestiges, energy, city size, instability → grades Platinum…Quacked. Five ducks argue, then vote. Platinum = ×8 income for 5 min + 3 fragments |
+| **Duck Tribunal** (`DuckTribunal`) | ✅ [page](https://claude.ai/artifact/N8CidxjtuYA56EnRAmhfDU) · `docs/DUCK_SCENES.md` | Once per run, 20 min in | Courtroom, speech bubbles over stalls. Charges you by play style, deliberates, sentences you. **Sentence now follows the charge** (was a random roll) |
 
 ## 2. Story moments
 
 | Event | Status | Trigger | What happens |
 |---|---|---|---|
-| **Existential Crisis** | ⬜ | Once, at 1,000,000 clicks | Board blurs behind a question. Power ×1.5 income · Numbers doubles energy · Fun +25 fragments · Void ×3 income. Each leaves a permanent mark: red vignette, board shifted 2 px, drained colour, or a small figure watching |
+| **Existential Crisis** | ✅ [page](https://claude.ai/artifact/3DJN1UE3eDjRSGcSenAYWS) · `docs/EXISTENTIAL_CRISIS.md` | Once, at 1,000,000 clicks | Board blurs behind a question. Power ×1.5 income · Numbers doubles energy · Fun +25 fragments · Void ×3 income. Each leaves a permanent mark: red vignette, board shifted 2 px, drained colour, or a small figure watching |
 | **NULL Interrogation** | ⬜ | After first prestige, 5,000–10,000 clicks | NULL types and speaks one of four monologues, then you type an answer. Emotional → "WE UNDERSTAND." and easier run. Generic or Escape → "Disappointing", +20% instability |
 
 *The Boot Sequence is not on this list: the "Shift 15" film replaced it on 10-08 (Settings → WATCH INTRO).

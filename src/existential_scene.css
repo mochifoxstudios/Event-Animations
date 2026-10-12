@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   existential_scene.css — THE EXISTENTIAL CRISIS.
+   Sits on top of the shared .dks base (duck_scenes.css). Same contract:
+   transform and opacity only, everything visible at rest, motion off under
+   reduced motion / safe mode.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dks.exs {
+    --dks-ink: #c9c3e6;
+    --dks-dim: rgba(201, 195, 230, 0.3);
+    --power: #ff4a3a;
+    --numbers: #8888ff;
+    --fun: #7fdc8a;
+    --void: #9a9aa8;
+    justify-content: center;
+    background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(120, 100, 200, 0.08), transparent 70%), rgba(3, 3, 7, 0.9);
+    padding-block: 32px;
+}
+.exs-frame { position: relative; z-index: 2; width: 100%; max-width: 44rem; display: flex; flex-direction: column; align-items: center; transition: transform 0.1s; }
+.exs-eyebrow { font-size: 0.56rem; letter-spacing: 6px; opacity: 0.5; }
+.exs-counter { margin-top: 10px; font-size: clamp(2rem, 7vw, 3.4rem); font-weight: 900; letter-spacing: 4px; font-variant-numeric: tabular-nums; color: #f0eeff; transition: opacity 1.2s, transform 1.2s; }
+.exs-counter-lbl { font-size: 0.56rem; letter-spacing: 5px; opacity: 0.55; transition: opacity 1.2s; }
+.exs-counter.exs-frozen { animation: exs-freeze 1.4s steps(1) both; }
+.exs-counter.exs-dim { opacity: 0.18; transform: scale(0.8); }
+.exs-counter-lbl.exs-dim { opacity: 0.12; }
+
+.exs-question { margin-top: clamp(16px, 4vh, 34px); min-height: 1.4em; font-size: clamp(1.1rem, 3.4vw, 1.7rem); letter-spacing: 1px; color: #f4f2ff; text-wrap: balance; }
+.exs-cursor { display: inline-block; width: 0.55em; height: 1em; margin-left: 4px; vertical-align: -0.12em; background: currentColor; animation: exs-blink 1s steps(1) infinite; }
+
+.exs-choices { width: 100%; margin-top: clamp(18px, 4vh, 34px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 12px; opacity: 0; transition: opacity 0.8s; }
+.exs-choices.dks-on { opacity: 1; }
+.exs-card {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    padding: 16px 18px; text-align: left;
+    font: inherit; color: #e6e3f4; background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(201, 195, 230, 0.2); border-radius: 8px;
+    cursor: pointer; touch-action: none;
+    transition: transform 0.6s cubic-bezier(.2,1.2,.4,1), opacity 0.6s, border-color 0.25s, background 0.25s;
+}
+.exs-card .g { font-size: 1.6rem; line-height: 1; color: var(--c); }
+.exs-card .l { font-size: 0.85rem; font-weight: 900; letter-spacing: 4px; color: var(--c); }
+.exs-card .d { font-size: 0.66rem; letter-spacing: 1px; color: #a8a3bd; }
+.exs-c0 { --c: var(--power); } .exs-c1 { --c: var(--numbers); } .exs-c2 { --c: var(--fun); } .exs-c3 { --c: var(--void); }
+.exs-card:hover, .exs-card:focus-visible { border-color: var(--c); background: rgba(255, 255, 255, 0.05); outline: none; }
+.exs-fill { position: absolute; inset: 0; background: var(--c); opacity: 0.18; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.exs-holding .exs-fill { transform: scaleX(1); transition: transform 0.9s linear; }
+.exs-holding { transform: scale(0.985); }
+.exs-picked { border-color: var(--c); background: rgba(255, 255, 255, 0.06); transform: scale(1.04); box-shadow: 0 0 40px -6px var(--c); }
+.exs-picked .exs-fill { transform: scaleX(1); }
+.exs-gone { opacity: 0; transform: translateY(40px) rotate(var(--r, 4deg)); pointer-events: none; }
+.exs-c0.exs-gone { --r: -6deg; } .exs-c2.exs-gone { --r: -3deg; }
+.exs-card[hidden] { display: none; }
+.exs-choices.exs-solo { grid-template-columns: minmax(0, 24rem); justify-content: center; }
+.exs-hold-hint { margin-top: 12px; font-size: 0.5rem; letter-spacing: 3px; opacity: 0; transition: opacity 0.6s; }
+.exs-hold-hint.dks-on { opacity: 0.5; }
+
+.exs-result { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 1px; }
+.exs-gift { font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 900; letter-spacing: 5px; color: var(--pick, #fff); animation: exs-slam 0.5s cubic-bezier(.2,1.6,.4,1) both; }
+.exs-energy { font-size: 0.8rem; letter-spacing: 3px; color: var(--numbers); font-variant-numeric: tabular-nums; }
+.exs-marktext { max-width: 32rem; font-size: 0.78rem; line-height: 1.7; color: #c8c4d8; font-style: italic; min-height: 1.7em; }
+.exs-continue { margin-top: 6px; color: var(--pick, var(--dks-ink)); animation: exs-rise 0.5s ease-out both; }
+.exs-acquire { opacity: 0.15; padding: 10px 26px; border: 2px solid #ffcc55; border-radius: 40px; font-size: 0.8rem; letter-spacing: 4px; font-weight: 900; color: #ffcc55; animation: exs-acquire-off 2.2s 0.3s ease-in both; }
+
+.dks.exs[data-chosen="POWER"]   { --pick: var(--power); }
+.dks.exs[data-chosen="NUMBERS"] { --pick: var(--numbers); }
+.dks.exs[data-chosen="FUN"]     { --pick: var(--fun); }
+.dks.exs[data-chosen="VOID"]    { --pick: var(--void); }
+
+/* ── the four marks — previewed on hover, made real on choosing ────────── */
+.exs-veil { position: absolute; inset: 0; pointer-events: none; z-index: 1; box-shadow: inset 0 0 140px 30px rgba(255, 30, 0, 0.55); opacity: 0; transition: opacity 0.6s; }
+.exs-drain { position: absolute; inset: 0; pointer-events: none; z-index: 5; background: #808080; mix-blend-mode: saturation; opacity: 0; transition: opacity 1.4s; }
+.exs-figure { position: absolute; left: 50%; bottom: 0; width: 2.4rem; height: 3.1rem; margin-left: -1.2rem; color: #2a2a34; opacity: 0; transform: translateY(100%); transition: transform 1s cubic-bezier(.3,1.2,.5,1), opacity 0.8s; pointer-events: none; z-index: 3; }
+.exs-figure svg { width: 100%; height: 100%; }
+
+.dks.exs[data-preview="vignette"] .exs-veil { opacity: 0.45; }
+.dks.exs[data-preview="drain"] .exs-drain { opacity: 0.7; }
+.dks.exs[data-preview="figure"] .exs-figure { opacity: 0.6; transform: translateY(55%); }
+.dks.exs[data-preview="shift"] .exs-frame { animation: exs-slip 0.5s steps(2) infinite; }
+
+.exs-mark-vignette .exs-veil { opacity: 1; animation: exs-pulse 0.9s ease-out; }
+.exs-mark-drain .exs-drain { opacity: 1; }
+.exs-mark-figure .exs-figure { opacity: 0.85; transform: translateY(0); }
+.exs-mark-shift .exs-frame { transform: translate(2px, 2px); animation: exs-fracture 0.6s steps(3); }
+
+.exs-shard { position: absolute; left: 50%; top: 60%; color: var(--fun); font-size: 1rem; pointer-events: none; animation: exs-shard 1.6s cubic-bezier(.2,.8,.3,1) both; opacity: 0; }
+
+/* ── on a page's board: the mark after the scene has gone ──────────────── */
+.exs-scar-vignette { box-shadow: inset 0 0 80px rgba(255, 30, 0, 0.18); }
+.exs-scar-shift > * { transform: translate(2px, 2px); }
+.exs-scar-drain { filter: grayscale(1); }
+.exs-scar-fig { position: absolute; left: 50%; bottom: 8px; width: 1.2rem; height: 1.6rem; margin-left: -0.6rem; color: #444; opacity: 0.35; pointer-events: none; }
+.exs-scar-fig svg { width: 100%; height: 100%; }
+
+@keyframes exs-freeze { 0%, 30%, 60% { opacity: 1; } 15%, 45% { opacity: 0.35; } }
+@keyframes exs-blink { 50% { opacity: 0; } }
+@keyframes exs-slam { from { opacity: 0; transform: scale(2.2); } }
+@keyframes exs-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes exs-slip { 0% { transform: translate(0, 0); } 50% { transform: translate(2px, 2px); } }
+@keyframes exs-fracture { 0% { transform: translate(-6px, 3px); } 33% { transform: translate(5px, -2px); } 66% { transform: translate(-2px, 4px); } }
+@keyframes exs-pulse { from { opacity: 0; transform: scale(1.3); } }
+@keyframes exs-shard { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(200deg); } }
+@keyframes exs-acquire-off { from { opacity: 1; } }

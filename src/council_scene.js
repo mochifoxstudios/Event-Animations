@@ -236,6 +236,10 @@
        opts.evaluation  { grade, score, rows } — from evaluate()
        opts.grade       force a grade (demo / QA); rows are kept, score is shown as-is
        opts.onRuling    (grade) => void, called at the gavel — apply the reward here
+       opts.verdicts    per-grade overrides of any VERDICTS field (new lines, labels, rewards)
+       opts.votes       per-grade vote lists, e.g. { gold: ['APPROVE', ...5] }
+       opts.opening     the Chairman's first line
+       opts.choices     decision buttons [{ id, label, title?, alt? }]; done resolves with the id
        opts.audio       false to silence the scene (music and effects come from CouncilScore)
        opts.sound       (name, ...) => void, told about every effect (optional game hook)
        opts.onMemberClick (i) => void — e.g. RubberIII.onDuckCardClick */
@@ -244,8 +248,9 @@
         var ev = opts.evaluation || evaluate(opts.state || window.state);
         var grade = opts.grade || ev.grade;
         var score = opts.grade ? clampToBand(ev.score, grade) : ev.score;
-        var v = VERDICTS[grade];
-        var votes = VOTES[grade];
+        /* any text can be replaced per grade: opts.verdicts.gold = { deliberation: [...], textLines: [...] } */
+        var v = Object.assign({}, VERDICTS[grade], (opts.verdicts || {})[grade]);
+        var votes = (opts.votes || {})[grade] || VOTES[grade];
         var au = D.audio(opts, window.CouncilScore);
         var sound = au.sfx;
         var dir = D.director();
@@ -314,13 +319,8 @@
         lower.appendChild(verdict);
         root.appendChild(lower);
 
-        /* actions */
-        var actions = D.h('div', 'dks-actions');
-        var accept = D.h('button', 'dks-btn', 'ACCEPT JUDGEMENT');
-        accept.type = 'button';
-        accept.hidden = true;
-        actions.appendChild(accept);
-        root.appendChild(actions);
+        /* decisions — data, like everything else: opts.choices = [{ id, label, title?, alt? }] */
+        var choices = D.choices(root, opts.choices || [{ id: 'accept', label: 'ACCEPT JUDGEMENT' }]);
 
         /* the old cards were clickable (RubberIII.onDuckCardClick) — keep that door open */
         if (typeof opts.onMemberClick === 'function') {
@@ -346,7 +346,7 @@
             });
             await dir.wait(1500);
             strike();
-            await D.say(dir, seats, CHAIR, NAMES[CHAIR], 'Order. The Council is in session.', 'speech', { log: log, hold: 500, voice: au.voice });
+            await D.say(dir, seats, CHAIR, NAMES[CHAIR], opts.opening || 'Order. The Council is in session.', 'speech', { log: log, hold: 500, voice: au.voice });
 
             /* 2 · LEDGER */
             ledger.classList.add('dks-on');
@@ -426,11 +426,9 @@
 
             /* 6 · ACCEPT */
             shell.done();
-            accept.hidden = false;
-            try { accept.focus({ preventScroll: true }); } catch (e) {}
-            return new Promise(function (resolve) {
-                accept.addEventListener('click', function () { shell.close(); resolve('accept'); });
-            });
+            var action = await choices.show();
+            shell.close();
+            return action;
         })();
 
         function strike() {

@@ -187,6 +187,9 @@
        play(host, opts) → { done: Promise<{ action: 'accept'|'banish', verdict }>, close() }
        opts.judgement   from judge(); computed from opts.state / window.state if absent
        opts.caseNo      shown on the docket (default: the run number, or 0015)
+       opts.lines       replace the hearing's dialogue ('NAME: "text"', '(action)', '[stage direction]')
+       opts.choices     replace the decision buttons: [{ id, label, title?, alt? }] — resolves { action: id }
+       opts.judgement   may carry any charge / exhibit / ruling text (see judge())
        opts.audio       false to silence the scene (music and effects come from TribunalScore)
        opts.sound       (name, ...) => void, told about every effect (optional game hook) */
     function play(host, opts) {
@@ -200,7 +203,7 @@
         var root = shell.root;
         root.setAttribute('aria-label', 'Duck Tribunal');
         root.dataset.register = j.register;
-        var lines = DIALOGUES[j.register] || DIALOGUES.philosophers;
+        var lines = opts.lines || DIALOGUES[j.register] || DIALOGUES.philosophers;
 
         root.appendChild(D.h('div', 'dks-eyebrow', '// TRIBUNAL CONVENED'));
         root.appendChild(D.h('div', 'dks-title', 'DUCK TRIBUNAL'));
@@ -237,15 +240,10 @@
         lower.appendChild(docket);
         root.appendChild(lower);
 
-        var actions = D.h('div', 'dks-actions');
-        var accept = D.h('button', 'dks-btn', 'ACCEPT SENTENCE');
-        var banish = D.h('button', 'dks-btn dks-alt', 'BANISH TO OMEGA');
-        accept.type = banish.type = 'button';
-        banish.title = 'No energy cost · shifts the burden to your Omega grid';
-        accept.hidden = banish.hidden = true;
-        actions.appendChild(accept);
-        actions.appendChild(banish);
-        root.appendChild(actions);
+        var choices = D.choices(root, opts.choices || [
+            { id: 'accept', label: 'ACCEPT SENTENCE' },
+            { id: 'banish', label: 'BANISH TO OMEGA', alt: true, title: 'No energy cost · shifts the burden to your Omega grid' }
+        ]);
 
         var log = shell.log;
         var still = [SILENT];
@@ -349,12 +347,9 @@
 
             /* 7 · THE PLAYER'S ONE CHOICE */
             shell.done();
-            accept.hidden = banish.hidden = false;
-            try { accept.focus({ preventScroll: true }); } catch (e) {}
-            return new Promise(function (resolve) {
-                accept.addEventListener('click', function () { shell.close(); resolve({ action: 'accept', verdict: j.verdict, judgement: j }); });
-                banish.addEventListener('click', function () { shell.close(); resolve({ action: 'banish', verdict: j.verdict, judgement: j }); });
-            });
+            var action = await choices.show();
+            shell.close();
+            return { action: action, verdict: j.verdict, judgement: j };
         })();
 
         return { done: done, close: shell.close };
