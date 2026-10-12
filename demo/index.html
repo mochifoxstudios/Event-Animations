@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duck Scenes Demo</title>
+<link rel="stylesheet" href="../src/duck_scenes.css">
+<style>
+    html, body { margin: 0; min-height: 100%; background: #030305; color: #aab; font-family: 'Courier New', monospace; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    #bar { position: relative; z-index: 50; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.85); border-bottom: 1px solid #222; font-size: 11px; }
+    #bar select, #bar button, #bar label { font: inherit; font-size: 11px; color: #ccd; background: #111; border: 1px solid #333; border-radius: 4px; padding: 3px 6px; }
+    #bar button { cursor: pointer; }
+    #bar .grp { display: flex; gap: 4px; align-items: center; padding-right: 10px; border-right: 1px solid #222; }
+    #host { position: relative; flex: 1; display: flex; }
+    #host > .dks { flex: 1; }
+    #result { color: #7c8; }
+</style>
+</head>
+<body>
+<div id="bar">
+    <div class="grp"><b>COUNCIL</b>
+        <select id="grade"><option value="">from sample state</option></select>
+        <button id="playCouncil">▶ play</button>
+    </div>
+    <div class="grp"><b>TRIBUNAL</b>
+        <select id="charge"></select>
+        <select id="register"></select>
+        <button id="playTribunal">▶ play</button>
+    </div>
+    <div class="grp"><label><input type="checkbox" id="reduced"> safe mode</label></div>
+    <span id="result"></span>
+</div>
+<div id="host"></div>
+
+<script src="../reference/duck_cast_art.js"></script>
+<script src="../reference/duck_council_art.js"></script>
+<script src="../reference/duck_tribunal_art.js"></script>
+<script src="../src/duck_scene_core.js"></script>
+<script src="../src/council_scene.js"></script>
+<script src="../src/tribunal_scene.js"></script>
+<script>
+    var host = document.getElementById('host');
+    var out = document.getElementById('result');
+    var scene = null;
+    var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
+                   stats: { totalPlaytimeMs: 40 * 60000, itemsBought: 12 }, eps: 5e9 };
+
+    CouncilScene.GRADES.slice().reverse().forEach(function (g) { grade.add(new Option(g, g)); });
+    TribunalScene.CHARGES.forEach(function (c) { charge.add(new Option(c.label + ' → ' + (c.verdict >= 0 ? TribunalScene.SENTENCES[c.verdict].title : 'coin flip'), c.key)); });
+    TribunalScene.REGISTERS.forEach(function (r) { register.add(new Option(r, r)); });
+
+    reduced.onchange = function () { document.body.classList.toggle('safe-mode', reduced.checked); };
+    function reset() { if (scene) scene.close(); out.textContent = ''; }
+
+    playCouncil.onclick = function () {
+        reset();
+        var g = grade.value || undefined;
+        scene = CouncilScene.play(host, { state: SAMPLE, grade: g,
+            onRuling: function (gr) { out.textContent = 'onRuling(' + gr + ')'; } });
+        scene.done.then(function (r) { out.textContent = 'closed: ' + r; });
+    };
+    playTribunal.onclick = function () {
+        reset();
+        var j = TribunalScene.judge(SAMPLE, { charge: charge.value, register: register.value });
+        scene = TribunalScene.play(host, { judgement: j });
+        scene.done.then(function (r) { out.textContent = 'closed: ' + r.action + ' · verdict ' + r.judgement.verdictName; });
+    };
+    var q = new URLSearchParams(location.search);
+    if (q.get('play') === 'council') { if (q.get('grade')) grade.value = q.get('grade'); playCouncil.onclick(); }
+    if (q.get('play') === 'tribunal') { if (q.get('charge')) charge.value = q.get('charge'); if (q.get('register')) register.value = q.get('register'); playTribunal.onclick(); }
+    if (q.get('safe')) { reduced.checked = true; reduced.onchange(); }
+</script>
+</body>
+</html>

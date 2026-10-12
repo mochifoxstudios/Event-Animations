@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   duck_scenes.css — THE DUCKY COUNCIL and THE DUCK TRIBUNAL, staged.
+
+   Rules (same contract as duck_tribunal_art.js / duck_council_art.js):
+   · transform and opacity only — these scenes open while the income loop runs;
+   · no colour baked into the art — shapes stroke currentColor, fill via .pf;
+   · base state is VISIBLE; a keyframe animates FROM hidden. Suppress the
+     animation (reduced motion, safe mode, accessibility mode) and the scene is
+     still all there.
+   Everything is scoped under .dks so nothing leaks into the rest of game.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dks {
+    --dks-ink: #e8c547;
+    --dks-dim: rgba(232, 197, 71, 0.45);
+    --dks-bg: #07060a;
+    --dks-paper: #12100a;
+    --seat-h: min(clamp(6.2rem, 23vh, 12.5rem), calc((100vw - 40px) * 0.25));   /* five seats always fit the width */
+    --seat-w: calc(var(--seat-h) * 112 / 150);
+    --duck: calc(var(--seat-h) * 0.47);
+    --duck-bottom: calc(var(--seat-h) * 42 / 150);
+    --approve: #7fdc8a;
+    --reject: #ff6a55;
+    --abstain: #8a90a6;
+
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: clamp(10px, 2.2vh, 26px) 16px clamp(10px, 2vh, 22px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--dks-ink);
+    background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(255, 220, 90, 0.06), transparent 70%), var(--dks-bg);
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    overflow: hidden;
+    user-select: none;
+}
+.dks *, .dks *::before, .dks *::after { box-sizing: border-box; }
+.dks svg { stroke: currentColor; overflow: hidden; }
+.dks .pf { fill: currentColor; fill-opacity: 0.08; }
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+.dks-eyebrow { font-size: 0.56rem; letter-spacing: 6px; opacity: 0.55; }
+.dks-title   { font-size: clamp(0.95rem, 2.4vh, 1.25rem); letter-spacing: 6px; font-weight: 900; margin: 4px 0 2px; }
+.dks-sub     { font-size: 0.58rem; letter-spacing: 3px; opacity: 0.6; }
+.dks-on-in .dks-title { animation: dks-stamp-title 0.55s cubic-bezier(.2,1.6,.4,1) both; }
+
+/* ── stage ──────────────────────────────────────────────────────────────── */
+.dks-stage {
+    position: relative;
+    width: 100%;
+    max-width: 52rem;
+    margin-top: clamp(4px, 1vh, 10px);
+    padding-top: clamp(4.6rem, 13vh, 7.6rem);          /* headroom for speech bubbles */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dks-backdrop {
+    position: absolute;
+    inset: 0 0 calc(var(--seat-h) * 0.25) 0;
+    pointer-events: none;
+    opacity: 0.85;
+}
+.dks-backdrop svg { width: 100%; height: 100%; }
+.dks-on-in .dks-backdrop { animation: dks-lights 1.1s ease-out both; }
+.dks-shake { animation: dks-shake 0.36s linear; }
+
+.dks-row { position: relative; display: flex; justify-content: center; z-index: 1; }
+
+.dks-seat {
+    position: relative;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    flex: 0 0 auto;
+    margin: 0;                                         /* stalls abut into one bench */
+    transition: opacity 0.5s;
+}
+.dks-furn, .dks-furn svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dks-duck {
+    position: absolute;
+    left: 50%;
+    bottom: var(--duck-bottom);
+    width: var(--duck);
+    height: var(--duck);
+    margin-left: calc(var(--duck) / -2);
+    transform-origin: 50% 100%;
+    transition: transform 0.5s cubic-bezier(.3,1.3,.5,1);
+    z-index: 2;
+}
+.dks-face, .dks-bob { width: 100%; height: 100%; transform-origin: 50% 100%; }
+.dks-face { transition: transform 0.32s ease-in-out; }
+.dks-bob svg { width: 100%; height: 100%; display: block; }
+.dks-fallback { font-size: calc(var(--duck) * 0.8); line-height: 1; }
+
+/* the cast's parts */
+.dks .dk-body.pf      { fill-opacity: 0.16; }
+.dks .dk-wing.pf      { fill-opacity: 0.26; }
+.dks .dk-eye.pf       { fill-opacity: 1; stroke: none; }
+.dks .dk-sash.pf      { fill-opacity: 0.55; }
+.dks .dk-medal.pf     { fill-opacity: 0.9; }
+.dks .dk-mark, .dks .dk-seam, .dks .dk-valve { stroke-width: 1.8; opacity: 0.8; }
+.dks .dk-shine        { stroke-width: 2; opacity: 0.7; }
+.dks .dk-billroot, .dks .dk-billline, .dks .dk-specs, .dks .dk-chain { stroke-width: 2; }
+
+/* blink — every member but the one who never moves (seat 4) and Rubber III, whose socket is empty */
+.dks .dk-eye { transform-box: fill-box; transform-origin: center; animation: dks-blink 5.2s infinite; }
+.dks .dks-seat-1 .dk-eye { animation-delay: -1.7s; animation-duration: 6.1s; }
+.dks .dks-seat-3 .dk-eye { animation-delay: -3.3s; animation-duration: 4.7s; }
+.dks .dks-seat-4 .dk-eye { animation: none; }
+
+/* facing: the art faces right; .dks-look-left turns a member toward a speaker on its left */
+.dks-look-left .dks-face { transform: scaleX(-1); }
+
+/* talking: the body bobs and the bill works. The Abstainer has no bill line, so he cannot. */
+.dks-talking .dks-bob { animation: dks-talk 0.26s ease-in-out infinite alternate; }
+.dks-talking .dk-billline { transform-box: fill-box; transform-origin: left center; animation: dks-yap 0.15s steps(2) infinite; }
+.dks-seat-4.dks-talking .dks-bob { animation: none; }               /* no mouth, no motion */
+.dks-gesture .dks-bob { animation: dks-hop 0.5s cubic-bezier(.3,1.6,.5,1); }
+
+/* ── speech bubbles — anchored above each seat, no measuring ─────────────── */
+.dks-anchor {
+    position: absolute;
+    bottom: calc(100% - var(--seat-h) * 0.04);
+    left: 50%;
+    width: min(21rem, 78vw);
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 5;
+    --tail: 50%;
+}
+.dks-seat-0 .dks-anchor { left: 0; transform: none; --tail: calc(var(--seat-w) / 2); }
+.dks-seat-4 .dks-anchor { left: auto; right: 0; transform: none; --tail: calc(100% - var(--seat-w) / 2); }
+.dks-bubble {
+    position: relative;
+    display: none;
+    padding: 7px 12px 8px;
+    background: rgba(10, 9, 14, 0.94);
+    border: 1px solid currentColor;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.6);
+    transform-origin: var(--tail) 100%;
+}
+.dks-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: var(--tail);
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    background: inherit;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(45deg);
+}
+.dks-bubble.dks-on { display: block; animation: dks-pop 0.22s cubic-bezier(.2,1.5,.5,1) both; }
+.dks-who { font-size: 0.5rem; letter-spacing: 3px; opacity: 0.6; margin-bottom: 3px; }
+.dks-say { font-size: clamp(0.66rem, 1.6vh, 0.78rem); line-height: 1.5; color: #e9e6dc; min-height: 1.2em; }
+.dks-bubble.dks-action .dks-say { font-style: italic; color: #aab0c4; }
+.dks-bubble.dks-murmur { padding: 3px 10px; }
+.dks-bubble.dks-murmur .dks-who { display: none; }
+
+.dks-caption {
+    min-height: 1.6em;
+    margin-top: 8px;
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    opacity: 0.75;
+}
+
+/* ── props: placards and the gavel ──────────────────────────────────────── */
+.dks-prop {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: calc(var(--duck-bottom) + var(--duck) * 0.92);
+    display: flex;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+}
+.dks-placard {
+    padding: 3px 7px;
+    font-size: clamp(0.46rem, 1.15vh, 0.56rem);
+    letter-spacing: 2px;
+    font-weight: 900;
+    color: #0b0a0c;
+    background: var(--c, var(--abstain));
+    border-radius: 3px;
+    box-shadow: 0 0 14px var(--c, transparent);
+    animation: dks-placard 0.42s cubic-bezier(.2,1.7,.5,1) both;
+}
+.dks-placard.approve { --c: var(--approve); }
+.dks-placard.reject  { --c: var(--reject); }
+.dks-placard.abstain { --c: var(--abstain); }
+.dks-placard.upside  { transform: rotate(180deg); }            /* the Council is not sure what Rubber III is */
+.dks-placard.upside  { animation-name: dks-placard-upside; }
+.dks-placard.silent  { background: none; color: var(--abstain); box-shadow: none; font-weight: 400; }
+
+.dks-gavel {
+    position: absolute;
+    right: -4%;
+    bottom: calc(var(--seat-h) * 0.27);
+    width: calc(var(--seat-h) * 0.42);
+    height: calc(var(--seat-h) * 0.42);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;                                        /* only there while it strikes */
+}
+.dks-gavel svg { width: 100%; height: 100%; }
+.dks-gavel .gv-head { transform-origin: 82% 82%; transform-box: view-box; }
+.dks-gavel.dks-strike { animation: dks-gavel-show 1.3s ease-out both; }
+.dks-gavel.dks-strike .gv-head { animation: dks-gavel 0.42s cubic-bezier(.5,0,.6,1.4) both; }
+.dks-gavel .gv-ring { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.dks-gavel.dks-strike .gv-ring { animation: dks-ring 0.6s 0.16s ease-out both; }
+
+/* ── entrance (CONVENE) ─────────────────────────────────────────────────── */
+.dks-pre .dks-duck { opacity: 0; }
+.dks-convene .dks-duck { animation: dks-waddle 0.9s ease-out both; }
+.dks-convene .dks-seat-0 .dks-duck { animation-delay: 0.68s; }               /* the chair arrives last */
+.dks-convene .dks-seat-1 .dks-duck { animation-delay: 0.12s; }
+.dks-convene .dks-seat-2 .dks-duck { animation-name: dks-glide; animation-delay: 0.3s; animation-timing-function: linear; } /* a toy does not waddle */
+.dks-convene .dks-seat-3 .dks-duck { animation-name: dks-waddle-r; animation-delay: 0.22s; }
+.dks-convene .dks-seat-4 .dks-duck { animation: dks-fade 1.2s 0.5s ease-in both; }  /* he does not walk in; he is simply there */
+
+/* ── rule ───────────────────────────────────────────────────────────────── */
+.dks-rule .dks-seat { opacity: 0.42; }
+.dks-rule .dks-seat.dks-ruling { opacity: 1; }
+.dks-ruling .dks-duck { transform: translateY(-5%) scale(1.09); }
+.dks .tb-bloom, .dks .dc-bloom { opacity: 0; transition: opacity 0.6s; }
+.dks-ruling .tb-bloom, .dks-ruling .dc-bloom, .dks-talking .tb-bloom, .dks-talking .dc-bloom { opacity: 1; }
+
+/* ── panels ─────────────────────────────────────────────────────────────── */
+.dks-lower {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+    max-width: 52rem;
+    margin-top: clamp(6px, 1.4vh, 14px);
+    flex-wrap: wrap;
+}
+.dks-panel {
+    flex: 1 1 18rem;
+    max-width: 25rem;
+    padding: 10px 14px;
+    border: 1px solid var(--dks-dim);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    text-align: left;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+}
+.dks-panel.dks-on { opacity: 1; transform: none; }
+.dks-panel-h { font-size: 0.5rem; letter-spacing: 4px; opacity: 0.6; margin-bottom: 8px; }
+
+.dks-actions { display: flex; gap: 10px; justify-content: center; margin-top: clamp(8px, 1.6vh, 16px); min-height: 2.4rem; }
+.dks-btn {
+    font: inherit;
+    font-size: 0.66rem;
+    letter-spacing: 3px;
+    font-weight: 900;
+    padding: 9px 20px;
+    color: var(--dks-ink);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.15s, background 0.15s;
+}
+.dks-btn:hover, .dks-btn:focus-visible { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); outline: none; }
+.dks-btn[hidden] { display: none; }
+.dks-btn.dks-alt { color: #bb88dd; }
+.dks-btn-note { font-size: 0.48rem; letter-spacing: 1px; opacity: 0.5; margin-top: 4px; }
+.dks-skip {
+    position: absolute;
+    top: 10px; right: 14px;
+    font: inherit;
+    font-size: 0.5rem;
+    letter-spacing: 3px;
+    color: inherit;
+    background: none;
+    border: 1px solid var(--dks-dim);
+    border-radius: 4px;
+    padding: 4px 9px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.dks-skip:hover { opacity: 1; }
+.dks-skip[hidden] { display: none; }
+.dks-hint { position: absolute; bottom: 6px; left: 0; right: 0; font-size: 0.46rem; letter-spacing: 2px; opacity: 0.35; pointer-events: none; }
+.dks-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ═══ THE DUCKY COUNCIL ════════════════════════════════════════════════════ */
+.dks-council { --dks-ink: #e8c547; --dks-dim: rgba(232, 197, 71, 0.35); }
+
+/* the ledger */
+.dks-ledger-row { display: grid; grid-template-columns: 6.6rem 1fr auto; align-items: center; gap: 8px; font-size: 0.6rem; letter-spacing: 1px; min-height: 1.45rem; opacity: 0; transition: opacity 0.3s; }
+.dks-ledger-row.dks-on { opacity: 1; }
+.dks-ledger-row .lv { color: #d8d3c0; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dks-pips { display: flex; gap: 3px; }
+.dks-pip { width: 9px; height: 9px; border: 1px solid currentColor; border-radius: 2px; opacity: 0.35; }
+.dks-pip.neg { color: var(--reject); border-radius: 50%; }
+.dks-pip.lit { opacity: 1; background: currentColor; animation: dks-pip 0.28s cubic-bezier(.2,1.8,.5,1) both; }
+
+/* the grade track */
+.dks-track { position: relative; margin-top: 10px; opacity: 0; transition: opacity 0.4s; }
+.dks-track.dks-on { opacity: 1; }
+.dks-bands { display: flex; height: 16px; border-radius: 3px; overflow: hidden; }
+.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: 0.42rem; line-height: 16px; letter-spacing: 1px; color: #0b0a0c; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
+.dks-band.dks-hit { opacity: 1; }
+.dks-rail { position: absolute; left: 0; top: -5px; width: 100%; height: 26px; transform: translateX(0%); transition: transform 1.1s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
+.dks-rail::before { content: ''; position: absolute; left: -1px; top: 0; width: 2px; height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
+.dks-score { margin-top: 6px; font-size: 0.56rem; letter-spacing: 3px; opacity: 0.75; }
+
+/* the medal and ruling */
+.dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dks-medal { width: clamp(3.4rem, 9vh, 4.6rem); height: clamp(3.4rem, 9vh, 4.6rem); color: var(--grade, var(--dks-ink)); }
+.dks-medal svg { width: 100%; height: 100%; }
+.dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
+.dks-grade-label { margin-top: 4px; font-size: 0.8rem; letter-spacing: 3px; font-weight: 900; color: var(--grade); }
+.dks-reward { margin-top: 3px; font-size: 0.58rem; letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
+.dks-lines { margin-top: 8px; font-size: 0.6rem; line-height: 1.6; color: #c8c4b4; }
+.dks-lines div { opacity: 0; transition: opacity 0.5s; }
+.dks-lines div.dks-on { opacity: 1; }
+
+/* grade moods */
+.dks-sigil { position: absolute; left: 50%; top: 4%; width: calc(var(--seat-h) * 0.95); height: calc(var(--seat-h) * 0.95); margin-left: calc(var(--seat-h) * -0.475); color: #cceeff; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 1.2s; }
+.dks-sigil svg { width: 100%; height: 100%; animation: dks-spin 18s linear infinite; }
+.dks-grade-platinum .dks-sigil { opacity: 0.9; }
+.dks-grade-platinum .dks-backdrop, .dks-grade-gold .dks-backdrop { animation: dks-glow 2.4s ease-in-out infinite alternate; }
+.dks-grade-tarnished .dks-backdrop { opacity: 0.4; transition: opacity 1s; }
+.dks-grade-quacked { --dks-ink: #ff7a55; }
+.dks-grade-quacked .dks-backdrop { opacity: 0.3; transition: opacity 1s; }
+.dks-feather { position: absolute; top: 0; left: 62%; width: 1.4rem; height: 2.4rem; color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
+.dks-grade-quacked .dks-feather { animation: dks-feather 6.5s 0.4s ease-in-out both; }
+
+/* ═══ THE DUCK TRIBUNAL ════════════════════════════════════════════════════ */
+.dks-tribunal { --dks-ink: #8f9fd6; --dks-dim: rgba(143, 159, 214, 0.32); --seat-w: calc(var(--seat-h) * 116 / 148); --duck: calc(var(--seat-h) * 70 / 148); --duck-bottom: calc(var(--seat-h) * 44 / 148);
+    background: radial-gradient(ellipse 60% 55% at 50% 22%, rgba(140, 160, 255, 0.07), transparent 70%), #05050a; }
+.dks-tribunal[data-register="sentencers"]   { --dks-ink: #d9788a; --dks-dim: rgba(217, 120, 138, 0.32); }
+.dks-tribunal[data-register="bureaucrats"]  { --dks-ink: #8fb8b0; --dks-dim: rgba(143, 184, 176, 0.32); }
+.dks-tribunal[data-register="philosophers"] { --dks-ink: #d8c86a; --dks-dim: rgba(216, 200, 106, 0.32); }
+.dks .tb-recess.pf  { fill-opacity: 0.05; }
+.dks .tb-benchtop.pf, .dks .tb-benchface.pf { fill-opacity: 0.14; }
+.dks .tb-shadow.pf  { fill-opacity: 0.25; stroke: none; }
+.dks .tb-cone.pf, .dks .dc-cone.pf { fill-opacity: 0.06; stroke: none; }
+.dks .tb-bloom.pf, .dks .dc-bloom.pf { fill-opacity: 0.14; stroke: none; }
+.dks .p-redact.pf { fill-opacity: 0.85; stroke: none; }
+.dks .p-scan, .dks .tb-moulding, .dks .dc-moulding { stroke-width: 1; opacity: 0.45; }
+.dks .tb-seal, .dks .dc-seal, .dks .dc-dome { opacity: 0.35; stroke-width: 1.4; }
+.dks .tb-cord, .dks .dc-ribbon { opacity: 0.4; stroke-width: 1.4; }
+
+/* the silent one is already seated when the lights come up, and never moves */
+.dks-tribunal.dks-pre .dks-seat-4 .dks-duck { opacity: 1; }
+.dks-tribunal.dks-convene .dks-duck { animation: dks-rise 0.6s cubic-bezier(.2,1.4,.5,1) both; }
+.dks-tribunal.dks-convene .dks-seat-0 .dks-duck { animation-delay: 0.27s; }
+.dks-tribunal.dks-convene .dks-seat-1 .dks-duck { animation-delay: 0.09s; }
+.dks-tribunal.dks-convene .dks-seat-2 .dks-duck { animation-delay: 0s; }
+.dks-tribunal.dks-convene .dks-seat-3 .dks-duck { animation-delay: 0.18s; animation-name: dks-rise; }
+.dks-tribunal.dks-convene .dks-seat-4 .dks-duck { animation: none; }
+
+/* the bench confers — everyone leans to the centre, the silent one does not */
+.dks-confer .dks-seat-0 .dks-duck { transform: translateX(22%) rotate(4deg); }
+.dks-confer .dks-seat-1 .dks-duck { transform: translateX(12%) rotate(3deg); }
+.dks-confer .dks-seat-3 .dks-duck { transform: translateX(-14%) rotate(-3deg); }
+.dks-confer-dots { display: inline-flex; gap: 6px; margin-left: 10px; vertical-align: middle; }
+.dks-confer-dots i { width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; transition: background 0.3s; }
+.dks-confer-dots i.dks-on { background: currentColor; }
+
+/* the dock and the docket */
+.dks-dock { flex: 0 0 auto; width: clamp(7rem, 15vh, 9rem); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
+.dks-dock svg { width: 100%; height: auto; }
+.dks .tb-dock-floor.pf { fill-opacity: 0.12; stroke: none; }
+.dks .tb-dock-rail, .dks .tb-dock-post { stroke-width: 2; }
+.dks-dock-label { font-size: 0.42rem; letter-spacing: 1px; line-height: 1.5; opacity: 0.6; margin-top: 4px; max-width: 9rem; }
+
+.dks-docket {
+    position: relative;
+    flex: 1 1 20rem;
+    max-width: 28rem;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+    border: 1px solid var(--dks-dim);
+    border-radius: 4px;
+    text-align: left;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    line-height: 1.7;
+    color: #c9cbd6;
+    opacity: 0;
+    transform: translateY(14px) rotate(-0.6deg);
+    transition: opacity 0.45s, transform 0.45s cubic-bezier(.2,1.3,.5,1);
+}
+.dks-docket.dks-on { opacity: 1; transform: rotate(-0.6deg); }
+.dks-docket-h { display: flex; justify-content: space-between; font-size: 0.48rem; letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
+.dks-docket .k { color: var(--dks-ink); opacity: 0.7; letter-spacing: 2px; }
+.dks-docket .ev { color: #9da3b8; font-style: italic; min-height: 1.7em; }
+.dks-stampslot { display: block; min-height: 2.1rem; margin: 4px 0 8px; }
+.dks-stamp {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 2px solid var(--stamp, var(--dks-ink));
+    color: var(--stamp, var(--dks-ink));
+    border-radius: 3px;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    font-weight: 900;
+    transform: rotate(-4deg);
+    animation: dks-stamp 0.4s cubic-bezier(.2,1.6,.4,1) both;
+}
+.dks-stamp.sentence { --stamp: #ff6a55; transform: rotate(3deg); animation-name: dks-stamp-r; }
+.dks-sentence { opacity: 0; transition: opacity 0.4s; }
+.dks-sentence.dks-on { opacity: 1; }
+.dks-sentence .fx { color: #e9e6dc; font-weight: 700; }
+
+.dks-flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.35), transparent 60%); opacity: 0; pointer-events: none; z-index: 8; }
+.dks-flash.dks-on { animation: dks-flash 0.5s ease-out both; }
+
+/* gathering — the 30-second warning */
+.dks-gather { position: relative; display: flex; align-items: flex-end; gap: 4px; height: 26px; color: #e8c547; overflow: hidden; }
+.dks-gather svg { width: 22px; height: 22px; stroke: currentColor; animation: dks-gather 3.2s linear infinite; }
+.dks-gather svg:nth-child(2) { animation-delay: -0.6s; }
+.dks-gather svg:nth-child(3) { animation-delay: -1.2s; }
+.dks-gather svg:nth-child(4) { animation-delay: -1.8s; }
+.dks-gather svg:nth-child(5) { animation-delay: -2.4s; }
+.dks-gather .pf { fill: currentColor; fill-opacity: 0.2; }
+
+/* ── keyframes ──────────────────────────────────────────────────────────── */
+@keyframes dks-fade        { from { opacity: 0; } }
+@keyframes dks-lights      { 0% { opacity: 0; } 30% { opacity: 0.9; } 42% { opacity: 0.25; } 60% { opacity: 0.85; } }
+@keyframes dks-stamp-title { from { opacity: 0; transform: scale(1.8); } }
+@keyframes dks-shake       { 20% { transform: translate(-3px, 1px); } 40% { transform: translate(3px, -1px); } 60% { transform: translate(-2px, 1px); } 80% { transform: translate(1px, 0); } }
+@keyframes dks-blink       { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
+@keyframes dks-talk        { from { transform: translateY(0) rotate(0); } to { transform: translateY(-3%) rotate(-1.6deg); } }
+@keyframes dks-yap         { from { transform: translateY(0); } to { transform: translateY(1.8px) rotate(4deg); } }
+@keyframes dks-hop         { 40% { transform: translateY(-12%); } }
+@keyframes dks-pop         { from { opacity: 0; transform: scale(0.6) translateY(6px); } }
+@keyframes dks-placard     { from { opacity: 0; transform: translateY(60%) rotate(-8deg); } }
+@keyframes dks-placard-upside { from { opacity: 0; transform: translateY(60%) rotate(160deg); } to { transform: rotate(180deg); } }
+@keyframes dks-gavel       { 0% { transform: rotate(-42deg); } 55% { transform: rotate(8deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0); } }
+@keyframes dks-gavel-show  { 0% { opacity: 0; } 12%, 70% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes dks-ring        { 0% { opacity: 0.9; transform: scale(0.3); } 100% { opacity: 0; transform: scale(1.9); } }
+@keyframes dks-waddle      { 0% { opacity: 0; transform: translateX(-60%) rotate(-7deg); } 20% { opacity: 1; transform: translateX(-46%) rotate(7deg); } 40% { transform: translateX(-31%) rotate(-7deg); } 60% { transform: translateX(-17%) rotate(6deg); } 80% { transform: translateX(-5%) rotate(-4deg); } 100% { transform: none; } }
+@keyframes dks-waddle-r    { 0% { opacity: 0; transform: translateX(60%) rotate(7deg); } 20% { opacity: 1; transform: translateX(46%) rotate(-7deg); } 40% { transform: translateX(31%) rotate(7deg); } 60% { transform: translateX(17%) rotate(-6deg); } 80% { transform: translateX(5%) rotate(4deg); } 100% { transform: none; } }
+@keyframes dks-glide       { from { opacity: 0; transform: translateX(70%); } 30% { opacity: 1; } }
+@keyframes dks-rise        { from { opacity: 0; transform: translateY(26%); } }
+@keyframes dks-pip         { from { transform: scale(0); } 60% { transform: scale(1.35); } }
+@keyframes dks-medal       { from { opacity: 0; transform: scale(2) rotate(-35deg); } }
+@keyframes dks-spin        { to { transform: rotate(360deg); } }
+@keyframes dks-glow        { from { opacity: 0.7; } to { opacity: 1; } }
+@keyframes dks-feather     { 0% { opacity: 0; transform: translate(0, -10%) rotate(-20deg); } 10% { opacity: 0.9; } 30% { transform: translate(-30px, 60%) rotate(25deg); } 55% { transform: translate(20px, 140%) rotate(-25deg); } 80% { transform: translate(-15px, 220%) rotate(18deg); opacity: 0.8; } 100% { opacity: 0; transform: translate(5px, 300%) rotate(-8deg); } }
+@keyframes dks-stamp       { from { opacity: 0; transform: scale(2.4) rotate(-16deg); } to { transform: rotate(-4deg); } }
+@keyframes dks-stamp-r     { from { opacity: 0; transform: scale(2.4) rotate(18deg); } to { transform: rotate(3deg); } }
+@keyframes dks-flash       { from { opacity: 1; } }
+@keyframes dks-gather      { from { transform: translateX(-40px); } to { transform: translateX(240px); } }
+
+/* ── reduced motion, safe mode, accessibility mode: keep fades, drop movement ── */
+@media (prefers-reduced-motion: reduce) {
+    .dks *, .dks *::before, .dks *::after { animation: none !important; transition-property: opacity !important; }
+}
+.dks.dks-reduced *, .dks.dks-reduced *::before, .dks.dks-reduced *::after { animation: none !important; transition-property: opacity !important; }
+.dks.dks-reduced .dks-convene .dks-duck, .dks.dks-reduced.dks-convene .dks-duck { opacity: 1; }
+
+@media (max-width: 640px) {
+    .dks-dock { display: none; }
+}
