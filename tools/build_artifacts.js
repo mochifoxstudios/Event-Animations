@@ -1,0 +1,111 @@
+/* Builds one self-contained HTML page per event into artifacts/, inlining the
+   art, the shared core and the scene. Run: node tools/build_artifacts.js */
+const fs = require('fs');
+const path = require('path');
+const ROOT = path.join(__dirname, '..');
+const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8');
+const js = p => {
+    const s = read(p);
+    if (/<\/script/i.test(s)) throw new Error(p + ' contains </script>');
+    return '<script>\n' + s + '\n</script>\n';
+};
+
+const ART = js('reference/duck_cast_art.js') + js('reference/duck_council_art.js') + js('reference/duck_tribunal_art.js')
+          + js('src/duck_scene_core.js');
+const CSS = read('src/duck_scenes.css');
+
+const PAGE_CSS = `
+/* A viewer for one in-game event. Single dark look on purpose: it is the game's screen. */
+:root { --bg: #050407; --bar: #0d0b10; --line: #26222c; --fg: #c9c4d4; --muted: #8a8496; --ok: #8fd69a; color-scheme: dark; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: 'Courier New', monospace; }
+.viewer { min-height: 100%; display: flex; flex-direction: column; }
+.ctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 16px; background: var(--bar); border-bottom: 1px solid var(--line); font-size: 12px; }
+.ctl h1 { margin: 0; font-size: 12px; letter-spacing: 4px; font-weight: 900; color: var(--fg); }
+.ctl .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ctl label { color: var(--muted); letter-spacing: 1px; }
+.ctl select, .ctl button { font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; max-width: 100%; }
+.ctl button { cursor: pointer; font-weight: 700; letter-spacing: 1px; }
+.ctl button:hover, .ctl button:focus-visible { border-color: var(--fg); outline: none; }
+.ctl .note { flex-basis: 100%; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.ctl .out { color: var(--ok); }
+.stagehost { position: relative; flex: 1; display: flex; min-height: 620px; }
+.stagehost > .dks { flex: 1; }
+`;
+
+function page({ title, scene, controls, script, note }) {
+    return `<title>${title}</title>
+<style>${PAGE_CSS}
+${CSS}</style>
+<div class="viewer">
+  <div class="ctl">
+    <h1>${title.toUpperCase()}</h1>
+    ${controls}
+    <div class="grp"><label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
+    <span class="out" id="out" aria-live="polite"></span>
+    <div class="note">${note}</div>
+  </div>
+  <div class="stagehost" id="host"></div>
+</div>
+${ART}${js(scene)}<script>
+var host = document.getElementById('host'), out = document.getElementById('out'), scene = null;
+document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); start(); };
+var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
+               stats: { totalPlaytimeMs: 40 * 60000, itemsBought: 64 }, eps: 5e9, voidBranch: { a: 1, b: 1 }, _sporeHappiness: 12 };
+${script}
+start();
+</script>
+`;
+}
+
+const council = page({
+    title: 'Ducky Council',
+    scene: 'src/council_scene.js',
+    note: 'Click anywhere to hurry a line along, or SKIP to jump to the verdict. "Sample operator" is graded by the real scoring: 84,000 clicks, 6 prestiges, 3.2e14 energy, 6 buildings, 22% instability.',
+    controls: `<div class="grp"><label for="grade">Grade</label><select id="grade"><option value="">Sample operator</option></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var gradeSel = document.getElementById('grade');
+CouncilScene.GRADES.slice().reverse().forEach(function (g) { gradeSel.add(new Option(g.charAt(0).toUpperCase() + g.slice(1), g)); });
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    scene = CouncilScene.play(host, { state: SAMPLE, grade: gradeSel.value || undefined,
+        onRuling: function (g) { out.textContent = 'Reward applied: ' + CouncilScene.VERDICTS[g].rewardDesc; } });
+    scene.done.then(function () { out.textContent = 'Judgement accepted. Press Replay to watch again.'; });
+}
+gradeSel.onchange = start;
+document.getElementById('replay').onclick = start;`
+});
+
+const tribunal = page({
+    title: 'Duck Tribunal',
+    scene: 'src/tribunal_scene.js',
+    note: 'The sentence follows the charge. Register sets who speaks and the colour of the room. Click anywhere to hurry a line along, or SKIP to jump to the sentence.',
+    controls: `<div class="grp"><label for="charge">Charge</label><select id="charge"></select>
+      <label for="register">Register</label><select id="register"></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var chargeSel = document.getElementById('charge'), regSel = document.getElementById('register');
+TribunalScene.CHARGES.forEach(function (c) {
+    var s = c.verdict >= 0 ? TribunalScene.SENTENCES[c.verdict].title.toLowerCase() : 'coin flip';
+    chargeSel.add(new Option(c.label.toLowerCase().replace(/\\b\\w/g, function (m) { return m.toUpperCase(); }) + ' → ' + s, c.key));
+});
+TribunalScene.REGISTERS.forEach(function (r) { regSel.add(new Option(r.charAt(0).toUpperCase() + r.slice(1), r)); });
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    var j = TribunalScene.judge(SAMPLE, { charge: chargeSel.value, register: regSel.value });
+    scene = TribunalScene.play(host, { judgement: j });
+    scene.done.then(function (r) {
+        out.textContent = r.action === 'banish' ? 'Banished to Omega. Anti-Energy taxed until dismissed.' : 'Sentence accepted: ' + TribunalScene.SENTENCES[r.verdict].fx + '.';
+    });
+}
+chargeSel.onchange = regSel.onchange = start;
+document.getElementById('replay').onclick = start;`
+});
+
+fs.mkdirSync(path.join(ROOT, 'artifacts'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
+fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
+console.log('built', council.length, tribunal.length);

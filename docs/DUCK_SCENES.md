@@ -108,3 +108,14 @@ bubble helpers are unused.
   `verdict_bad`. Only `gavel` is wired by default, because it's the only one confirmed to exist (`sfx:gavel`).
   The music director already switches to the duck cues from `GlobalEventQueue` / `DuckyCouncil.isActive()`.
 - **`DuckyCouncil.isActive()`:** `music.js` reads it, so `_active` must stay true until `dismiss()`, which the code above does.
+
+---
+
+## Viewable pages
+
+Each event is also built as one self-contained page in `artifacts/` (`node tools/build_artifacts.js`). Rebuild them after any change to `src/` or the art files.
+
+| Event | Page |
+|---|---|
+| Ducky Council | https://claude.ai/artifact/HHEUhtckLdBPEXdy6rjQnm |
+| Duck Tribunal | https://claude.ai/artifact/N8CidxjtuYA56EnRAmhfDU |
