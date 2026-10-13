@@ -284,6 +284,136 @@ negSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/severance_package.html'), severancePage);
+const CRASH_BOARD_CSS = `
+.board .cpu { position: absolute; left: 40px; bottom: 40px; width: 300px; padding: 16px 20px; border: 1px solid rgba(30,120,30,0.6); border-radius: 8px; background: rgba(0,10,0,0.9); font-size: 20px; letter-spacing: 2px; color: #6fdc6f; text-align: left; }
+.board .cpu b { float: right; font-variant-numeric: tabular-nums; }
+.board .cpu i { display: block; margin-top: 10px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.board .cpu s { display: block; height: 100%; background: linear-gradient(90deg, #6fdc6f, #ffcc55, #ff4a2a); transform-origin: left; transition: transform 0.2s; }
+.board .cpu.hot { border-color: #ff4a2a; color: #ff6a3a; }
+`;
+function crashPage(o) {
+    return page({
+        title: o.title,
+        scene: 'src/crash_scene.js',
+        score: 'src/audio/score_crash.js',
+        extraCss: 'src/crash_scene.css',
+        extraInline: BOARD_CSS + CRASH_BOARD_CSS,
+        accent: o.accent,
+        gateLabel: o.gate,
+        blurb: o.blurb,
+        note: o.note,
+        controls: o.controls,
+        script: o.script
+    });
+}
+const fakeCrash = crashPage({
+    title: 'Fake Crash',
+    accent: '#7dffb0',
+    gate: '▶ OPEN THE BOARD',
+    blurb: 'At 13,333, 66,666 and 123,456 clicks the simulation crashes. Or seems to. Click CLICK to get there.',
+    note: 'The stop code is TOO_MANY_CLICKS, so clicking during the crash is noticed, and enough clicks end it early. The reveal pays +50% energy.',
+    controls: `<div class="grp"><label for="ms">Milestone</label><select id="ms"><option>13333</option><option>66666</option><option>123456</option></select>
+      <button id="trigger" type="button">⚡ Crash now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+    script: `
+var msSel = document.getElementById('ms'), clicks = 0, crashed = false, music = null, energy = 3.2e14;
+function board() {
+    return '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en">' + DuckScene.fmt(energy) + '</b></span><span>TOTAL CLICKS<b id="tc"></b></span></div>'
+      + '<button class="acq" id="acq" type="button">CLICK</button>'
+      + '<div class="tip" id="tip">Click. Something happens at ' + (+msSel.value).toLocaleString('en-US') + '.</div></div><div class="sceneLayer" id="layer" hidden></div>';
+}
+function start() {
+    if (scene) scene.close();
+    if (music) music.stop();
+    crashed = false; energy = 3.2e14; out.textContent = '';
+    var goal = +msSel.value; clicks = goal - 6;
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = board();
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
+    document.getElementById('tc').textContent = clicks.toLocaleString('en-US');
+    music = EventAudio.session(FakeCrashScore); music.cue('board');
+    document.getElementById('acq').onclick = function () {
+        if (crashed) return;
+        clicks++; music.sfx('click');
+        document.getElementById('tc').textContent = clicks.toLocaleString('en-US');
+        if (clicks >= goal) trigger();
+    };
+}
+function trigger() {
+    if (crashed) return;
+    crashed = true;
+    if (music) { music.stop(); music = null; }
+    var layer = document.getElementById('layer');
+    layer.hidden = false;
+    scene = CrashScene.play(layer, { variant: 'fake', clicks: +msSel.value, state: { energy: energy },
+        onBonus: function (g) { energy += g; document.getElementById('en').textContent = DuckScene.fmt(energy); } });
+    scene.done.then(function (r) {
+        layer.hidden = true;
+        out.textContent = 'Crash bonus +' + DuckScene.fmt(r.bonus) + ' energy' + (r.clicks ? '; you clicked ' + r.clicks + ' times during the crash' : '') + '.';
+        document.getElementById('tip').textContent = 'Nothing crashed. (Reset board to crash again.)';
+    });
+}
+document.getElementById('trigger').onclick = function () { if (!begun) begin(); trigger(); };
+msSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/fake_crash.html'), fakeCrash);
+const thermalCrash = crashPage({
+    title: 'Thermal Crash',
+    accent: '#ffb050',
+    gate: '▶ OPEN THE BOARD',
+    blurb: 'The System Diagnostics CPU meter is climbing. At 100% the simulation overheats and crashes, and something is left behind the crash screen.',
+    note: 'Hold OVERCLOCK to push the CPU, or wait. After the crash, the screen cracks open: claim the ×25 EPS dividend before the gap cools shut (20 s).',
+    controls: `<div class="grp"><button id="trigger" type="button">⚡ Overheat now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+    script: `
+var cpu = 86, crashed = false, music = null, heatT = null, push = false;
+var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b>3.20e14</b></span><span>EPS<b id="eps">5.00e9</b></span></div>'
+  + '<button class="acq" id="acq" type="button">OVERCLOCK</button>'
+  + '<div class="tip" id="tip">Hold OVERCLOCK. The CPU does not like it.</div>'
+  + '<div class="cpu" id="cpu">CPU <b id="cpuv">86%</b><i><s id="cpub"></s></i></div></div><div class="sceneLayer" id="layer" hidden></div>';
+function start() {
+    if (scene) scene.close();
+    if (music) music.stop();
+    clearInterval(heatT);
+    crashed = false; cpu = 86; out.textContent = '';
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = BOARD;
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
+    music = EventAudio.session(ThermalCrashScore); music.cue('heat');
+    var acq = document.getElementById('acq');
+    acq.onpointerdown = function () { push = true; }; acq.onpointerup = acq.onpointerleave = function () { push = false; };
+    acq.onclick = function () { cpu += 0.6; };
+    heatT = setInterval(function () {
+        if (crashed) return;
+        cpu = Math.min(100, cpu + (push ? 0.5 : 0.08) + (Math.random() - 0.4) * 0.2);
+        document.getElementById('cpuv').textContent = Math.floor(cpu) + '%';
+        document.getElementById('cpub').style.transform = 'scaleX(' + cpu / 100 + ')';
+        document.getElementById('cpu').classList.toggle('hot', cpu > 95);
+        if (cpu >= 100) trigger();
+    }, 100);
+}
+function trigger() {
+    if (crashed) return;
+    crashed = true;
+    clearInterval(heatT);
+    var cv = document.getElementById('cpuv'); if (cv) { cv.textContent = '100%'; document.getElementById('cpub').style.transform = 'scaleX(1)'; document.getElementById('cpu').classList.add('hot'); }
+    if (music) { music.stop(); music = null; }
+    var layer = document.getElementById('layer');
+    layer.hidden = false;
+    scene = CrashScene.play(layer, { variant: 'thermal', state: SAMPLE,
+        onClaim: function () { out.textContent = 'Crash dividend claimed: ×25 EPS for 30 minutes.'; } });
+    scene.done.then(function (r) {
+        layer.hidden = true;
+        if (!r.claimed) out.textContent = r.action ? 'The gap closed. No dividend this time.' : 'Crash screen dismissed. No dividend.';
+        else document.getElementById('eps').textContent = '1.25e11';
+        document.getElementById('tip').textContent = 'Contained. (Reset board to overheat again.)';
+    });
+}
+document.getElementById('trigger').onclick = function () { if (!begun) begin(); trigger(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/thermal_crash.html'), thermalCrash);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);

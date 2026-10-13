@@ -1,0 +1,2613 @@
+<title>Fake Crash</title>
+<style>
+/* A viewer for one in-game event. Single dark look on purpose: it is the game's screen. */
+:root { --bg: #050407; --bar: #0d0b10; --line: #26222c; --fg: #c9c4d4; --muted: #8a8496; --ok: #8fd69a; color-scheme: dark; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: 'Courier New', monospace; }
+.viewer { min-height: 100%; display: flex; flex-direction: column; }
+.ctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 16px; background: var(--bar); border-bottom: 1px solid var(--line); font-size: 12px; }
+.ctl h1 { margin: 0; font-size: 12px; letter-spacing: 4px; font-weight: 900; color: var(--fg); }
+.ctl .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ctl label { color: var(--muted); letter-spacing: 1px; }
+.ctl select, .ctl button { font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; max-width: 100%; }
+.ctl button { cursor: pointer; font-weight: 700; letter-spacing: 1px; }
+.ctl button:hover, .ctl button:focus-visible { border-color: var(--fg); outline: none; }
+.ctl .note { flex-basis: 100%; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.ctl .out { color: var(--ok); }
+.stagehost { position: relative; flex: 1; display: flex; min-height: 620px; }
+.stagehost > .dks { flex: 1; }
+.gate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 16px; text-align: center; }
+.gate h2 { margin: 0; font-size: clamp(20px, 4vw, 30px); letter-spacing: 8px; color: var(--accent); }
+.gate p { margin: 0; max-width: 34rem; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
+.gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   crash_scene.css — THE FAKE CRASH and THE THERMAL CRASH on the 1920×1080 canvas.
+   The cut to blue is instant on purpose: no fade, no transition. That is the dread.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dks-fit.dks-see { background: transparent; }
+.dks.cr {
+    --blue: #0b3184;
+    --dks-ink: #ffffff;
+    padding: 0;
+    background: transparent;
+    color: #fff;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    text-align: left;
+    cursor: default;
+}
+.dks.cr.cr-s-crash { cursor: none; }
+.dks.cr.cr-s-reveal { cursor: default; }
+
+/* 1 · the freeze */
+.cr-pre { position: absolute; inset: 0; pointer-events: none; }
+.cr-tears i { position: absolute; left: 0; right: 0; background: repeating-linear-gradient(90deg, rgba(255,255,255,0.5) 0 3px, rgba(0,255,200,0.25) 3px 9px, transparent 9px 21px, rgba(255,0,90,0.3) 21px 26px);
+    mix-blend-mode: difference; animation: cr-tear 0.12s steps(2) infinite alternate; }
+.cr-haze { position: absolute; inset: 0; background: linear-gradient(to top, rgba(255, 80, 0, 0.3), rgba(255, 80, 0, 0.08) 55%, transparent); animation: cr-throb 0.5s ease-in-out infinite; }
+.cr-haze i { position: absolute; bottom: -300px; width: 1100px; height: 700px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 110, 20, 0.55), rgba(255, 60, 0, 0.2) 60%, transparent);
+    animation: cr-haze 1.4s ease-in both; }
+.cr-haze i:nth-child(1) { left: -200px; } .cr-haze i:nth-child(2) { left: 500px; animation-delay: 0.15s; } .cr-haze i:nth-child(3) { left: 1100px; animation-delay: 0.3s; }
+.cr-warn { position: absolute; left: 60px; top: 50px; padding: 10px 22px; border: 3px solid #ff4a2a; border-radius: 8px; font-size: 44px; font-weight: 900; letter-spacing: 6px; color: #ff6a3a; background: rgba(40, 0, 0, 0.6);
+    animation: cr-blink 0.3s steps(1) infinite; }
+.cr-s-crash .cr-pre { display: none; }
+
+/* 2 · the crash: an instant cut */
+.cr-screen { position: absolute; inset: 0; background: var(--blue); opacity: 0; overflow: hidden; }
+.cr-s-crash .cr-screen { opacity: 1; }
+.cr-scan { position: absolute; inset: 0; background: repeating-linear-gradient(rgba(0, 0, 0, 0.12) 0 2px, transparent 2px 5px); pointer-events: none; }
+.cr-heat { position: absolute; left: 0; right: 0; bottom: 0; height: 520px; background: radial-gradient(ellipse 60% 100% at 50% 100%, rgba(255, 90, 20, 0.45), transparent 70%); opacity: 0; pointer-events: none; }
+.cr-thermal .cr-heat { opacity: 1; animation: cr-throb 2.4s ease-in-out infinite; }
+.cr-in { position: absolute; left: 250px; top: 120px; width: 1420px; }
+.cr-in.cr-jolt { animation: cr-jolt 0.12s; }
+.cr-eyebrow { font-size: 18px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.55); margin-bottom: 24px; opacity: 0; font-family: 'Courier New', monospace; }
+.cr-face { font-size: 220px; line-height: 1; font-weight: 300; margin-bottom: 30px; }
+.cr-paren { display: inline-block; transition: transform 0.6s cubic-bezier(.3,1.6,.5,1); }
+.cr-title { font-size: 42px; line-height: 1.35; font-weight: 300; max-width: 1300px; }
+.cr-pct { margin: 34px 0 40px; font-size: 42px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.cr-low { display: flex; gap: 36px; align-items: flex-start; }
+.cr-qr { width: 170px; height: 170px; flex: none; padding: 10px; box-sizing: border-box; background: #fff; color: var(--blue); opacity: 0; }
+.cr-qr svg { width: 100%; height: 100%; }
+.cr-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.cr-info { font-family: 'Courier New', monospace; font-size: 21px; line-height: 1.5; white-space: pre-line; color: rgba(255, 255, 255, 0.85); }
+.cr-pokes { font-family: 'Courier New', monospace; font-size: 20px; line-height: 1.5; color: #ffd36a; min-height: 30px; }
+.cr-pokes div { animation: cr-in 0.2s both; }
+.cr-pokes .cr-poke-x { color: #ff8a8a; font-weight: 700; }
+.cr-link { font-size: 18px; line-height: 1.5; color: rgba(255, 255, 255, 0.6); opacity: 0; }
+.cr-s-owned .cr-eyebrow, .cr-s-owned .cr-qr, .cr-s-owned .cr-link { opacity: 1; transition: opacity 0.4s; }
+.cr-bonus { margin-top: 34px; display: inline-block; padding: 14px 26px; border: 2px solid #7dffb0; border-radius: 10px; font-size: 26px; letter-spacing: 3px; font-weight: 700; color: #7dffb0; opacity: 0; }
+
+/* 3 · fake: the joke */
+.cr-fake.cr-s-reveal .cr-screen { background: #0a5a4a; transition: background-color 0.6s; }
+.cr-s-reveal .cr-paren { transform: rotate(180deg) translateY(-6px); }
+.cr-s-reveal .cr-pct { font-size: 74px; font-weight: 900; letter-spacing: 8px; color: #7dffb0; animation: cr-pop 0.5s cubic-bezier(.3,1.6,.5,1) both; }
+.cr-s-reveal .cr-title { animation: cr-in 0.4s both; }
+.cr-s-bonus .cr-bonus { opacity: 1; animation: cr-pop 0.5s cubic-bezier(.3,1.6,.5,1) both; }
+.cr-thermal.cr-s-reveal .cr-pct { color: #ffb36a; }
+.cr-thermal.cr-s-reveal .cr-paren { transform: none; }
+.cr-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 6; }
+.cr-flash.on { animation: cr-flash 0.5s ease-out both; }
+
+/* 4 · thermal: the crack, and what is behind it */
+.cr-core { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; opacity: 0; pointer-events: none;
+    background: radial-gradient(ellipse 50% 45% at 50% 48%, rgba(255, 120, 30, 0.25), transparent 70%), #0a0402; }
+.cr-s-crack .cr-core { opacity: 1; }
+.cr-s-core .cr-core { pointer-events: auto; }
+.cr-behind { font-size: 22px; letter-spacing: 12px; color: rgba(255, 220, 190, 0.6); }
+.cr-orb { position: relative; pointer-events: none; width: 250px; height: 250px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 45% 40%, #fff6e0, #ffb050 30%, #ff5a10 62%, #6a1000 100%); box-shadow: 0 0 120px 20px rgba(255, 110, 20, 0.6); animation: cr-pulse 1.2s ease-in-out infinite; }
+.cr-orb i { position: absolute; inset: -30px; pointer-events: none; border-radius: 50%; border: 2px solid rgba(255, 140, 50, 0.5); animation: cr-ring 2.4s ease-out infinite; }
+.cr-orb i:nth-child(2) { animation-delay: 1.2s; }
+.cr-orb b { font-size: 76px; font-weight: 900; color: #3a0a00; letter-spacing: 2px; }
+.cr-claim { font: inherit; font-size: 28px; font-weight: 900; letter-spacing: 4px; padding: 20px 40px; color: #fff3e0; background: rgba(255, 110, 20, 0.2); border: 2px solid #ffb050; border-radius: 14px; cursor: pointer;
+    box-shadow: 0 0 40px -6px #ff7a20; transition: background-color 0.15s, transform 0.15s; }
+.cr-claim:hover, .cr-claim:focus-visible { background: rgba(255, 110, 20, 0.45); transform: scale(1.04); outline: none; }
+.cr-only { font-size: 14px; letter-spacing: 5px; color: rgba(255, 220, 190, 0.45); }
+.cr-cool { display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 14px; letter-spacing: 5px; color: rgba(160, 200, 255, 0.7); }
+.cr-cool i { display: block; width: 440px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.cr-cool s { display: block; height: 100%; background: linear-gradient(90deg, #6ab0ff, #ffb050); transform-origin: left; }
+.cr-hurry .cr-cool { color: #ff8a6a; animation: cr-blink 0.5s steps(1) infinite; }
+.cr-dismiss { font: inherit; font-size: 15px; letter-spacing: 3px; padding: 8px 18px; color: rgba(255, 255, 255, 0.55); background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 10px; cursor: pointer; }
+.cr-dismiss:hover, .cr-dismiss:focus-visible { color: #fff; border-color: #fff; outline: none; }
+.cr-s-claimed .cr-claim, .cr-s-claimed .cr-cool, .cr-s-claimed .cr-dismiss, .cr-s-claimed .cr-only { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.cr-s-claimed .cr-orb { animation: cr-claim 0.9s cubic-bezier(.3,1.5,.5,1) both, cr-pulse 0.6s 0.9s ease-in-out infinite; }
+
+.cr-shut { position: absolute; left: 0; right: 0; height: 540px; background: var(--blue); opacity: 0; pointer-events: none; z-index: 3;
+    transition: transform 0.9s cubic-bezier(.6,0,.3,1); }
+.cr-shut-a { top: 0; border-bottom: 2px solid #ffb050; } .cr-shut-b { bottom: 0; border-top: 2px solid #ffb050; }
+.cr-s-crack .cr-shut { opacity: 1; }
+.cr-s-crack .cr-screen { opacity: 0; }
+.cr-s-core .cr-shut-a { transform: translateY(-88%); } .cr-s-core .cr-shut-b { transform: translateY(88%); }
+.cr-s-claimed .cr-shut-a { transform: translateY(-101%); } .cr-s-claimed .cr-shut-b { transform: translateY(101%); }
+.cr-s-core.cr-s-shut .cr-shut { transform: none; transition-duration: 1.3s; }
+.cr-crackline { position: absolute; left: 0; right: 0; top: 539px; height: 3px; background: #fff0d0; box-shadow: 0 0 30px 6px #ff8a20; opacity: 0; transform: scaleX(0); z-index: 4; pointer-events: none; }
+.cr-s-crack .cr-crackline { opacity: 1; transform: scaleX(1); transition: transform 0.45s cubic-bezier(.7,0,.3,1); }
+.cr-s-core .cr-crackline { opacity: 0; transition: opacity 0.3s; }
+.cr-after { position: absolute; left: 0; right: 0; top: 760px; text-align: center; display: flex; flex-direction: column; gap: 10px; z-index: 5; pointer-events: none; opacity: 0; }
+.cr-after b { font-size: 44px; letter-spacing: 8px; color: #ffd8a0; text-shadow: 0 0 30px #ff7a20; }
+.cr-after span { font-size: 22px; letter-spacing: 3px; color: rgba(255, 230, 210, 0.75); }
+.cr-s-claimed .cr-after, .cr-s-shut .cr-after { opacity: 1; animation: cr-in 0.5s 0.3s both; }
+.cr-s-shut .cr-after { top: 380px; }
+.cr-s-shut .cr-after b { color: #fff; text-shadow: none; }
+
+.dks.cr .dks-actions { position: absolute; left: 0; right: 0; top: 960px; z-index: 7; }
+.dks.cr-fake .dks-actions { justify-content: flex-end; padding-right: 250px; }
+.dks.cr .dks-btn { font-family: inherit; font-size: 20px; padding: 14px 44px; letter-spacing: 6px; color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+.dks.cr.cr-s-reveal .dks-actions { cursor: default; }
+
+@keyframes cr-tear  { from { transform: translateX(0); } to { transform: translateX(var(--dx)); } }
+@keyframes cr-haze  { from { transform: translateY(300px) scale(0.6); opacity: 0; } }
+@keyframes cr-blink { 50% { opacity: 0.25; } }
+@keyframes cr-throb { 50% { opacity: 0.55; } }
+@keyframes cr-jolt  { 30% { transform: translate(-6px, 3px); } 70% { transform: translate(5px, -2px); } }
+@keyframes cr-in    { from { opacity: 0; transform: translateY(10px); } }
+@keyframes cr-pop   { from { opacity: 0; transform: scale(1.5); } }
+@keyframes cr-flash { from { opacity: 0.85; } to { opacity: 0; } }
+@keyframes cr-pulse { 50% { transform: scale(1.05); } }
+@keyframes cr-ring  { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(1.5); opacity: 0; } }
+@keyframes cr-claim { 0% { transform: scale(1); } 40% { transform: scale(1.6); } 100% { transform: scale(1.15); } }
+
+/* reduced motion: the cut and the reveal stay; nothing tears, flashes or slides */
+.dks.cr.dks-reduced .cr-tears, .dks.cr.dks-reduced .cr-flash { display: none; }
+.dks.cr.dks-reduced.cr-s-core .cr-shut { opacity: 0; }
+.dks.cr.dks-reduced.cr-s-core.cr-s-shut .cr-shut { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .dks.cr .cr-tears, .dks.cr .cr-flash { display: none; }
+    .dks.cr.cr-s-core .cr-shut { opacity: 0; }
+    .dks.cr.cr-s-core.cr-s-shut .cr-shut { opacity: 1; }
+}
+
+
+.dks-fit > .board { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.board { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,204,85,0.06), transparent 70%), #07060a; transition: filter 0.8s, opacity 0.8s; }
+.board.blur { filter: blur(10px); opacity: 0.5; }
+.board .hud { display: flex; gap: 90px; justify-content: center; font-size: 22px; letter-spacing: 6px; color: var(--muted); }
+.board .hud b { display: block; margin-top: 6px; font-size: 56px; letter-spacing: 3px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.board .acq { width: 380px; height: 380px; border-radius: 50%; border: 4px solid #ffcc55; background: radial-gradient(circle at 40% 35%, rgba(255,204,85,0.28), rgba(255,204,85,0.04) 70%); color: #ffcc55; font: inherit; font-weight: 900; font-size: 34px; letter-spacing: 10px; cursor: pointer; box-shadow: 0 0 90px -30px #ffcc55; transition: transform 0.08s; }
+.board .acq:active { transform: scale(0.95); }
+.board .acq:disabled { opacity: 0.15; cursor: default; }
+.board .gens { display: grid; grid-template-columns: repeat(3, 320px); gap: 20px; font-size: 22px; letter-spacing: 2px; color: var(--muted); }
+.board .gens div { border: 1px solid var(--line); border-radius: 8px; padding: 16px 22px; display: flex; justify-content: space-between; }
+.board .tip { font-size: 22px; letter-spacing: 3px; color: var(--muted); text-align: center; max-width: 1400px; }
+.sceneLayer { position: absolute; inset: 0; }
+.sceneLayer[hidden] { display: none; }
+
+.board .cpu { position: absolute; left: 40px; bottom: 40px; width: 300px; padding: 16px 20px; border: 1px solid rgba(30,120,30,0.6); border-radius: 8px; background: rgba(0,10,0,0.9); font-size: 20px; letter-spacing: 2px; color: #6fdc6f; text-align: left; }
+.board .cpu b { float: right; font-variant-numeric: tabular-nums; }
+.board .cpu i { display: block; margin-top: 10px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.board .cpu s { display: block; height: 100%; background: linear-gradient(90deg, #6fdc6f, #ffcc55, #ff4a2a); transform-origin: left; transition: transform 0.2s; }
+.board .cpu.hot { border-color: #ff4a2a; color: #ff6a3a; }
+
+:root { --accent: #7dffb0; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   duck_scenes.css — THE DUCKY COUNCIL and THE DUCK TRIBUNAL, staged.
+
+   Rules (same contract as duck_tribunal_art.js / duck_council_art.js):
+   · transform and opacity only — these scenes open while the income loop runs;
+   · no colour baked into the art — shapes stroke currentColor, fill via .pf;
+   · base state is VISIBLE; a keyframe animates FROM hidden. Suppress the
+     animation (reduced motion, safe mode, accessibility mode) and the scene is
+     still all there.
+   Everything is scoped under .dks so nothing leaks into the rest of game.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── THE 16:9 CANVAS ─────────────────────────────────────────────────────
+   Every scene is laid out on a fixed 1920×1080 canvas and scaled to fit the
+   screen (D.fit). Wider or taller screens — 3440×1440 included — get dark
+   edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
+   the sizes below mean the same thing on every monitor. */
+.dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
+
+.dks {
+    --r: 26px;
+    --vh: 10.8px;
+    --vw: 19.2px;
+    --dks-ink: #e8c547;
+    --dks-dim: rgba(232, 197, 71, 0.45);
+    --dks-bg: #07060a;
+    --dks-paper: #12100a;
+    --seat-h: 340px;                                   /* on the 1080 canvas: the bench is the scene */
+    --seat-w: calc(var(--seat-h) * 112 / 150);
+    --duck: calc(var(--seat-h) * 0.47);
+    --duck-bottom: calc(var(--seat-h) * 42 / 150);
+    --approve: #7fdc8a;
+    --reject: #ff6a55;
+    --abstain: #8a90a6;
+
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: 34px 60px 30px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--dks-ink);
+    background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(255, 220, 90, 0.06), transparent 70%), var(--dks-bg);
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    overflow: hidden;
+    overflow: clip;                                    /* nothing inside may scroll the scene */
+    user-select: none;
+}
+.dks *, .dks *::before, .dks *::after { box-sizing: border-box; }
+.dks svg { stroke: currentColor; overflow: hidden; }
+.dks .pf { fill: currentColor; fill-opacity: 0.08; }
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+.dks-eyebrow { font-size: calc(0.56 * var(--r)); letter-spacing: 6px; opacity: 0.55; }
+.dks-title   { font-size: clamp(calc(0.95 * var(--r)), calc(2.4 * var(--vh)), calc(1.25 * var(--r))); letter-spacing: 6px; font-weight: 900; margin: 4px 0 2px; }
+.dks-sub     { font-size: calc(0.58 * var(--r)); letter-spacing: 3px; opacity: 0.6; }
+.dks-on-in .dks-title { animation: dks-stamp-title 0.55s cubic-bezier(.2,1.6,.4,1) both; }
+
+/* ── stage ──────────────────────────────────────────────────────────────── */
+.dks-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1700px;
+    margin-top: clamp(4px, calc(1 * var(--vh)), 10px);
+    padding-top: clamp(calc(4.6 * var(--r)), calc(13 * var(--vh)), calc(7.6 * var(--r)));          /* headroom for speech bubbles */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dks-backdrop {
+    position: absolute;
+    inset: 0 0 calc(var(--seat-h) * 0.25) 0;
+    pointer-events: none;
+    opacity: 0.85;
+}
+.dks-backdrop svg { width: 100%; height: 100%; }
+.dks-on-in .dks-backdrop { animation: dks-lights 1.1s ease-out both; }
+.dks-shake { animation: dks-shake 0.36s linear; }
+
+.dks-row { position: relative; display: flex; justify-content: center; z-index: 1; }
+
+.dks-seat {
+    position: relative;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    flex: 0 0 auto;
+    margin: 0;                                         /* stalls abut into one bench */
+    transition: opacity 0.5s;
+}
+.dks-furn, .dks-furn svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dks-duck {
+    position: absolute;
+    left: 50%;
+    bottom: var(--duck-bottom);
+    width: var(--duck);
+    height: var(--duck);
+    margin-left: calc(var(--duck) / -2);
+    transform-origin: 50% 100%;
+    transition: transform 0.5s cubic-bezier(.3,1.3,.5,1);
+    z-index: 2;
+}
+.dks-face, .dks-bob { width: 100%; height: 100%; transform-origin: 50% 100%; }
+.dks-face { transition: transform 0.32s ease-in-out; }
+.dks-bob svg { width: 100%; height: 100%; display: block; }
+.dks-fallback { font-size: calc(var(--duck) * 0.8); line-height: 1; }
+
+/* the cast's parts */
+.dks .dk-body.pf      { fill-opacity: 0.16; }
+.dks .dk-wing.pf      { fill-opacity: 0.26; }
+.dks .dk-eye.pf       { fill-opacity: 1; stroke: none; }
+.dks .dk-sash.pf      { fill-opacity: 0.55; }
+.dks .dk-medal.pf     { fill-opacity: 0.9; }
+.dks .dk-mark, .dks .dk-seam, .dks .dk-valve { stroke-width: 1.8; opacity: 0.8; }
+.dks .dk-shine        { stroke-width: 2; opacity: 0.7; }
+.dks .dk-billroot, .dks .dk-billline, .dks .dk-specs, .dks .dk-chain { stroke-width: 2; }
+
+/* blink — every member but the one who never moves (seat 4) and Rubber III, whose socket is empty */
+.dks .dk-eye { transform-box: fill-box; transform-origin: center; animation: dks-blink 5.2s infinite; }
+.dks .dks-seat-1 .dk-eye { animation-delay: -1.7s; animation-duration: 6.1s; }
+.dks .dks-seat-3 .dk-eye { animation-delay: -3.3s; animation-duration: 4.7s; }
+.dks .dks-seat-4 .dk-eye { animation: none; }
+
+/* facing: the art faces right; .dks-look-left turns a member toward a speaker on its left */
+.dks-look-left .dks-face { transform: scaleX(-1); }
+
+/* talking: the body bobs and the bill works. The Abstainer has no bill line, so he cannot. */
+.dks-talking .dks-bob { animation: dks-talk 0.26s ease-in-out infinite alternate; }
+.dks-talking .dk-billline { transform-box: fill-box; transform-origin: left center; animation: dks-yap 0.15s steps(2) infinite; }
+.dks-seat-4.dks-talking .dks-bob { animation: none; }               /* no mouth, no motion */
+.dks-gesture .dks-bob { animation: dks-hop 0.5s cubic-bezier(.3,1.6,.5,1); }
+
+/* ── speech bubbles — anchored above each seat, no measuring ─────────────── */
+.dks-anchor {
+    position: absolute;
+    bottom: calc(100% - var(--seat-h) * 0.04);
+    left: 50%;
+    width: min(calc(21 * var(--r)), calc(78 * var(--vw)));
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 5;
+    --tail: 50%;
+}
+.dks-seat-0 .dks-anchor { left: 0; transform: none; --tail: calc(var(--seat-w) / 2); }
+.dks-seat-4 .dks-anchor { left: auto; right: 0; transform: none; --tail: calc(100% - var(--seat-w) / 2); }
+.dks-bubble {
+    position: relative;
+    display: none;
+    padding: 7px 12px 8px;
+    background: rgba(10, 9, 14, 0.94);
+    border: 1px solid currentColor;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.6);
+    transform-origin: var(--tail) 100%;
+}
+.dks-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: var(--tail);
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    background: inherit;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(45deg);
+}
+.dks-bubble.dks-on { display: block; animation: dks-pop 0.22s cubic-bezier(.2,1.5,.5,1) both; }
+.dks-who { font-size: calc(0.5 * var(--r)); letter-spacing: 3px; opacity: 0.6; margin-bottom: 3px; }
+.dks-say { font-size: clamp(calc(0.66 * var(--r)), calc(1.6 * var(--vh)), calc(0.78 * var(--r))); line-height: 1.5; color: #e9e6dc; min-height: 1.2em; }
+.dks-bubble.dks-action .dks-say { font-style: italic; color: #aab0c4; }
+.dks-bubble.dks-murmur { padding: 3px 10px; }
+.dks-bubble.dks-murmur .dks-who { display: none; }
+
+.dks-caption {
+    min-height: 1.6em;
+    margin-top: 8px;
+    font-size: calc(0.62 * var(--r));
+    letter-spacing: 3px;
+    opacity: 0.75;
+}
+
+/* ── props: placards and the gavel ──────────────────────────────────────── */
+.dks-prop {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: calc(var(--duck-bottom) + var(--duck) * 0.92);
+    display: flex;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+}
+.dks-placard {
+    padding: 3px 7px;
+    font-size: clamp(calc(0.46 * var(--r)), calc(1.15 * var(--vh)), calc(0.56 * var(--r)));
+    letter-spacing: 2px;
+    font-weight: 900;
+    color: #0b0a0c;
+    background: var(--c, var(--abstain));
+    border-radius: 3px;
+    box-shadow: 0 0 14px var(--c, transparent);
+    animation: dks-placard 0.42s cubic-bezier(.2,1.7,.5,1) both;
+}
+.dks-placard.approve { --c: var(--approve); }
+.dks-placard.reject  { --c: var(--reject); }
+.dks-placard.abstain { --c: var(--abstain); }
+.dks-placard.upside  { transform: rotate(180deg); }            /* the Council is not sure what Rubber III is */
+.dks-placard.upside  { animation-name: dks-placard-upside; }
+.dks-placard.never   { background: rgba(10, 9, 14, 0.85); color: var(--abstain); box-shadow: none; border: 1px dashed var(--abstain); }
+
+.dks-gavel {
+    position: absolute;
+    right: -4%;
+    bottom: calc(var(--seat-h) * 0.27);
+    width: calc(var(--seat-h) * 0.42);
+    height: calc(var(--seat-h) * 0.42);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;                                        /* only there while it strikes */
+}
+.dks-gavel svg { width: 100%; height: 100%; }
+.dks-gavel .gv-head { transform-origin: 82% 82%; transform-box: view-box; }
+.dks-gavel.dks-strike { animation: dks-gavel-show 1.3s ease-out both; }
+.dks-gavel.dks-strike .gv-head { animation: dks-gavel 0.42s cubic-bezier(.5,0,.6,1.4) both; }
+.dks-gavel .gv-ring { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.dks-gavel.dks-strike .gv-ring { animation: dks-ring 0.6s 0.16s ease-out both; }
+
+/* ── entrance (CONVENE) ─────────────────────────────────────────────────── */
+.dks-pre .dks-duck { opacity: 0; }
+.dks-convene .dks-duck { animation: dks-waddle 0.9s ease-out both; }
+.dks-convene .dks-seat-0 .dks-duck { animation-delay: 0.68s; }               /* the chair arrives last */
+.dks-convene .dks-seat-1 .dks-duck { animation-delay: 0.12s; }
+.dks-convene .dks-seat-2 .dks-duck { animation-name: dks-glide; animation-delay: 0.3s; animation-timing-function: linear; } /* a toy does not waddle */
+.dks-convene .dks-seat-3 .dks-duck { animation-name: dks-waddle-r; animation-delay: 0.22s; }
+.dks-convene .dks-seat-4 .dks-duck { animation: dks-fade 1.2s 0.5s ease-in both; }  /* he does not walk in; he is simply there */
+
+/* ── rule ───────────────────────────────────────────────────────────────── */
+.dks-rule .dks-seat { opacity: 0.42; }
+.dks-rule .dks-seat.dks-ruling { opacity: 1; }
+.dks-ruling .dks-duck { transform: translateY(-5%) scale(1.09); }
+.dks .tb-bloom, .dks .dc-bloom { opacity: 0; transition: opacity 0.6s; }
+.dks-ruling .tb-bloom, .dks-ruling .dc-bloom, .dks-talking .tb-bloom, .dks-talking .dc-bloom { opacity: 1; }
+
+/* ── panels ─────────────────────────────────────────────────────────────── */
+.dks-lower {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+    max-width: calc(52 * var(--r));
+    margin-top: clamp(6px, calc(1.4 * var(--vh)), 14px);
+    flex-wrap: wrap;
+}
+.dks-panel {
+    flex: 1 1 calc(18 * var(--r));
+    max-width: calc(25 * var(--r));
+    padding: 10px 14px;
+    border: 1px solid var(--dks-dim);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    text-align: left;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+}
+.dks-panel.dks-on { opacity: 1; transform: none; }
+.dks-panel-h { font-size: calc(0.5 * var(--r)); letter-spacing: 4px; opacity: 0.6; margin-bottom: 8px; }
+
+.dks-actions { display: flex; gap: 10px; justify-content: center; margin-top: clamp(8px, calc(1.6 * var(--vh)), 16px); min-height: calc(2.4 * var(--r)); }
+.dks-btn {
+    font: inherit;
+    font-size: calc(0.66 * var(--r));
+    letter-spacing: 3px;
+    font-weight: 900;
+    padding: 9px 20px;
+    color: var(--dks-ink);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.15s, background 0.15s;
+}
+.dks-btn:hover, .dks-btn:focus-visible { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); outline: none; }
+.dks-btn[hidden] { display: none; }
+.dks-btn.dks-alt { color: #bb88dd; }
+.dks-btn-note { font-size: calc(0.48 * var(--r)); letter-spacing: 1px; opacity: 0.5; margin-top: 4px; }
+.dks-skip {
+    position: absolute;
+    top: 10px; right: 14px;
+    font: inherit;
+    font-size: calc(0.5 * var(--r));
+    letter-spacing: 3px;
+    color: inherit;
+    background: none;
+    border: 1px solid var(--dks-dim);
+    border-radius: 4px;
+    padding: 4px 9px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.dks-skip:hover { opacity: 1; }
+.dks-skip[hidden] { display: none; }
+.dks-hint { position: absolute; bottom: 6px; left: 0; right: 0; font-size: calc(0.46 * var(--r)); letter-spacing: 2px; opacity: 0.35; pointer-events: none; }
+.dks-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ═══ THE DUCKY COUNCIL ════════════════════════════════════════════════════ */
+.dks-council { --dks-ink: #e8c547; --dks-dim: rgba(232, 197, 71, 0.35); }
+
+/* the ledger */
+.dks-ledger-row { display: grid; grid-template-columns: calc(6.6 * var(--r)) 1fr auto; align-items: center; gap: 8px; font-size: calc(0.6 * var(--r)); letter-spacing: 1px; min-height: calc(1.45 * var(--r)); opacity: 0; transition: opacity 0.3s; }
+.dks-ledger-row.dks-on { opacity: 1; }
+.dks-ledger-row .lv { color: #d8d3c0; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dks-pips { display: flex; gap: 3px; }
+.dks-pip { width: 9px; height: 9px; border: 1px solid currentColor; border-radius: 2px; opacity: 0.35; }
+.dks-pip.neg { color: var(--reject); border-radius: 50%; }
+.dks-pip.lit { opacity: 1; background: currentColor; animation: dks-pip 0.28s cubic-bezier(.2,1.8,.5,1) both; }
+
+/* the grade track */
+.dks-track { position: relative; margin-top: 10px; opacity: 0; transition: opacity 0.4s; }
+.dks-track.dks-on { opacity: 1; }
+.dks-bands { display: flex; height: 16px; border-radius: 3px; overflow: hidden; }
+.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: calc(0.42 * var(--r)); line-height: 16px; letter-spacing: 1px; color: #0b0a0c; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
+.dks-band.dks-hit { opacity: 1; }
+.dks-rail { position: absolute; left: 0; top: -5px; width: 100%; height: 26px; transform: translateX(0%); transition: transform 1.1s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
+.dks-rail::before { content: ''; position: absolute; left: -1px; top: 0; width: 2px; height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
+.dks-score { margin-top: 6px; font-size: calc(0.56 * var(--r)); letter-spacing: 3px; opacity: 0.75; }
+
+/* the medal and ruling */
+.dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
+.dks-medal svg { width: 100%; height: 100%; }
+.dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
+.dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
+.dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
+.dks-lines { margin-top: 8px; font-size: calc(0.6 * var(--r)); line-height: 1.6; color: #c8c4b4; }
+.dks-lines div { opacity: 0; transition: opacity 0.5s; }
+.dks-lines div.dks-on { opacity: 1; }
+
+/* grade moods */
+.dks-sigil { position: absolute; left: 50%; top: 4%; width: calc(var(--seat-h) * 0.95); height: calc(var(--seat-h) * 0.95); margin-left: calc(var(--seat-h) * -0.475); color: #cceeff; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 1.2s; }
+.dks-sigil svg { width: 100%; height: 100%; animation: dks-spin 18s linear infinite; }
+.dks-grade-platinum .dks-sigil { opacity: 0.9; }
+.dks-grade-platinum .dks-backdrop, .dks-grade-gold .dks-backdrop { animation: dks-glow 2.4s ease-in-out infinite alternate; }
+.dks-grade-tarnished .dks-backdrop { opacity: 0.4; transition: opacity 1s; }
+.dks-grade-quacked { --dks-ink: #ff7a55; }
+.dks-grade-quacked .dks-backdrop { opacity: 0.3; transition: opacity 1s; }
+.dks-feather { position: absolute; top: 0; left: 62%; width: calc(1.4 * var(--r)); height: calc(2.4 * var(--r)); color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
+.dks-grade-quacked .dks-feather { animation: dks-feather 6.5s 0.4s ease-in-out both; }
+
+/* ═══ THE DUCK TRIBUNAL ════════════════════════════════════════════════════ */
+.dks-tribunal { --dks-ink: #8f9fd6; --dks-dim: rgba(143, 159, 214, 0.32); --seat-w: calc(var(--seat-h) * 116 / 148); --duck: calc(var(--seat-h) * 70 / 148); --duck-bottom: calc(var(--seat-h) * 44 / 148);
+    background: radial-gradient(ellipse 60% 55% at 50% 22%, rgba(140, 160, 255, 0.07), transparent 70%), #05050a; }
+.dks-tribunal[data-register="sentencers"]   { --dks-ink: #d9788a; --dks-dim: rgba(217, 120, 138, 0.32); }
+.dks-tribunal[data-register="bureaucrats"]  { --dks-ink: #8fb8b0; --dks-dim: rgba(143, 184, 176, 0.32); }
+.dks-tribunal[data-register="philosophers"] { --dks-ink: #d8c86a; --dks-dim: rgba(216, 200, 106, 0.32); }
+.dks .tb-recess.pf  { fill-opacity: 0.05; }
+.dks .tb-benchtop.pf, .dks .tb-benchface.pf { fill-opacity: 0.14; }
+.dks .tb-shadow.pf  { fill-opacity: 0.25; stroke: none; }
+.dks .tb-cone.pf, .dks .dc-cone.pf { fill-opacity: 0.06; stroke: none; }
+.dks .tb-bloom.pf, .dks .dc-bloom.pf { fill-opacity: 0.14; stroke: none; }
+.dks .p-redact.pf { fill-opacity: 0.85; stroke: none; }
+.dks .p-scan, .dks .tb-moulding, .dks .dc-moulding { stroke-width: 1; opacity: 0.45; }
+.dks .tb-seal, .dks .dc-seal, .dks .dc-dome { opacity: 0.35; stroke-width: 1.4; }
+.dks .tb-cord, .dks .dc-ribbon { opacity: 0.4; stroke-width: 1.4; }
+
+/* the silent one is already seated when the lights come up, and never moves */
+.dks-tribunal.dks-pre .dks-seat-4 .dks-duck { opacity: 1; }
+.dks-tribunal.dks-convene .dks-duck { animation: dks-rise 0.6s cubic-bezier(.2,1.4,.5,1) both; }
+.dks-tribunal.dks-convene .dks-seat-0 .dks-duck { animation-delay: 0.27s; }
+.dks-tribunal.dks-convene .dks-seat-1 .dks-duck { animation-delay: 0.09s; }
+.dks-tribunal.dks-convene .dks-seat-2 .dks-duck { animation-delay: 0s; }
+.dks-tribunal.dks-convene .dks-seat-3 .dks-duck { animation-delay: 0.18s; animation-name: dks-rise; }
+.dks-tribunal.dks-convene .dks-seat-4 .dks-duck { animation: none; }
+
+/* the bench confers — everyone leans to the centre, the silent one does not */
+.dks-confer .dks-seat-0 .dks-duck { transform: translateX(22%) rotate(4deg); }
+.dks-confer .dks-seat-1 .dks-duck { transform: translateX(12%) rotate(3deg); }
+.dks-confer .dks-seat-3 .dks-duck { transform: translateX(-14%) rotate(-3deg); }
+.dks-confer-dots { display: inline-flex; gap: 6px; margin-left: 10px; vertical-align: middle; }
+.dks-confer-dots i { width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; transition: background 0.3s; }
+.dks-confer-dots i.dks-on { background: currentColor; }
+
+/* the dock and the docket */
+.dks-dock { flex: 0 0 auto; width: clamp(calc(7 * var(--r)), calc(15 * var(--vh)), calc(9 * var(--r))); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
+.dks-dock svg { width: 100%; height: auto; }
+.dks .tb-dock-floor.pf { fill-opacity: 0.12; stroke: none; }
+.dks .tb-dock-rail, .dks .tb-dock-post { stroke-width: 2; }
+.dks-dock-label { font-size: calc(0.42 * var(--r)); letter-spacing: 1px; line-height: 1.5; opacity: 0.6; margin-top: 4px; max-width: calc(9 * var(--r)); }
+
+.dks-docket {
+    position: relative;
+    flex: 1 1 calc(20 * var(--r));
+    max-width: calc(28 * var(--r));
+    padding: 12px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+    border: 1px solid var(--dks-dim);
+    border-radius: 4px;
+    text-align: left;
+    font-size: calc(0.6 * var(--r));
+    letter-spacing: 1px;
+    line-height: 1.7;
+    color: #c9cbd6;
+    opacity: 0;
+    transform: translateY(14px) rotate(-0.6deg);
+    transition: opacity 0.45s, transform 0.45s cubic-bezier(.2,1.3,.5,1);
+}
+.dks-docket.dks-on { opacity: 1; transform: rotate(-0.6deg); }
+.dks-docket-h { display: flex; justify-content: space-between; font-size: calc(0.48 * var(--r)); letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
+.dks-docket .k { color: var(--dks-ink); opacity: 0.7; letter-spacing: 2px; }
+.dks-docket .ev { color: #9da3b8; font-style: italic; min-height: 1.7em; }
+.dks-stampslot { display: block; min-height: calc(2.1 * var(--r)); margin: 4px 0 8px; }
+.dks-stamp {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 2px solid var(--stamp, var(--dks-ink));
+    color: var(--stamp, var(--dks-ink));
+    border-radius: 3px;
+    font-size: calc(0.9 * var(--r));
+    letter-spacing: 3px;
+    font-weight: 900;
+    transform: rotate(-4deg);
+    animation: dks-stamp 0.4s cubic-bezier(.2,1.6,.4,1) both;
+}
+.dks-stamp.sentence { --stamp: #ff6a55; transform: rotate(3deg); animation-name: dks-stamp-r; }
+.dks-sentence { opacity: 0; transition: opacity 0.4s; }
+.dks-sentence.dks-on { opacity: 1; }
+.dks-sentence .fx { color: #e9e6dc; font-weight: 700; }
+
+.dks-flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.35), transparent 60%); opacity: 0; pointer-events: none; z-index: 8; }
+.dks-flash.dks-on { animation: dks-flash 0.5s ease-out both; }
+
+/* gathering — the 30-second warning */
+.dks-gather { position: relative; display: flex; align-items: flex-end; gap: 4px; height: 26px; color: #e8c547; overflow: hidden; }
+.dks-gather svg { width: 22px; height: 22px; stroke: currentColor; animation: dks-gather 3.2s linear infinite; }
+.dks-gather svg:nth-child(2) { animation-delay: -0.6s; }
+.dks-gather svg:nth-child(3) { animation-delay: -1.2s; }
+.dks-gather svg:nth-child(4) { animation-delay: -1.8s; }
+.dks-gather svg:nth-child(5) { animation-delay: -2.4s; }
+.dks-gather .pf { fill: currentColor; fill-opacity: 0.2; }
+
+/* ── keyframes ──────────────────────────────────────────────────────────── */
+@keyframes dks-fade        { from { opacity: 0; } }
+@keyframes dks-lights      { 0% { opacity: 0; } 30% { opacity: 0.9; } 42% { opacity: 0.25; } 60% { opacity: 0.85; } }
+@keyframes dks-stamp-title { from { opacity: 0; transform: scale(1.8); } }
+@keyframes dks-shake       { 20% { transform: translate(-3px, 1px); } 40% { transform: translate(3px, -1px); } 60% { transform: translate(-2px, 1px); } 80% { transform: translate(1px, 0); } }
+@keyframes dks-blink       { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.12); } }
+@keyframes dks-talk        { from { transform: translateY(0) rotate(0); } to { transform: translateY(-3%) rotate(-1.6deg); } }
+@keyframes dks-yap         { from { transform: translateY(0); } to { transform: translateY(1.8px) rotate(4deg); } }
+@keyframes dks-hop         { 40% { transform: translateY(-12%); } }
+@keyframes dks-pop         { from { opacity: 0; transform: scale(0.6) translateY(6px); } }
+@keyframes dks-placard     { from { opacity: 0; transform: translateY(60%) rotate(-8deg); } }
+@keyframes dks-placard-upside { from { opacity: 0; transform: translateY(60%) rotate(160deg); } to { transform: rotate(180deg); } }
+@keyframes dks-gavel       { 0% { transform: rotate(-42deg); } 55% { transform: rotate(8deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0); } }
+@keyframes dks-gavel-show  { 0% { opacity: 0; } 12%, 70% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes dks-ring        { 0% { opacity: 0.9; transform: scale(0.3); } 100% { opacity: 0; transform: scale(1.9); } }
+@keyframes dks-waddle      { 0% { opacity: 0; transform: translateX(-60%) rotate(-7deg); } 20% { opacity: 1; transform: translateX(-46%) rotate(7deg); } 40% { transform: translateX(-31%) rotate(-7deg); } 60% { transform: translateX(-17%) rotate(6deg); } 80% { transform: translateX(-5%) rotate(-4deg); } 100% { transform: none; } }
+@keyframes dks-waddle-r    { 0% { opacity: 0; transform: translateX(60%) rotate(7deg); } 20% { opacity: 1; transform: translateX(46%) rotate(-7deg); } 40% { transform: translateX(31%) rotate(7deg); } 60% { transform: translateX(17%) rotate(-6deg); } 80% { transform: translateX(5%) rotate(4deg); } 100% { transform: none; } }
+@keyframes dks-glide       { from { opacity: 0; transform: translateX(70%); } 30% { opacity: 1; } }
+@keyframes dks-rise        { from { opacity: 0; transform: translateY(26%); } }
+@keyframes dks-pip         { from { transform: scale(0); } 60% { transform: scale(1.35); } }
+@keyframes dks-medal       { from { opacity: 0; transform: scale(2) rotate(-35deg); } }
+@keyframes dks-spin        { to { transform: rotate(360deg); } }
+@keyframes dks-glow        { from { opacity: 0.7; } to { opacity: 1; } }
+@keyframes dks-feather     { 0% { opacity: 0; transform: translate(0, -10%) rotate(-20deg); } 10% { opacity: 0.9; } 30% { transform: translate(-30px, 60%) rotate(25deg); } 55% { transform: translate(20px, 140%) rotate(-25deg); } 80% { transform: translate(-15px, 220%) rotate(18deg); opacity: 0.8; } 100% { opacity: 0; transform: translate(5px, 300%) rotate(-8deg); } }
+@keyframes dks-stamp       { from { opacity: 0; transform: scale(2.4) rotate(-16deg); } to { transform: rotate(-4deg); } }
+@keyframes dks-stamp-r     { from { opacity: 0; transform: scale(2.4) rotate(18deg); } to { transform: rotate(3deg); } }
+@keyframes dks-flash       { from { opacity: 1; } }
+@keyframes dks-gather      { from { transform: translateX(-40px); } to { transform: translateX(240px); } }
+
+/* ── reduced motion, safe mode, accessibility mode: keep fades, drop movement ── */
+@media (prefers-reduced-motion: reduce) {
+    .dks *, .dks *::before, .dks *::after { animation: none !important; transition-property: opacity !important; }
+}
+.dks.dks-reduced *, .dks.dks-reduced *::before, .dks.dks-reduced *::after { animation: none !important; transition-property: opacity !important; }
+.dks.dks-reduced .dks-convene .dks-duck, .dks.dks-reduced.dks-convene .dks-duck { opacity: 1; }
+
+</style>
+<div class="viewer">
+  <div class="ctl">
+    <h1>FAKE CRASH</h1>
+    <div class="grp"><label for="ms">Milestone</label><select id="ms"><option>13333</option><option>66666</option><option>123456</option></select>
+      <button id="trigger" type="button">⚡ Crash now</button><button id="replay" type="button">↺ Reset board</button></div>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+      <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
+    <span class="out" id="out" aria-live="polite"></span>
+    <div class="note">The stop code is TOO_MANY_CLICKS, so clicking during the crash is noticed, and enough clicks end it early. The reveal pays +50% energy.</div>
+  </div>
+  <div class="stagehost" id="host">
+    <div class="gate"><h2>FAKE CRASH</h2><p>At 13,333, 66,666 and 123,456 clicks the simulation crashes. Or seems to. Click CLICK to get there.</p>
+      <button id="go" type="button">▶ OPEN THE BOARD</button></div>
+  </div>
+</div>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE DUCK CAST — FIVE MEMBERS, HAND-AUTHORED, ONE SET SERVING BOTH PANELS.
+
+   Owner, 2026-08-31: *"I don't want the art that is used for the duck rain to be
+   used for the tribunal/council."* Brief: `ART_NEVER_MADE.md` §25.
+
+   ⭐⭐ THIS REINSTATES AN INSTRUCTION THAT WAS ARGUED DOWN, AND THE ARGUMENT WAS
+   SOUND AT THE TIME. `DUCK_TRIBUNAL.md` §9 asked for *"a very detailed and
+   animated SVG"* of five judges. §10 measured the screen, found the owner's
+   rasters ALREADY on the bench, and redirected the SVG to the courtroom on the
+   grounds that a third depiction of the same five ducks would have been the bug
+   the complaint was about, drawn better. That reasoning rested on one premise —
+   **the rasters were the cast** — and the owner has now removed it. ▶ The plan was
+   right; it was right for a reason that had not arrived yet.
+
+   ⛔⛔ THE HARD PART IS NOT THE WIRING, IT IS THAT A DUCK HAS NO STRAIGHT LINES.
+   This project has already shipped an unrecognisable one: `gen_ui_plates.js` has
+   `box · fill · line · poly · ring · plate · scan · arc` and **no curve primitive
+   at all**, so its duck came out as a hexagonal bag with a circle balanced on it —
+   the owner called it a motorcycle helmet on sight — and every suite in the build
+   passed while it was on screen. ▶ **A suite cannot see that a shape is
+   unrecognisable.** The only check that works is `tools/probe_cast.js`: render it,
+   screenshot it at the sizes it actually ships at, and LOOK.
+
+   ⭐ WHY VECTOR AND NOT A NEW RASTER SET. Three reasons, and the third decided it:
+     1. `currentColor` — the cast re-tints with the room under the per-chapter
+        palette. A raster cast would sit fixed inside furniture that moves.
+     2. ~1 KB against ~50 KB, five files against zero.
+     3. ⭐ **The R1 opaque-box hazard stops existing.** Both panels put a
+        `drop-shadow` on the member, which follows the ALPHA channel — with rasters
+        that meant measuring corner alpha before every swap, because an opaque one
+        grows a glowing square. A vector has no corners to measure.
+
+   ⭐ ONE CAST, FIVE INDIVIDUALS — the silhouette is SHARED and only the marks
+   differ. Five separately-drawn birds would read as five species; the same body
+   five times with different wear reads as a panel of people, which is what both
+   fictions need. ⚠ `SILHOUETTE` is therefore one literal shared constant below,
+   not five near-copies.
+
+   ⭐⭐ AND THE CHARACTERISATION SURVIVES THE WITHDRAWAL. The old casting joke was
+   carried by the damage ladder — `duck_rain1` factory-new for THE ABSTAINER
+   (*nothing has ever touched him*), `duck_rain5` for CHAIRMAN QUACK (*the most
+   worn thing on the bench presides*), `duck_rain6`'s shards for RUBBER III
+   (*"The Council is not sure what Rubber III is"*). That ladder is gone, so the
+   wear is drawn EXPLICITLY here as `marks[]` — 3 · 1 · seams · 1 · **0**. ▶ The
+   joke is not inherited from a filename any more; it is in the drawing.
+
+   ⛔ NO COLOUR IS BAKED IN. Every shape strokes `currentColor` and fills through
+   `.pf`, same contract as `ui_plates.js`, `duck_tribunal_art.js` and
+   `duck_council_art.js`. A hex here would survive a theme change nothing else did.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    /* ── THE BOX ─────────────────────────────────────────────────────────────
+       ⚠ SQUARE ON PURPOSE, and it is a wiring decision rather than a drawing one.
+       Both panels size the member into a SQUARE slot inherited from the 256×256
+       rasters — `.tribunal-duck-img` is `w = h = --tb-h × 0.4730`, `.duck-img` is
+       `height:46%` at 1:1. A non-square viewBox would letterbox inside that slot
+       and shrink the cast without a single rule changing. The duck is drawn to
+       fill 112×112 with its feet ON the bottom edge, because both panels
+       bottom-anchor the slot to the bench line. */
+    var VW = 112, VH = 112;
+
+    /* ══ THE SHARED SILHOUETTE — ONE CLOSED PATH ═════════════════════════════
+       ⛔⛔ ONE PATH, NOT FIVE PARTS, AND THAT IS THE WHOLE LESSON OF THE FIRST
+       DRAFT. Rendered 2026-09-01, the first version drew body · head · beak ·
+       wing · tail as five separate closed shapes, each filled and each stroked.
+       It read as **a circle balanced on a bag with a nozzle stuck to it** — which
+       is, precisely, the motorcycle-helmet failure again, only with better curves.
+       Three faults, all of them structural rather than a matter of taste:
+         1. two stroked outlines meeting at the neck draw a SEAM across it, so the
+            head reads as a separate object resting on the body;
+         2. the bill, entered as its own closed shape, has a vertical left edge
+            where it overlaps the head — a hard line no bird has;
+         3. two translucent fills overlapping doubled to a darker patch exactly
+            where the neck should be continuous.
+       ▶ A silhouette is ONE outline. Everything else is interior detail drawn ON
+       it. Fill once, stroke once, and the animal is a single creature.
+
+       ⚠ THE BILL IS PART OF THE OUTLINE (segments 8–10). It cannot be an add-on:
+       at the 44–68px these ship at, the wedge is the single feature that says
+       "duck" rather than "bird", so it has to be continuous with the head or it
+       reads as a beak-shaped sticker.
+
+       Three-quarter view: body to the viewer, head turned so the bill is in
+       profile. ⭐ That choice is the legibility argument. Head-on, a duck is a blob
+       with a triangle on it; in pure profile it reads perfectly but cannot look at
+       you — and BOTH panels' animations are about being looked at (the tribunal's
+       DELIBERATE turns the bench, the Council's VOTE names each member in turn).
+       Three-quarter is the only view that does both.
+
+       ⛔ THE BILL TIP IS DELIBERATELY BLUNT. Draft three met it at a sharp angle
+       and it read as a bird of prey; it now carries a two-unit CAP segment between
+       the lower and upper edges, and that cap is the whole difference between a
+       duck and a hawk at 44px. ⚠ Not decoration — a point is the one thing an
+       organic silhouette cannot have, and points are exactly what made the
+       generated version read as a polygon.
+
+       ⛔⛔ AND THE TAIL TAUGHT THE SAME LESSON THE HARD WAY. Draft three's tail
+       came to a spike, so draft four blunted the spike — and made it WORSE, a
+       broad flipper. Rendering both showed the tip was never the fault: the tail
+       sat at SHOULDER HEIGHT, level with the neck, so whatever shape it was given
+       it read as a second appendage growing out of the shoulder. ▶ **It was a
+       position error being fixed as a shape error.** The back now slopes down from
+       the nape and the tail is a small stub at the LOW rear, which is where a duck
+       keeps one. ⚠ Worth remembering the next time a shape is wrong: check where
+       it IS before redrawing what it is.
+       ⚠ It took two further passes after that to settle, and both were the same
+       correction again — smaller, and lower. A tail that projects 11 units at 66%
+       of the height reads as a tail; the same shape at 55% and 18 units long read
+       as a flipper. **Size and position, not silhouette.**
+
+       ⛔⛔ THE MARGIN IS NOT WHITESPACE, IT IS CHAIRMAN QUACK'S. He is drawn at
+       `scale: 1.06` about his own feet, so every unit of the drawing moves 6% further
+       from (56,111) — and at the first attempt the crown sat at y≈4 and the bill cap
+       at x=109, which put both OUTSIDE the box once he was grown. `qa_duck_cast`
+       caught it as `outOfBox 1`.
+       ⚠ The tempting fix is `overflow: visible` on the slot, and game.css bans it in
+       as many words twenty lines from where this cast is painted: art that escapes its
+       viewBox *"overlaps its neighbours instead of being clipped, which trades a sliced
+       edge for a collision."* Both panels tile their furniture EDGE TO EDGE — that is
+       what makes five stalls read as one bench — so an overhanging member lands in the
+       next member's stall. ▶ The drawing gives the room back instead: crown at y≥9,
+       bill cap at x≤107, which leaves 1.06 inside the box with the stroke on.
+
+       Clockwise from the tail tip. */
+    var SILHOUETTE =
+          'M12,74'                         /* tail tip — LOW and blunt, see above */
+        + ' C15,79 19,83 23,86'            /* the tail's underside into the flank */
+        + ' C16,92 13,101 20,107'          /* left flank, out and down */
+        + ' C27,111 41,111 58,111'         /* the waterline, left half */
+        + ' C76,111 90,110 95,102'         /* the waterline, right half */
+        + ' C101,93 99,78 90,70'           /* right flank rising */
+        + ' C84,65 76,62 70,58'            /* the shoulder, sloping in */
+        + ' C66,55 67,49 71,45'            /* ▶ THE CHIN NOTCH — concave */
+        + ' C74,42 76,41 79,41'            /* the root of the bill */
+        + ' C88,43 99,42 104,38'           /* ▶ lower bill, out to the tip */
+        + ' C107,36 107,31 104,29'         /* ▶ THE BLUNT CAP — see the note above */
+        + ' C97,24 89,21 79,22'            /* ▶ upper bill, back to the root */
+        + ' C85,17 80,12 70,10'            /* the brow above the bill */
+        + ' C56,9 41,15 37,25'             /* over the crown */
+        + ' C33,32 35,42 40,47'            /* the back of the head */
+        + ' C43,50 42,54 38,57'            /* ▶ THE NAPE NOTCH — concave */
+        + ' C33,62 27,68 23,74'            /* ▶ THE BACK, SLOPING DOWN to the tail */
+        + ' C19,73 15,73 12,74 Z';         /* the tail's upper edge, closing */
+
+    /* ── INTERIOR DETAIL ─────────────────────────────────────────────────────
+       Drawn ON the silhouette, never through it. ⚠ All of it is OPEN strokes: a
+       closed interior shape is what made the first draft's wing read as a fish
+       lying on the belly. */
+
+    /* Where the bill leaves the head. One short curve does what the old vertical
+       seam did, without asserting an edge that is not there. */
+    var BILL_ROOT = 'M79,22 C75,28 75,35 78,41';
+    /* The mouth. ⭐ THE ABSTAINER DOES NOT GET THIS ONE — see `mute`. */
+    var BILL_LINE = 'M84,32 C92,33 100,32 105,31';
+    /* ⛔ THE WING TOOK THREE DRAFTS AND EACH FAILED DIFFERENTLY — worth recording,
+       because all three were one mistake seen from different angles:
+         1. a closed lens in the middle of the belly — read as a FISH lying on it;
+         2. two horizontal crescents — read as a FROWN;
+         3. two swept arcs — read as SPEED LINES: scratches, not a limb.
+       ▶ A folded wing has THICKNESS and a ROOT. One crescent tucked under the
+       shoulder and angled down-back has both; a stroke of any shape, anywhere on
+       the flank, has neither. ⚠ It is also the only interior shape that is closed
+       and filled, which is what separates it from the marks.
+       ⚠ Both ends are ROUNDED rather than cusped, for the same reason the bill
+       tip is: draft four's two-cusp version read as a leaf lying on the body. */
+    var WING = 'M75,69 C63,70 48,79 39,92 C44,95 51,93 57,89'
+             + ' C66,83 73,76 77,71 C78,69 77,68 75,69 Z';
+
+    /* ── THE FIVE ────────────────────────────────────────────────────────────
+       ⚠ INDEX ORDER IS LOAD-BEARING AND IT IS SHARED BY BOTH PANELS. The Council's
+       `DUCKS` table is CHAIRMAN QUACK · DR. MALLARD · RUBBER III · SENATOR DUCK ·
+       THE ABSTAINER, and the tribunal's `JUDGES[4]` is the stall that never moves
+       in any beat. ⭐ Those already agree: index 4 is THE ABSTAINER, who has never
+       voted, so the silent stall and the abstention are one joke told twice.
+       `qa_duck_cast` asserts the two agree rather than trusting this comment.
+
+       ⛔ The tribunal REDACTS its nameplates and this cast is named. Not a
+       contradiction — the point: the same five bodies sit on both benches, and the
+       anonymity is theatre. Names live in game.js; only the index is here.
+
+       ⚠⚠ EVERY DISTINGUISHING FEATURE IS SILHOUETTE-ADJACENT, AND THAT IS A
+       MEASURED CONSTRAINT RATHER THAN A STYLE. `ART_NEVER_MADE` §7–12, learned on
+       the raster ladder these replace: *silhouette changes read; surface changes do
+       not.* `duck_rain2` was skipped from the Council for exactly this reason — a
+       hairline crack is invisible at 44px. So the five are told apart by things
+       that break an OUTLINE: the Chairman is bigger and carries a medal that
+       overhangs his chest, the Doctor's spectacles cut the head's edge, the
+       Senator wears a FILLED band, Rubber III has no wing at all, and the
+       Abstainer is the only one with nothing on him. ⛔ A tint or a shade here
+       would be invisible in the only panel that matters. */
+    var MEMBERS = [
+        {
+            key: 'chair', name: 'CHAIRMAN QUACK',
+            /* Presides, and wears it. Drawn 6% larger FROM THE FEET, which is the
+               cheapest way to say "presiding" without a second silhouette. */
+            scale: 1.06, regalia: 'chain',
+            /* The most worn thing on the bench presides. Three marks. */
+            marks: ['crown', 'flank', 'bill'],
+            eye: 'open'
+        },
+        {
+            key: 'mallard', name: 'DR. MALLARD',
+            scale: 1.0, regalia: 'specs',
+            marks: ['flank'],
+            eye: 'open'
+        },
+        {
+            key: 'rubber', name: 'RUBBER III',
+            /* ⛔⛔ THE ONE THAT MUST NOT READ AS A DUCK, and the game's own verdict
+               text says why: *"The Council is not sure what Rubber III is."* ⚠ He
+               keeps the SHARED silhouette — he is on the bench, and a different
+               outline would make him a different species rather than an uncertain
+               member. Every other detail says manufactured object instead: a mould
+               parting seam from crown to base, a squeaker valve underneath, a
+               crack, an eye socket with nothing in it — and ⭐ **no wing**, because
+               a moulded bath toy does not have one. That last is the only one of
+               his tells that survives 44px, which is why he has it. */
+            scale: 0.97, regalia: 'none',
+            marks: ['seam', 'valve', 'crack'],
+            eye: 'blank', nowing: true
+        },
+        {
+            key: 'senator', name: 'SENATOR DUCK',
+            scale: 1.0, regalia: 'sash',
+            marks: ['flank'],
+            eye: 'open'
+        },
+        {
+            key: 'abstainer', name: 'THE ABSTAINER',
+            /* ⭐⭐ PRISTINE, AND THE BLANK IS THE CHARACTERISATION. He has never
+               voted; nothing has ever touched him. No regalia, no marks, and — the
+               detail that costs nothing and says the most — **no bill line**,
+               because it has never opened. ⚠ `marks: []` is deliberate and
+               `qa_duck_cast` asserts it stays empty. The one thing he gets that
+               nobody else does is a factory shine on the crown, so he reads as NEW
+               rather than unfinished: a member with no detail at all looks like a
+               bug, and this is one stroke of the difference. */
+            scale: 1.0, regalia: 'none',
+            marks: [],
+            eye: 'open', shine: true, mute: true
+        }
+    ];
+
+    /* ── WEAR ────────────────────────────────────────────────────────────────
+       Open strokes that sit across an edge, never a wash. */
+    var MARKS = {
+        /* ⚠ THESE FOLLOW THE CROWN, AND THE CROWN MOVED. When the silhouette was
+           lowered 5 units to make room for CHAIRMAN QUACK's 1.06, this notch and THE
+           ABSTAINER's shine stayed where they were and rendered as a V and an arc
+           FLOATING ABOVE two bald heads. ▶ A mark that sits on an edge has to move
+           with the edge; nothing links them but this note and probe_cast. */
+        crown: '<path d="M48,18 L53,11 L59,18" class="dk-mark"/>',
+        flank: '<path d="M26,92 C32,88 38,89 42,93" class="dk-mark"/>',
+        bill:  '<path d="M95,29 L99,33" class="dk-mark"/>',
+        seam:  '<path d="M57,7 C51,32 50,56 55,80 C58,94 57,104 58,110" class="dk-seam"/>',
+        crack: '<path d="M32,86 L40,81 L44,90 L53,84" class="dk-mark"/>',
+        valve: '<circle cx="57" cy="100" r="5.4" class="dk-valve"/>'
+             + '<path d="M51.6,100 L62.4,100" class="dk-valve"/>'
+    };
+
+    /* ── REGALIA ─────────────────────────────────────────────────────────────
+       ⭐ What each one wears is the only place the two panels' fictions differ, and
+       it is drawn to survive BOTH readings: the tribunal charges you and the
+       Council grades you, so a chain of office reads as authority either way.
+       ⚠ It all sits on the CHEST, above `WING` — an earlier draft put the medal
+       through the wing and the cluster read as a fishing hook. */
+    var REGALIA = {
+        chain: '<path d="M42,62 C53,74 67,72 76,60" class="dk-chain"/>'
+             + '<circle cx="58" cy="73" r="5" class="dk-medal"/>'
+             + '<circle cx="58" cy="73" r="2.1" class="dk-medal pf"/>',
+        specs: '<circle cx="68" cy="24" r="8" class="dk-specs"/>'
+             + '<circle cx="50" cy="28" r="6.4" class="dk-specs"/>'
+             + '<path d="M59,26 C61,24 62,24 60,27" class="dk-specs"/>',
+        /* ⭐ FILLED, not two lines. Two thin diagonals read as a scribble at 44px;
+           a solid band still reads as a sash. ⚠ Over ONE shoulder and down to the
+           opposite flank — a horizontal band across the belly reads as a bandage,
+           and so did a WIDE diagonal one, which is why this one is narrow and
+           carries a pin at the shoulder. */
+        sash:  '<path d="M68,60 C64,75 54,87 37,94 L33,88 C48,81 56,70 59,58 Z" class="dk-sash pf"/>'
+             + '<path d="M68,60 C64,75 54,87 37,94 L33,88 C48,81 56,70 59,58 Z" class="dk-sash-line"/>'
+             + '<circle cx="64" cy="63" r="3.4" class="dk-medal"/>',
+        none:  ''
+    };
+
+    function open(cls, extra) {
+        return '<svg class="ui-plate duck-cast ' + cls + '" viewBox="0 0 ' + VW + ' ' + VH + '"'
+             + ' xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2.6"'
+             + ' stroke-linecap="round" stroke-linejoin="round" preserveAspectRatio="xMidYMax meet"'
+             + ' ' + extra + ' aria-hidden="true" focusable="false">';
+    }
+
+    /* ── ONE MEMBER ──────────────────────────────────────────────────────────
+       ⚠ THE CALLER PASSES ITS OWN SLOT CLASS, and that is a boundary rather than a
+       convenience. `tribunal-duck-img` and `duck-img` name a POSITION in each panel
+       — both names predate the art being a vector, and game.css, `qa_tribunal_art`,
+       `probe_tribunal` and `probe_council` all key off them. ▶ This module knows how
+       to draw a duck and nothing about where either panel puts one.
+       ⚠ THE SCALE GOES ON AN INNER <g>, NOT ON THE ROOT. Both panels animate the
+       member element's own `transform` — the tribunal's LEAN and RULE, the
+       Council's MUTTER — and a transform on the root would be overwritten by the
+       first beat that fires, silently un-sizing the Chairman mid-scene. Anchored
+       at the feet (`56,111`) so growing him does not lift him off the bench. */
+    function duck(i, slot) {
+        var m = MEMBERS[i] || MEMBERS[1];
+        var s = open('dcast-' + m.key + (slot ? ' ' + slot : ''), 'data-cast="' + i + '"');
+
+        s += m.scale !== 1
+            ? '<g transform="translate(56,111) scale(' + m.scale + ') translate(-56,-111)">'
+            : '<g>';
+
+        /* ⭐ THE ANIMAL: one fill, one stroke, one outline. */
+        s += '<path d="' + SILHOUETTE + '" class="dk-body pf"/>';
+        s += '<path d="' + SILHOUETTE + '" class="dk-body-line"/>';
+
+        /* Interior detail, back to front. */
+        s += '<path d="' + BILL_ROOT + '" class="dk-billroot"/>';
+        if (!m.mute) s += '<path d="' + BILL_LINE + '" class="dk-billline"/>';
+        if (!m.nowing) {
+            s += '<path d="' + WING + '" class="dk-wing pf"/>';
+            s += '<path d="' + WING + '" class="dk-wing-line"/>';
+        }
+
+        /* The eye. ⛔ RUBBER III's is an empty socket — a ring with nothing in it,
+           which is the cheapest way to draw "there is no one home" at 44px. */
+        s += m.eye === 'blank'
+            ? '<circle cx="68" cy="24" r="5" class="dk-socket"/>'
+            : '<circle cx="68" cy="24" r="4.6" class="dk-eye pf"/>';
+
+        /* Factory shine — THE ABSTAINER only. New, not unfinished. */
+        if (m.shine) s += '<path d="M41,25 C46,16 56,12 66,13" class="dk-shine"/>';
+
+        s += REGALIA[m.regalia] || '';
+        for (var k = 0; k < m.marks.length; k++) s += MARKS[m.marks[k]] || '';
+
+        return s + '</g></svg>';
+    }
+
+    window.DuckCast = {
+        duck: duck, MEMBERS: MEMBERS, VW: VW, VH: VH, COUNT: MEMBERS.length,
+        SILHOUETTE: SILHOUETTE,
+        /* The index that never moves and never votes. Exported so the tribunal's
+           SILENT stall and the Council's abstention can be asserted to agree
+           instead of drifting apart in two files. */
+        ABSTAINER: 4
+    };
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE DUCKY COUNCIL — THE CHAMBER, HAND-AUTHORED.
+
+   Owner, 2026-08-31: *"The duck tribunal, or the ducks, one of the most important
+   parts of the game, feel like they were something added on last minute instead of
+   truly thought out, in part due to the terrible layout and that there are no
+   animations or proper graphics."*
+
+   ⭐ MEASURED BEFORE ANYTHING WAS DRAWN — `tools/probe_council.js`, and the numbers
+   say the complaint plainly. On a 1920×1080 screen:
+
+     | | Tribunal | Council |
+     | staging          | full-bleed, board blacked out | **520×527 — 27% of the width** |
+     | the board behind | dimmed and blurred            | **fully lit**: HUD, nav, six live notifications |
+     | the five         | seated at a bench             | **five bordered tiles**, reading as a shop grid |
+     | animating at rest| three named beats             | ⛔ **zero elements, zero keyframes** |
+
+   ⛔⛔ THE REAL FAULT IS THAT IT NEVER TAKES THE SCREEN. The tribunal stages a
+   scene; the Council is a dialog box floating on a live dashboard. That — more
+   than the art — is what "added on last minute" actually looks like.
+
+   ⭐ DELIBERATELY NOT THE SAME ROOM. The tribunal is a straight bench: angular
+   stalls, square nameplates, names redacted. The Council is a **curved dais** with
+   rounded high-backed chairs and a rosette on each desk, because it is a different
+   body doing a different thing — it *grades* you, where the tribunal *charges* you.
+   `event_ducky_council` already draws a struck medal on a ribbon for exactly that
+   reason, and this is the same argument in furniture.
+
+   ⚠ IT ADDS, IT NEVER REPLACES. `#ducky-council-ducks` is INTERACTIVE — every
+   `.duck-card` carries an onclick into `RubberIII`, and `qa_glyph_wiring` asserts
+   the cards survive. The chamber is drawn BEHIND them; not one card is rebuilt.
+
+   ⛔ NO COLOUR IS BAKED IN. Every shape strokes `currentColor` and fills via `.pf`,
+   so `game.css`'s per-chapter palette reaches the chamber — same contract as
+   `ui_plates.js` and `duck_tribunal_art.js`.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    /* ── SEAT GEOMETRY ───────────────────────────────────────────────────────
+       ⚠ Shared with game.css exactly as the tribunal's are: the CSS box is
+       derived from one custom property, width = height × SW/SH, and the duck sits
+       at (SH - SEAT_TOP) / SH of the height. `qa_council_art` asserts the ratios
+       rather than trusting this comment. */
+    var SW = 112, SH = 150, SEAT_TOP = 108;
+
+    /* Five members, and the rosette on each desk says what they are. ⚠ These are
+       NOT redaction bars — the tribunal redacts because it is anonymous; the
+       Council is proud of itself and puts its rank on the desk. */
+    var SEATS = [
+        { pips: 3, chair: 'tall'  },   // CHAIRMAN QUACK — presides
+        { pips: 2, chair: 'mid'   },   // DR. MALLARD
+        { pips: 0, chair: 'low'   },   // RUBBER III — nobody is sure what he is
+        { pips: 2, chair: 'mid'   },   // SENATOR DUCK
+        { pips: 1, chair: 'mid'   }    // THE ABSTAINER
+    ];
+
+    function open(cls, vb, extra) {
+        return '<svg class="ui-plate ' + cls + '" viewBox="' + vb + '" xmlns="http://www.w3.org/2000/svg"'
+             + ' fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"'
+             + ' ' + extra + ' aria-hidden="true" focusable="false">';
+    }
+
+    /* ── ONE SEAT ────────────────────────────────────────────────────────────
+       A high-backed chair on a step, and the desk in front of it. The duck image
+       is NOT in here — it is a sibling, so the members can lean without the
+       furniture leaning with them. */
+    function seat(i) {
+        var s = SEATS[i] || SEATS[1];
+        var top = s.chair === 'tall' ? 6 : s.chair === 'low' ? 30 : 18;
+        var o = open('dc-seat', '0 0 ' + SW + ' ' + SH, 'preserveAspectRatio="xMidYMid meet"');
+
+        /* The alcove behind the member. */
+        o += '<rect x="10" y="' + (top + 4) + '" width="92" height="' + (100 - top) + '" class="dc-alcove pf"/>';
+
+        /* ⭐ THE CHAIR — round, and that roundness is the point: `gen_ui_plates.js`
+           has eight primitives and no curve, which is why the Council came out of it
+           as "seven keyrings" in the first place. A high back drawn as one cubic. */
+        o += '<path d="M22,106 L22,' + (top + 34) + ' C22,' + (top + 8) + ' 40,' + top
+           + ' 56,' + top + ' C72,' + top + ' 90,' + (top + 8) + ' 90,' + (top + 34) + ' L90,106" class="dc-back"/>';
+        o += '<path d="M31,106 L31,' + (top + 40) + ' C31,' + (top + 20) + ' 43,'
+           + (top + 12) + ' 56,' + (top + 12) + ' C69,' + (top + 12) + ' 81,' + (top + 20)
+           + ' 81,' + (top + 40) + ' L81,106" class="dc-back dc-back-in"/>';
+
+        /* The bloom behind whoever is speaking. Opacity only. */
+        o += '<ellipse cx="56" cy="64" rx="44" ry="50" class="dc-bloom pf"/>';
+
+        /* The desk. Full-bleed so the five tile into one continuous dais. */
+        o += '<rect x="0" y="' + SEAT_TOP + '" width="' + SW + '" height="7" class="dc-desktop pf"/>';
+        o += '<path d="M0,115 Q56,123 ' + SW + ',115 L' + SW + ',142 L0,142 Z" class="dc-deskface pf"/>';
+        o += '<path d="M0,121 Q56,129 ' + SW + ',121" class="dc-moulding"/>';
+
+        /* ⭐ THE ROSETTE, not a redaction. Rank, worn openly. RUBBER III has none —
+           the verdict text says the Council is not sure what he is. */
+        if (s.pips > 0) {
+            o += '<circle cx="56" cy="132" r="6.5" class="dc-rosette"/>';
+            for (var k = 0; k < s.pips; k++) {
+                o += '<circle cx="' + (56 + (k - (s.pips - 1) / 2) * 13) + '" cy="132" r="2.4" class="dc-pip pf"/>';
+            }
+        } else {
+            o += '<line x1="46" y1="132" x2="66" y2="132" class="dc-moulding"/>';
+        }
+        return o + '</svg>';
+    }
+
+    /* ── THE CHAMBER BEHIND THEM ─────────────────────────────────────────────
+       ⭐ Needs no alignment with anything, which is why the seal and the lamp live
+       here rather than in the seats: a circle centred behind a row is centred
+       whatever the row measures. */
+    function chamber() {
+        var s = open('dc-chamber', '0 0 640 300', 'preserveAspectRatio="xMidYMid slice"');
+        s += '<polygon points="320,-40 500,250 140,250" class="dc-cone pf"/>';
+        /* The dome: three arcs, the chamber seen from the floor. */
+        s += '<path d="M60,250 A260,260 0 0 1 580,250" class="dc-dome"/>';
+        s += '<path d="M120,250 A200,200 0 0 1 520,250" class="dc-dome dc-dome-in"/>';
+        /* The seal — a struck medal, the same read as `event_ducky_council`. */
+        s += '<circle cx="320" cy="96" r="46" class="dc-seal"/>';
+        s += '<circle cx="320" cy="96" r="33" class="dc-seal"/>';
+        s += '<polygon points="320,68 344,82 344,110 320,124 296,110 296,82" class="dc-seal-core"/>';
+        s += '<polyline points="300,40 320,96 340,40" class="dc-ribbon"/>';
+        return s + '</svg>';
+    }
+
+    window.CouncilArt = {
+        seat: seat, chamber: chamber,
+        SEATS: SEATS, SW: SW, SH: SH, SEAT_TOP: SEAT_TOP
+    };
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE DUCK TRIBUNAL — THE COURTROOM, HAND-AUTHORED.
+
+   Owner, 2026-08-29, with a screenshot of the bench: *"Why is this used for the
+   duck tribunal, it was supposed to be a very detailed and animated SVG."*
+   Plan: `DUCK_TRIBUNAL.md` §9. This is that plan built, with ONE deviation, and
+   the deviation is the whole reason to read this header.
+
+   ⛔⛔ §9 SAID "DRAW FIVE JUDGES". MEASURING THE SCREEN SAYS DO NOT.
+   `tools/probe_tribunal.js` opened the real overlay and found TWO depictions of
+   the same five ducks already stacked 203px apart: the generated `event_tribunal`
+   plate (11 primitives, 5 circles, 82px — the thing the owner was pointing at),
+   and `#tribunal-ducks`, which is five 65px RASTERS of the owner's own art. A
+   third bench would have been the bug the complaint was about, drawn better.
+
+   ⭐ SO THE SVG IS THE COURTROOM AND THE OWNER'S ART IS THE CAST. The screenshot
+   showed five ducks floating in a void with no bench, no chairs and no dock under
+   them. They now sit at one. That satisfies §9's actual ask — detailed, animated,
+   hand-authored, curves the generator cannot draw — without drawing a duck at all.
+
+   ⛔⛔ AND THAT LAST CLAUSE STOPPED BEING TRUE ON 2026-09-01. The owner withdrew
+   `duck_rain*` from both duck panels, which removed the premise this whole header
+   rests on: the rasters were the cast, and now there is no cast. `duck_cast_art.js`
+   draws the five, and §9's original instruction — *"a very detailed and animated
+   SVG"* of five judges — turned out to be right after all. ▶ **The reasoning below
+   is not wrong; an input changed.** `DUCK_TRIBUNAL.md` §11.
+   ▶ `event_tribunal` is unmapped from this overlay for the same reason. It stays
+   in `ui_plates.js`, where `qa_glyph_wiring` still requires the key.
+
+   ⭐ WHY THE BENCH IS A REPEATED SEGMENT AND NOT ONE WIDE PICTURE.
+   The row is five inline-blocks sized in `rem`, so its width moves with the root
+   font size. A single background image would have to be ALIGNED to five ducks
+   whose positions are not knowable from here — the kind of measurement that is
+   right once and silently wrong after any type change. Each duck instead carries
+   its own stall, and the stalls abut into a continuous bench at any size.
+   ⚠ `margin: 0` on `.tribunal-duck` is therefore load-bearing, not cosmetic: an
+   8px gap puts a hole in the bench between every judge.
+
+   ⭐ THE ANIMATION IS THE VERDICT, NOT AN IDLE. §9: *"A permanently-wiggling bench
+   is chrome; a bench that turns to look at you is the mechanic."* Three beats,
+   driven by classes `DuckTribunal` already knows when to set:
+       CONVENE     the bench assembles, staggered 90ms
+       DELIBERATE  slow turns, the only looping beat — 5.4s, deliberately dull
+       RULE        the deciding judge leans in; everyone else goes still and dims
+   ⛔ THE FIFTH STALL NEVER MOVES IN ANY BEAT. `THE SILENT ONE` is in the
+   `sentencers` dialogue and has no line, and its nameplate has nothing left on it
+   to redact. It is the only judge whose stillness is characterisation rather than
+   a missing animation. ⭐ Stall 4 also seats `DuckCast.ABSTAINER` — the member who
+   has never voted — so the silence and the abstention are one character. That
+   agreement lives in three files and `qa_duck_cast` asserts it.
+
+   ⚠ TRANSFORM AND OPACITY ONLY — see game.css. Not a style preference: anything
+   else composites on the main thread, and this panel opens while the income loop
+   is running.
+
+   ⛔ NO COLOUR IS BAKED IN HERE. Every shape strokes `currentColor` and fills via
+   `.pf`, exactly like `ui_plates.js`, so `game.css`'s per-chapter palette reaches
+   the courtroom. A hex here would survive a theme change that nothing else did.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    /* ── STALL GEOMETRY ──────────────────────────────────────────────────────
+       ⚠ THREE NUMBERS ARE SHARED WITH `game.css` AND NOTHING WILL TELL YOU WHEN
+       THEY DISAGREE. The stall's CSS box is derived from a single custom property
+       there — width = height × SW/SH, and the duck image is bottom-positioned at
+       (SH - BENCH_TOP) / SH of the height so its feet land on the bench surface.
+       `qa_tribunal_art` asserts the ratios rather than trusting this comment.
+
+       ⛔ SH WAS 168 UNTIL THE VERDICT BEAT WAS PHOTOGRAPHED. With the verdict list
+       rendered, the overlay measured **1074px of content in a 1080px viewport** —
+       six pixels from the clip that `MASTER_PLAN` §6.8 A2 is an open item about,
+       on a panel that had 372px of headroom before this courtroom was added. The
+       bench took the room, so the bench gives it back: the dead band above the
+       arch is gone and the under-shadow is halved. ▶ Anything added here from now
+       on is added to a panel with a measured budget — re-run `probe_tribunal`. */
+    var SW = 116, SH = 148, BENCH_TOP = 104;
+
+    /* Five judges, five different nameplates. ⚠ The bars are DISTINCT on purpose:
+       five identical plates read as a repeated tile rather than five names that
+       were each removed separately. The last has one bar the full width — there
+       is no name under it to break up. */
+    var JUDGES = [
+        { bars: [22, 14, 10], silent: false },
+        { bars: [16, 26],     silent: false },
+        { bars: [12, 18, 12], silent: false },
+        { bars: [30, 8],      silent: false },
+        { bars: [52],         silent: true  }
+    ];
+
+    function open(cls, vb, extra) {
+        return '<svg class="ui-plate ' + cls + '" viewBox="' + vb + '" xmlns="http://www.w3.org/2000/svg"'
+             + ' fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"'
+             + ' ' + extra + ' aria-hidden="true" focusable="false">';
+    }
+
+    /* ── ONE STALL ───────────────────────────────────────────────────────────
+       Back recess, panelling, the chair, the bench slab, the nameplate. The duck
+       image is NOT in here — it is a sibling, because the judges turn and the
+       furniture does not. */
+    function stall(i) {
+        var j = JUDGES[i] || JUDGES[0];
+        var s = open('tb-stall', '0 0 ' + SW + ' ' + SH, 'preserveAspectRatio="xMidYMid meet"');
+
+        /* The recess behind the judge, and three panel seams in it. */
+        s += '<rect x="8" y="6" width="100" height="96" class="tb-recess pf"/>';
+        s += '<line x1="30" y1="14" x2="30" y2="102" class="p-scan"/>';
+        s += '<line x1="58" y1="10" x2="58" y2="102" class="p-scan"/>';
+        s += '<line x1="86" y1="14" x2="86" y2="102" class="p-scan"/>';
+
+        /* ⭐ THE CHAIR — and the reason this file is hand-authored at all.
+           `gen_ui_plates.js` has eight primitives and not one of them is a curve,
+           which is how the Ducky Council came out as "seven keyrings" and the five
+           judges as "a motorcycle helmet" (CLAUDE.md PART SIX). Two cubic segments
+           that a generator cannot express: the outer shell and the inner padding. */
+        s += '<path d="M18,102 L18,40 C18,20 34,10 58,10 C82,10 98,20 98,40 L98,102" class="tb-seat"/>';
+        s += '<path d="M27,102 L27,45 C27,29 40,21 58,21 C76,21 89,29 89,45 L89,102" class="tb-seat tb-seat-in"/>';
+
+        /* The bloom that comes up behind whichever judge rules. Opacity only. */
+        s += '<ellipse cx="58" cy="60" rx="46" ry="52" class="tb-bloom pf"/>';
+
+        /* Stall dividers. Drawn on both edges so the outermost two are closed;
+           the shared edges simply draw the same line twice. */
+        s += '<line x1="2" y1="16" x2="2" y2="104" class="tb-post"/>';
+        s += '<line x1="114" y1="16" x2="114" y2="104" class="tb-post"/>';
+
+        /* The bench. Full-bleed left to right — this is what tiles. */
+        s += '<rect x="0" y="' + BENCH_TOP + '" width="' + SW + '" height="8" class="tb-benchtop pf"/>';
+        s += '<rect x="0" y="112" width="' + SW + '" height="28" class="tb-benchface pf"/>';
+        s += '<line x1="0" y1="118" x2="' + SW + '" y2="118" class="tb-moulding"/>';
+
+        /* The nameplate, and what is left on it. */
+        s += '<rect x="28" y="121" width="60" height="14" class="tb-nameplate"/>';
+        var total = 0, k;
+        for (k = 0; k < j.bars.length; k++) total += j.bars[k];
+        total += (j.bars.length - 1) * 4;                  // the gaps between bars
+        var x = 58 - total / 2;
+        for (k = 0; k < j.bars.length; k++) {
+            s += '<rect x="' + x.toFixed(1) + '" y="125" width="' + j.bars[k] + '" height="6" class="p-redact pf"/>';
+            x += j.bars[k] + 4;
+        }
+
+        s += '<rect x="0" y="140" width="' + SW + '" height="8" class="tb-shadow pf"/>';
+        return s + '</svg>';
+    }
+
+    /* ── THE BACKDROP ────────────────────────────────────────────────────────
+       Seal and overhead light. ⭐ It needs NO alignment with anything, which is
+       exactly why these two shapes live here rather than in the stalls: a circle
+       centred behind a row is centred whatever the row measures. */
+    function backdrop() {
+        var s = open('tb-backdrop', '0 0 640 300', 'preserveAspectRatio="xMidYMid slice"');
+        s += '<polygon points="320,-40 512,262 128,262" class="tb-cone pf"/>';
+        s += '<circle cx="320" cy="104" r="74" class="tb-seal"/>';
+        s += '<circle cx="320" cy="104" r="55" class="tb-seal"/>';
+        s += '<polygon points="320,63 355,83 355,125 320,145 285,125 285,83" class="tb-seal-core"/>';
+        s += '<line x1="320" y1="-40" x2="320" y2="30" class="tb-cord"/>';
+        return s + '</svg>';
+    }
+
+    /* ── THE DOCK ────────────────────────────────────────────────────────────
+       ⭐ CONDUCT_ROUTES §9.5 asks that the bench read as *"OTHER ducks, and yours
+       conspicuously not among them."* An empty stand in front of it is the most
+       direct way to say so, and it costs no art: the absence IS the drawing.
+       ⚠ It is a block after the row in a text-align:center parent, so it centres
+       itself. No measurement, nothing to keep in sync. */
+    function dock() {
+        var s = open('tb-dock', '0 0 200 104', 'preserveAspectRatio="xMidYMid meet"');
+        s += '<ellipse cx="100" cy="88" rx="76" ry="11" class="tb-dock-floor pf"/>';
+        s += '<path d="M46,84 L46,36 C46,23 64,17 100,17 C136,17 154,23 154,36 L154,84" class="tb-dock-rail"/>';
+        s += '<line x1="46" y1="54" x2="154" y2="54" class="tb-dock-rail"/>';
+        s += '<line x1="61" y1="84" x2="61" y2="19" class="tb-dock-post"/>';
+        s += '<line x1="139" y1="84" x2="139" y2="19" class="tb-dock-post"/>';
+        return s + '</svg>';
+    }
+
+    /* ── THE WHOLE BENCH ─────────────────────────────────────────────────────
+       Built here rather than in game.js so the markup and the geometry that
+       depends on it stay in one file. `imgFor` is passed in because WHICH cast sits
+       here is the caller's business — game.js routes it to `duck_cast_art.js` and
+       owns the fallback. ⭐ That boundary is why the 2026-09-01 cast swap did not
+       touch this file's geometry at all: the room never knew what it seated. */
+    function bench(imgFor) {
+        var html = backdrop(), i;
+        for (i = 0; i < JUDGES.length; i++) {
+            html += '<span class="tribunal-duck' + (JUDGES[i].silent ? ' tb-silent' : '') + '">'
+                  + stall(i) + imgFor(i) + '</span>';
+        }
+        html += '<div class="tb-dock-wrap">' + dock()
+              + '<div class="tb-dock-label">// DOCK · THE OPERATOR IS NOT REQUIRED TO ATTEND</div></div>';
+        return html;
+    }
+
+    window.TribunalArt = {
+        bench: bench, stall: stall, backdrop: backdrop, dock: dock,
+        JUDGES: JUDGES, SW: SW, SH: SH, BENCH_TOP: BENCH_TOP,
+        /* The duck image's share of the stall, in the same units. game.css derives
+           its width, height and offsets from these three ratios. */
+        IMG_UNITS: 70,
+        /* The index that never moves, exported so game.js never picks it to rule
+           and the suite can assert the two agree. */
+        SILENT: 4
+    };
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   event_audio.js — the sound engine every event scene plays through.
+
+   Everything is synthesised with Web Audio: no files, nothing to load. An event
+   brings a SCORE (see score_*.js):
+     score.bpm          tempo of its music
+     score.cues[name]   (A, t, step, bar) => schedule notes for one 16th-note step
+     score.sfx[name]    (A, t, ...args)   => a one-shot sound effect
+     score.voices[i]    a member's speaking voice (babble while their text types)
+
+   A scene opens a session:  var au = EventAudio.session(score)
+     au.cue('debate')     switch music; takes effect on the next beat
+     au.sfx('gavel')      play an effect now
+     au.voice(seat)       one syllable of that member's voice
+     au.stop()            fade the music out and release the game's music
+
+   In the game: while a session runs it holds GameMusic ('event-audio'), so the
+   soundtrack director goes quiet instead of playing on top, and it follows
+   Settings (sound on/off, Music and Effects sliders).
+   Browsers only allow sound after a click — EventAudio.unlock() from any click.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    var ctx = null, master, musicBus, sfxBus, verbIn, noiseBuf;
+    var userMuted = false;
+    var VOL = { music: 0.5, sfx: 0.85 };
+
+    function mf(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+    function prefs() {
+        var p = { on: true, music: 1, sfx: 1 };
+        try {
+            if (window.Settings && Settings._prefs) {
+                if (Settings._prefs.sound === false) p.on = false;
+                if (typeof Settings._prefs.musicVol === 'number') p.music = Settings._prefs.musicVol;
+                if (typeof Settings._prefs.sfxVol === 'number') p.sfx = Settings._prefs.sfxVol;
+            }
+        } catch (e) {}
+        return p;
+    }
+
+    function impulse(seconds) {
+        var rate = ctx.sampleRate, len = Math.floor(rate * seconds);
+        var buf = ctx.createBuffer(2, len, rate);
+        for (var c = 0; c < 2; c++) {
+            var d = buf.getChannelData(c);
+            for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6);
+        }
+        return buf;
+    }
+
+    function ensure() {
+        if (ctx) { if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} } return ctx; }
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        try { ctx = new AC(); } catch (e) { return null; }
+        var comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.005; comp.release.value = 0.2;
+        master = ctx.createGain();
+        master.connect(comp); comp.connect(ctx.destination);
+        musicBus = ctx.createGain(); musicBus.connect(master);
+        sfxBus = ctx.createGain(); sfxBus.connect(master);
+        var verb = ctx.createConvolver(); verb.buffer = impulse(2.8);
+        verbIn = ctx.createGain(); verbIn.gain.value = 0.32;
+        verbIn.connect(verb); verb.connect(master);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+        var nd = noiseBuf.getChannelData(0);
+        for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+        applyLevels();
+        return ctx;
+    }
+
+    function applyLevels() {
+        if (!ctx) return;
+        var p = prefs();
+        var on = p.on && !userMuted;
+        master.gain.setTargetAtTime(on ? 0.9 : 0, ctx.currentTime, 0.05);
+        musicBus.gain.setTargetAtTime(VOL.music * p.music, ctx.currentTime, 0.05);
+        sfxBus.gain.setTargetAtTime(VOL.sfx * p.sfx, ctx.currentTime, 0.05);
+    }
+
+    /* ── BUILDING BLOCKS ───────────────────────────────────────────────────── */
+    function out(bus, wet) {
+        var g = ctx.createGain();
+        g.connect(bus);
+        if (wet) { var s = ctx.createGain(); s.gain.value = wet; g.connect(s); s.connect(verbIn); }
+        return g;
+    }
+    function osc(type, freq, t, stop, dest) {
+        var o = ctx.createOscillator();
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        o.connect(dest); o.start(t); o.stop(stop);
+        return o;
+    }
+    function noise(t, stop, dest) {
+        var n = ctx.createBufferSource();
+        n.buffer = noiseBuf; n.loop = true;
+        n.connect(dest); n.start(t, Math.random() * 1.5); n.stop(stop);
+        return n;
+    }
+    function filt(type, freq, q) {
+        var f = ctx.createBiquadFilter();
+        f.type = type; f.frequency.value = freq; if (q != null) f.Q.value = q;
+        return f;
+    }
+    /* attack → peak, exponential decay to silence by `end` */
+    function perc(g, t, peak, attack, end) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(peak, t + attack);
+        g.gain.exponentialRampToValueAtTime(0.0001, end);
+    }
+    /* attack → sustain → release */
+    function sustain(g, t, peak, attack, dur, release) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(peak, t + attack);
+        g.gain.setValueAtTime(peak, t + Math.max(attack, dur));
+        g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(attack, dur) + release);
+    }
+
+    /* ── INSTRUMENTS — (t, midi, durSeconds, velocity 0..1, bus?) ──────────── */
+    function makeInstruments(defaultBus) {
+        var I = {};
+        function B(bus) { return bus || defaultBus(); }
+
+        I.pluck = function (t, m, dur, v, bus) {          // harpsichord-ish
+            var f = filt('lowpass', 3200); f.frequency.setValueAtTime(3600, t); f.frequency.exponentialRampToValueAtTime(700, t + 0.25);
+            var g = out(B(bus), 0.18); f.connect(g);
+            perc(g, t, 0.16 * v, 0.003, t + dur + 0.35);
+            osc('sawtooth', mf(m), t, t + dur + 0.4, f);
+            osc('square', mf(m) * 1.003, t, t + dur + 0.4, f);
+        };
+        I.bass = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 700);
+            var g = out(B(bus), 0.05); f.connect(g);
+            perc(g, t, 0.42 * v, 0.008, t + dur + 0.18);
+            osc('triangle', mf(m), t, t + dur + 0.2, f);
+            osc('sine', mf(m - 12), t, t + dur + 0.2, f);
+        };
+        I.brass = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 500, 2);
+            f.frequency.setValueAtTime(400, t);
+            f.frequency.linearRampToValueAtTime(600 + 2600 * v, t + 0.06);
+            f.frequency.exponentialRampToValueAtTime(900 + 900 * v, t + 0.3);
+            var g = out(B(bus), 0.25); f.connect(g);
+            sustain(g, t, 0.17 * v, 0.04, dur, 0.14);
+            [-6, 6].forEach(function (c) {
+                var o = osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 0.2, f);
+                if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo) * Math.pow(2, c / 1200), t + dur);
+            });
+        };
+        I.organ = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.4);
+            sustain(g, t, 0.08 * v, 0.09, dur, 0.4);
+            var lfo = ctx.createOscillator(), lg = ctx.createGain();
+            lfo.frequency.value = 5.2; lg.gain.value = 2.2; lfo.connect(lg); lfo.start(t); lfo.stop(t + dur + 0.5);
+            [[1, 1], [2, 0.5], [3, 0.3], [4, 0.22], [6, 0.1]].forEach(function (h) {
+                var hg = ctx.createGain(); hg.gain.value = h[1]; hg.connect(g);
+                var o = osc('sine', mf(m) * h[0], t, t + dur + 0.5, hg);
+                lg.connect(o.frequency);
+            });
+        };
+        I.pad = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 1100);
+            var g = out(B(bus), 0.6); f.connect(g);
+            sustain(g, t, 0.05 * v, Math.min(0.9, dur / 2), dur, 1.4);
+            [-9, 0, 9].forEach(function (c) { osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 1.5, f); });
+        };
+        I.choir = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.75);
+            sustain(g, t, 0.07 * v, Math.min(1.1, dur / 2), dur, 1.6);
+            [[700, 6], [1150, 8], [2600, 10]].forEach(function (fm, k) {
+                var bp = filt('bandpass', fm[0], fm[1]);
+                var fg = ctx.createGain(); fg.gain.value = [1, 0.6, 0.25][k];
+                bp.connect(fg); fg.connect(g);
+                [-7, 7].forEach(function (c) {
+                    var o = osc('sawtooth', mf(m) * Math.pow(2, c / 1200), t, t + dur + 1.7, bp);
+                    var l = ctx.createOscillator(), lg = ctx.createGain();
+                    l.frequency.value = 4.6 + c / 20; lg.gain.value = 3; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + dur + 1.7);
+                });
+            });
+        };
+        I.bell = function (t, m, dur, v, bus) {
+            var g = out(B(bus), 0.5);
+            perc(g, t, 0.12 * v, 0.002, t + dur + 1.4);
+            var car = osc('sine', mf(m), t, t + dur + 1.5, g);
+            var mod = ctx.createOscillator(), mg = ctx.createGain();
+            mod.frequency.value = mf(m) * 3.5;
+            mg.gain.setValueAtTime(mf(m) * 2.2, t); mg.gain.exponentialRampToValueAtTime(1, t + 0.9);
+            mod.connect(mg); mg.connect(car.frequency); mod.start(t); mod.stop(t + dur + 1.5);
+        };
+        I.timp = function (t, m, v, bus) {
+            var g = out(B(bus), 0.35);
+            perc(g, t, 0.55 * v, 0.004, t + 1.1);
+            var o = osc('sine', mf(m) * 1.5, t, t + 1.2, g);
+            o.frequency.exponentialRampToValueAtTime(mf(m), t + 0.06);
+            var f = filt('lowpass', 900); var ng = out(B(bus), 0.2); f.connect(ng);
+            perc(ng, t, 0.18 * v, 0.002, t + 0.12); noise(t, t + 0.15, f);
+        };
+        I.kick = function (t, v, bus) {
+            var g = out(B(bus));
+            perc(g, t, 0.7 * v, 0.003, t + 0.32);
+            var o = osc('sine', 130, t, t + 0.35, g);
+            o.frequency.exponentialRampToValueAtTime(42, t + 0.12);
+        };
+        I.snare = function (t, v, bus) {
+            var f = filt('bandpass', 1900, 0.8); var g = out(B(bus), 0.15); f.connect(g);
+            perc(g, t, 0.26 * v, 0.002, t + 0.16); noise(t, t + 0.18, f);
+            var tg = out(B(bus)); perc(tg, t, 0.12 * v, 0.002, t + 0.08); osc('triangle', 190, t, t + 0.1, tg);
+        };
+        I.hat = function (t, v, bus) {
+            var f = filt('highpass', 7200); var g = out(B(bus)); f.connect(g);
+            perc(g, t, 0.12 * v, 0.001, t + 0.045); noise(t, t + 0.05, f);
+        };
+        I.cymbal = function (t, v, bus) {
+            var f = filt('highpass', 5200); var g = out(B(bus), 0.5); f.connect(g);
+            perc(g, t, 0.16 * v, 0.004, t + 2.2); noise(t, t + 2.3, f);
+        };
+        I.tick = function (t, freq, v, bus) {
+            var g = out(B(bus)); perc(g, t, 0.18 * v, 0.001, t + 0.05);
+            osc('sine', freq || 2200, t, t + 0.06, g);
+        };
+        /* a struck block of wood — gavels and knocks */
+        I.wood = function (t, v, size, bus) {
+            size = size || 1;
+            var g = out(B(bus), 0.35 * size);
+            perc(g, t, 0.6 * v, 0.001, t + 0.18 * size);
+            var o = osc('sine', 210 / size, t, t + 0.25 * size, g);
+            o.frequency.exponentialRampToValueAtTime(120 / size, t + 0.08);
+            var bp = filt('bandpass', 1300 / size, 3); var ng = out(B(bus), 0.25); bp.connect(ng);
+            perc(ng, t, 0.5 * v, 0.001, t + 0.05 * size); noise(t, t + 0.08, bp);
+        };
+        I.whoosh = function (t, dur, from, to, v, bus) {
+            var bp = filt('bandpass', from, 1.2);
+            bp.frequency.setValueAtTime(from, t); bp.frequency.exponentialRampToValueAtTime(to, t + dur);
+            var g = out(B(bus), 0.3); bp.connect(g);
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.2 * v, t + dur * 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            noise(t, t + dur + 0.05, bp);
+        };
+        /* a short vocal syllable: pitch swoop through a formant — the ducks talk in these */
+        I.syllable = function (t, p, v, bus) {
+            var dur = p.len || 0.075;
+            var f0 = p.f * (0.88 + Math.random() * 0.26);
+            var bp = filt('bandpass', p.formant || 1000, p.q || 2.5);
+            var g = out(B(bus), 0.12); bp.connect(g);
+            perc(g, t, (p.gain || 0.22) * v, 0.006, t + dur);
+            var o = osc(p.type || 'sawtooth', f0 * (p.up || 1.3), t, t + dur + 0.02, bp);
+            o.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur);
+            if (p.dry) { var dg = out(B(bus)); perc(dg, t, (p.gain || 0.22) * v * p.dry, 0.004, t + dur); var o2 = osc('sine', f0 * (p.up || 1.3), t, t + dur + 0.02, dg); o2.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur); }
+        };
+        /* ── softer voices, for scores that need to be in tune and quiet ─────── */
+        /* warm electric piano: sine + a little octave triangle, filter closing */
+        I.keys = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 2400);
+            f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(800, t + 0.7);
+            var g = out(B(bus), 0.3); f.connect(g);
+            perc(g, t, 0.22 * v, 0.004, t + dur + 0.9);
+            var hg = ctx.createGain(); hg.gain.value = 0.22; hg.connect(f);
+            var o1 = osc('sine', mf(m), t, t + dur + 1, f);
+            var o2 = osc('sine', mf(m) * 2, t, t + dur + 1, hg);
+            if (slideTo != null) { o1.frequency.exponentialRampToValueAtTime(mf(slideTo), t + dur); o2.frequency.exponentialRampToValueAtTime(mf(slideTo) * 2, t + dur); }
+        };
+        /* a clean bass: sine and its octave, no odd overtones — for minor keys, where a
+           triangle's 5th harmonic (a major third) fights the chord */
+        I.bassClean = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 900);
+            var g = out(B(bus), 0.04); f.connect(g);
+            perc(g, t, 0.5 * v, 0.006, t + dur + 0.16);
+            osc('sine', mf(m), t, t + dur + 0.2, f);
+            var hg = ctx.createGain(); hg.gain.value = 0.45; hg.connect(f);
+            osc('sine', mf(m + 12), t, t + dur + 0.2, hg);
+            var cg = ctx.createGain(); cg.gain.value = 0.08; cg.connect(f);            // a little click for attack
+            osc('square', mf(m + 24), t, t + 0.02, cg);
+        };
+        /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
+           ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
+           and under a minor or a hollow chord that third was measured clashing (C♯ against
+           an F major 7's C; a C♯ turning VOID's open fifth into A major). */
+        I.warm = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 760, 0.5);
+            var g = out(B(bus), 0.55); f.connect(g);
+            sustain(g, t, 0.11 * v, Math.min(1.2, dur / 2), dur, 1.8);
+            [[-6, 'sine', 1], [6, 'sine', 1], [0, 'triangle', 0.2]].forEach(function (d) {
+                var c = d[0], vg = ctx.createGain(); vg.gain.value = d[2]; vg.connect(f);
+                var o = osc(d[1], mf(m) * Math.pow(2, c / 1200), t, t + dur + 2, vg);
+                if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo) * Math.pow(2, c / 1200), t + dur);
+            });
+            var sg = ctx.createGain(); sg.gain.value = 0.6; sg.connect(f);
+            var so = osc('sine', mf(m - 12), t, t + dur + 2, sg);
+            if (slideTo != null) so.frequency.exponentialRampToValueAtTime(mf(slideTo - 12), t + dur);
+        };
+        /* a pure low sine with a swell — drones and floors */
+        I.sub = function (t, m, dur, v, bus, slideTo) {
+            var g = out(B(bus));
+            sustain(g, t, 0.32 * v, 0.05, dur, 0.6);
+            var o = osc('sine', mf(m), t, t + dur + 0.7, g);
+            if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo), t + dur);
+        };
+        /* a tuned body thump: a heartbeat, a floor dropping */
+        I.thump = function (t, m, v, bus) {
+            var g = out(B(bus), 0.1);
+            perc(g, t, 0.75 * v, 0.004, t + 0.45);
+            var o = osc('sine', mf(m) * 2.2, t, t + 0.5, g);
+            o.frequency.exponentialRampToValueAtTime(mf(m), t + 0.05);
+        };
+        /* a clean, harmonic chime (the FM bell is metallic; this one is in tune) */
+        I.chime = function (t, m, dur, v, bus) {
+            [[1, 1, 1], [2, 0.32, 0.6], [3, 0.12, 0.4], [4, 0.05, 0.3]].forEach(function (p) {
+                var g = out(B(bus), 0.45);
+                perc(g, t, 0.13 * v * p[1], 0.002, t + (dur + 1.2) * p[2]);
+                osc('sine', mf(m) * p[0], t, t + dur + 1.3, g);
+            });
+        };
+        /* tuned noise rising through a resonant band, under a quiet rising sine */
+        I.riser = function (t, dur, m, v, bus) {
+            var bp = filt('bandpass', mf(m), 9);
+            bp.frequency.setValueAtTime(mf(m), t); bp.frequency.exponentialRampToValueAtTime(mf(m + 24), t + dur);
+            var g = out(B(bus), 0.35); bp.connect(g);
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.35 * v, t + dur); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
+            noise(t, t + dur + 0.2, bp);
+            var sg = out(B(bus), 0.2);
+            sg.gain.setValueAtTime(0.0001, t); sg.gain.linearRampToValueAtTime(0.05 * v, t + dur); sg.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
+            var o = osc('sine', mf(m), t, t + dur + 0.2, sg); o.frequency.exponentialRampToValueAtTime(mf(m + 12), t + dur);
+        };
+        /* a REVERSE SWELL: the note grows from nothing to full and is cut dead at t + dur.
+           The classic build-into-silence; pair it with a cut to black. */
+        I.swell = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 500, 0.7);
+            f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(3200, t + dur);
+            var g = out(B(bus), 0.08); f.connect(g);          // nearly dry: the cut must be a real silence
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.16 * v, t + dur);
+            g.gain.setValueAtTime(0.16 * v, t + dur);
+            g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.02);
+            [[-7, 'sine'], [7, 'sine'], [0, 'triangle']].forEach(function (d) {
+                osc(d[1], mf(m) * Math.pow(2, d[0] / 1200), t, t + dur + 0.05, f);
+            });
+        };
+        /* a reverse cymbal: bright noise rushing in, cut dead */
+        I.revcym = function (t, dur, v, bus) {
+            var f = filt('highpass', 4000);
+            f.frequency.setValueAtTime(7000, t); f.frequency.exponentialRampToValueAtTime(2500, t + dur);
+            var g = out(B(bus), 0.06); f.connect(g);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.2 * v, t + dur);
+            g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.02);
+            noise(t, t + dur + 0.05, f);
+        };
+        /* breath through a fixed vowel — whispers */
+        I.breath = function (t, dur, v, vowel, bus) {
+            var F = vowel === 'oo' ? [[350, 8], [800, 10]] : [[750, 7], [1150, 9]];
+            F.forEach(function (fm, k) {
+                var bp = filt('bandpass', fm[0], fm[1]);
+                var g = out(B(bus), 0.6); bp.connect(g);
+                g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime((k ? 0.35 : 0.5) * v, t + dur * 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                noise(t, t + dur + 0.05, bp);
+            });
+        };
+        return I;
+    }
+
+    /* ── A SESSION — one event on screen ─────────────────────────────────────── */
+    function session(score) {
+        var live = !!ensure();
+        var api = { cue: noop, sfx: noop, voice: noop, stop: noop, live: live };
+        if (!live) return api;
+        try { if (window.GameMusic && GameMusic.hold) GameMusic.hold('event-audio'); } catch (e) {}
+        applyLevels();
+
+        /* music runs through its own gain so a session can fade without touching the bus */
+        var mGain = ctx.createGain(); mGain.connect(musicBus);
+        var sGain = ctx.createGain(); sGain.connect(sfxBus);
+        var M = makeInstruments(function () { return mGain; });
+        var S = makeInstruments(function () { return sGain; });
+        var A = { music: M, fx: S, mf: mf, ctx: ctx };
+
+        var bpm = score.bpm || 90, stepDur = 60 / bpm / 4;
+        A.step = stepDur; A.beat = stepDur * 4; A.bar = stepDur * 16;
+        var cur = null, pending, step = 0, bar = 0, nextTime = 0, timer = null, stopped = false;
+        var lastVoice = 0;
+
+        function tick() {
+            if (stopped) return;
+            if (!nextTime || nextTime < ctx.currentTime - 0.2) nextTime = ctx.currentTime + 0.05;
+            while (nextTime < ctx.currentTime + 0.14) {
+                if (pending !== undefined && step % 4 === 0) {
+                    cur = pending; pending = undefined;
+                    if (step % 16 !== 0) { step = 0; }       // a new cue starts on its own downbeat
+                    bar = 0;
+                }
+                var fn = cur && score.cues[cur];
+                if (fn) { try { fn(A, nextTime, step % 16, bar); } catch (e) {} }
+                nextTime += stepDur;
+                step += 1;
+                if (step % 16 === 0) bar += 1;
+            }
+        }
+
+        api.cue = function (name) {
+            if (stopped) return;
+            pending = name || null;
+            if (!timer) { timer = setInterval(tick, 25); tick(); }
+        };
+        api.sfx = function (name) {
+            if (stopped) return;
+            var fn = score.sfx && score.sfx[name];
+            if (!fn) return;
+            var args = [A, ctx.currentTime + 0.01].concat([].slice.call(arguments, 1));
+            try { fn.apply(null, args); } catch (e) {}
+        };
+        api.voice = function (seat) {
+            if (stopped) return;
+            var p = score.voices && score.voices[seat];
+            if (!p) return;
+            var now = ctx.currentTime;
+            if (now - lastVoice < (p.gap || 0.085)) return;
+            lastVoice = now;
+            S.syllable(now + 0.005, p, 1);
+        };
+        api.stop = function () {
+            if (stopped) return;
+            stopped = true;
+            clearInterval(timer);
+            var t = ctx.currentTime;
+            mGain.gain.setValueAtTime(mGain.gain.value, t);
+            mGain.gain.linearRampToValueAtTime(0.0001, t + 0.8);
+            setTimeout(function () { try { mGain.disconnect(); sGain.disconnect(); } catch (e) {} }, 3500);
+            try { if (window.GameMusic && GameMusic.release) GameMusic.release('event-audio'); } catch (e) {}
+        };
+        return api;
+    }
+    function noop() {}
+
+    window.EventAudio = {
+        session: session,
+        unlock: function () { ensure(); },
+        setMuted: function (m) { userMuted = !!m; applyLevels(); },
+        isMuted: function () { return userMuted; },
+        refresh: applyLevels,                  // call after Settings' sound sliders change
+        mf: mf
+    };
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   duck_scene_core.js — what the Council and the Tribunal share.
+
+   · director()  paces a scene. Every wait and every typed line is a STEP, and a
+                 click completes the current step; FAST-FORWARD shortens all the
+                 rest. The Council comes back every 1–3 hours, so a player who has
+                 seen it must be able to get to the verdict in two seconds.
+   · bench()     five seats: furniture, member, prop slot and a speech bubble
+                 anchored above each seat (anchored in CSS, never measured).
+   · say()       a member speaks: bubble up, bill moving, the others turn to look.
+
+   Depends on DuckCast (duck_cast_art.js) and optionally CouncilArt / TribunalArt.
+   Every one of them degrades: a missing art module leaves an empty seat, not a
+   broken scene.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    var D = {};
+
+    D.reduced = function () {
+        try {
+            if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+            var c = document.body.classList;
+            return c.contains('safe-mode') || c.contains('accessibility-mode');
+        } catch (e) { return false; }
+    };
+
+    D.h = function (tag, cls, html) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html != null) e.innerHTML = html;
+        return e;
+    };
+
+    D.esc = function (s) {
+        return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+    };
+
+    D.fmt = function (n) {
+        if (typeof window.format === 'function') { try { return window.format(n); } catch (e) {} }
+        n = +n || 0;
+        if (Math.abs(n) >= 1e6) return n.toExponential(2).replace('e+', 'e');
+        return Math.round(n).toLocaleString('en-US');
+    };
+
+    /* restart a class-driven animation: removing and re-adding a class that is already there does nothing */
+    D.replay = function (el, cls) {
+        el.classList.remove(cls);
+        void el.offsetWidth;
+        el.classList.add(cls);
+    };
+
+    /* ── THE DIRECTOR ────────────────────────────────────────────────────── */
+    D.director = function () {
+        var cur = null, fast = false, dead = false;
+
+        function step(start) {
+            return new Promise(function (resolve) {
+                if (dead) return;                       // a closed scene simply stops
+                var finished = false, complete = null;
+                function done() {
+                    if (finished) return;
+                    finished = true;
+                    if (cur === skipper) cur = null;
+                    if (!dead) resolve();
+                }
+                function skipper() { if (complete) complete(); done(); }
+                complete = start(done);
+                if (!finished) cur = skipper;
+            });
+        }
+
+        return {
+            wait: function (ms) {
+                return step(function (done) {
+                    var t = setTimeout(done, fast ? Math.min(ms, 70) : ms);
+                    return function () { clearTimeout(t); };
+                });
+            },
+            type: function (el, text, msPerChar, onChar) {
+                text = String(text || '');
+                return step(function (done) {
+                    if (fast || !text) { el.textContent = text; setTimeout(done, 0); return null; }
+                    var i = 0;
+                    el.textContent = '';
+                    var iv = setInterval(function () {
+                        i += 1;
+                        el.textContent = text.slice(0, i);
+                        if (onChar && /[A-Za-z0-9]/.test(text.charAt(i - 1))) onChar();
+                        if (i >= text.length) { clearInterval(iv); done(); }
+                    }, msPerChar || 18);
+                    return function () { clearInterval(iv); el.textContent = text; };
+                });
+            },
+            skip: function () { if (cur) cur(); },
+            fastForward: function () { fast = true; if (cur) cur(); },
+            isFast: function () { return fast; },
+            kill: function () { dead = true; cur = null; }
+        };
+    };
+
+    /* ── SOUND ───────────────────────────────────────────────────────────────
+       Each event has its own score (src/audio/score_*.js) played through
+       EventAudio. `opts.audio === false` silences a scene; `opts.sound(name)`,
+       if given, is told about every effect as well (the game's own hook). */
+    D.audio = function (opts, score) {
+        opts = opts || {};
+        var au = (opts.audio !== false && window.EventAudio && score) ? EventAudio.session(score) : null;
+        var hook = typeof opts.sound === 'function' ? opts.sound : null;
+        return {
+            cue: function (name) { if (au) au.cue(name); },
+            sfx: function (name) {
+                if (au) au.sfx.apply(null, arguments);
+                if (hook) { try { hook.apply(null, arguments); } catch (e) {} }
+            },
+            voice: function (seat) { if (au) au.voice(seat); },
+            stop: function () { if (au) au.stop(); }
+        };
+    };
+
+    /* ── THE BENCH ───────────────────────────────────────────────────────── */
+    D.bench = function (kind) {
+        var row = D.h('div', 'dks-row');
+        var seats = [];
+        for (var i = 0; i < 5; i++) {
+            var furn = '';
+            if (kind === 'tribunal' && window.TribunalArt) furn = TribunalArt.stall(i);
+            if (kind === 'council' && window.CouncilArt) furn = CouncilArt.seat(i);
+            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">◒</span>';
+            var seat = D.h('div', 'dks-seat dks-seat-' + i,
+                '<div class="dks-furn">' + furn + '</div>'
+              + '<div class="dks-duck"><div class="dks-face"><div class="dks-bob">' + cast + '</div></div></div>'
+              + '<div class="dks-prop"></div>'
+              + '<div class="dks-anchor"><div class="dks-bubble"><div class="dks-who"></div><div class="dks-say"></div></div></div>');
+            row.appendChild(seat);
+            seats.push({
+                i: i,
+                el: seat,
+                prop: seat.querySelector('.dks-prop'),
+                bubble: seat.querySelector('.dks-bubble'),
+                who: seat.querySelector('.dks-who'),
+                text: seat.querySelector('.dks-say')
+            });
+        }
+        return { row: row, seats: seats };
+    };
+
+    /* Turn the bench toward a seat (null = everyone faces front). `still` lists
+       seats that never turn. */
+    D.look = function (seats, target, still) {
+        seats.forEach(function (s) {
+            if (still && still.indexOf(s.i) >= 0) return;
+            s.el.classList.toggle('dks-look-left', target != null && s.i > target);
+        });
+    };
+
+    D.hush = function (seats) {
+        seats.forEach(function (s) {
+            s.bubble.classList.remove('dks-on', 'dks-action', 'dks-murmur');
+            s.el.classList.remove('dks-talking');
+        });
+    };
+
+    /* A member speaks. kind: 'speech' (typed, bill moving) · 'action' (a stage
+       direction in that member's bubble: italic, no talking) · 'murmur' */
+    D.say = function (dir, seats, idx, who, text, kind, opts) {
+        opts = opts || {};
+        var s = seats[idx];
+        D.hush(seats);
+        if (!opts.noLook) D.look(seats, idx, opts.still);
+        if (kind === 'action') s.bubble.classList.add('dks-action');
+        if (kind === 'murmur') s.bubble.classList.add('dks-murmur');
+        s.who.textContent = who || '';
+        s.text.textContent = '';
+        D.replay(s.bubble, 'dks-on');
+        if (kind === 'speech') s.el.classList.add('dks-talking');
+        if (kind === 'action') D.replay(s.el, 'dks-gesture');
+        if (opts.log) opts.log((who ? who + ': ' : '') + text);
+        var onChar = (kind === 'speech' && opts.voice) ? function () { opts.voice(idx); } : null;
+        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
+            s.el.classList.remove('dks-talking');
+            var hold = opts.hold != null ? opts.hold : Math.min(2400, 650 + text.length * 13);
+            return dir.wait(hold);
+        });
+    };
+
+    /* ── PROPS ───────────────────────────────────────────────────────────── */
+    D.GAVEL_SVG =
+        '<svg viewBox="0 0 64 64" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<ellipse cx="34" cy="58" rx="20" ry="4" class="gv-ring"/>'
+      + '<rect x="22" y="54" width="24" height="5" rx="1.5" class="pf" style="fill-opacity:.3"/>'
+      + '<g class="gv-head">'
+      +   '<line x1="52" y1="52" x2="30" y2="30"/>'
+      +   '<g transform="rotate(-45 24 24)"><rect x="12" y="17" width="24" height="14" rx="3" class="pf" style="fill-opacity:.35"/>'
+      +   '<line x1="17" y1="17" x2="17" y2="31"/><line x1="31" y1="17" x2="31" y2="31"/></g>'
+      + '</g></svg>';
+
+    D.gavel = function (seat) {
+        var g = D.h('div', 'dks-gavel', D.GAVEL_SVG);
+        seat.el.appendChild(g);
+        return g;
+    };
+
+    /* ── CHOICES ─────────────────────────────────────────────────────────────
+       A row of decision buttons from data: [{ id, label, title?, alt? }].
+       show() reveals them and resolves with the id that was pressed. Any scene can
+       offer any number of decisions without new code. */
+    D.choices = function (parent, list) {
+        var row = D.h('div', 'dks-actions');
+        var btns = list.map(function (c) {
+            var b = D.h('button', 'dks-btn' + (c.alt ? ' dks-alt' : ''), D.esc(c.label));
+            b.type = 'button';
+            if (c.title) b.title = c.title;
+            b.hidden = true;
+            row.appendChild(b);
+            return b;
+        });
+        parent.appendChild(row);
+        return {
+            show: function () {
+                btns.forEach(function (b) { b.hidden = false; });
+                try { btns[0].focus({ preventScroll: true }); } catch (e) {}
+                return new Promise(function (resolve) {
+                    btns.forEach(function (b, i) { b.addEventListener('click', function () { resolve(list[i].id); }); });
+                });
+            }
+        };
+    };
+
+    /* ── THE 16:9 CANVAS ─────────────────────────────────────────────────────
+       Puts `inner` (laid out at 1920×1080) inside a frame that fills `host`, and
+       scales it to fit, centred. The frame's own background is the dark edge a
+       21:9 or a portrait screen sees. */
+    D.W = 1920; D.H = 1080;
+    D.fit = function (host, inner) {
+        var frame = D.h('div', 'dks-fit');
+        frame.appendChild(inner);
+        host.appendChild(frame);
+        function size() {
+            var w = frame.clientWidth, h = frame.clientHeight;
+            if (!w || !h) return;
+            var s = Math.min(w / D.W, h / D.H);
+            inner.style.transform = 'translate(' + ((w - D.W * s) / 2) + 'px,' + ((h - D.H * s) / 2) + 'px) scale(' + s + ')';
+        }
+        /* the canvas is larger than the frame in layout terms (it is scaled by a transform), so a focused
+           button could scroll the frame and shift the whole scene; it never may */
+        [frame, inner].forEach(function (el) {
+            el.addEventListener('scroll', function () { el.scrollTop = 0; el.scrollLeft = 0; });
+        });
+        var ro = window.ResizeObserver ? new ResizeObserver(size) : null;
+        if (ro) ro.observe(frame); else window.addEventListener('resize', size);
+        size();
+        return {
+            frame: frame,
+            remove: function () {
+                if (ro) ro.disconnect(); else window.removeEventListener('resize', size);
+                if (frame.parentNode) frame.parentNode.removeChild(frame);
+            }
+        };
+    };
+
+    /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
+    D.shell = function (host, cls, dir, au) {
+        var root = D.h('div', 'dks ' + cls + ' dks-pre');
+        if (D.reduced()) root.classList.add('dks-reduced');
+        root.setAttribute('role', 'dialog');
+        root.setAttribute('aria-modal', 'true');
+        var log = D.h('div', 'dks-sr');
+        log.setAttribute('aria-live', 'polite');
+        var skipBtn = D.h('button', 'dks-skip', 'SKIP ▸▸');
+        skipBtn.type = 'button';
+        skipBtn.title = 'Skip to the verdict';
+        var hint = D.h('div', 'dks-hint', 'click to hurry them along');
+        root.appendChild(skipBtn);
+        root.appendChild(log);
+        root.appendChild(hint);
+
+        skipBtn.addEventListener('click', function (e) { e.stopPropagation(); dir.fastForward(); });
+        root.addEventListener('click', function (e) { if (!e.target.closest('button')) dir.skip(); });
+        root.addEventListener('pointerdown', function () { if (window.EventAudio) EventAudio.unlock(); });
+        function onKey(e) {
+            if (!root.isConnected) { document.removeEventListener('keydown', onKey, true); return; }
+            if (e.target && /^(BUTTON|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); dir.skip(); }
+        }
+        document.addEventListener('keydown', onKey, true);
+
+        host.innerHTML = '';
+        var fit = D.fit(host, root);
+        return {
+            root: root,
+            log: function (line) { var d = D.h('div'); d.textContent = line; log.appendChild(d); },
+            done: function () { skipBtn.hidden = true; hint.style.display = 'none'; },
+            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); fit.remove(); }
+        };
+    };
+
+    window.DuckScene = D;
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   score_crash.js — the two crash screens' music and sound. Two scores, one file:
+   they share a silence, and nothing else.
+
+   FAKE CRASH (FakeCrashScore, C major, 120 bpm)
+     The music dies with one dead click and a mains hum on C. The percentage
+     ticks like a disk. Then the joke lands: a brass "ta-da" and a bouncy
+     C major tune.
+     CUES     board · dread · joke
+     EFFECTS  click · freeze · tick · poke · reveal · bonus
+
+   THERMAL CRASH (ThermalCrashScore, E minor, 100 bpm)
+     Fans whine up to 100%, a dead click, a hum on E. "Contained", and then
+     the screen cracks open on something that pulses: the crash dividend.
+     CUES     heat · dread · core · claimed · closed
+     EFFECTS  overheat · freeze · tick · poke · contained · crack · claim · lost · cool
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+
+    /* the shared crash: everything stops on one dead click */
+    function freeze(A, t, root) {
+        var F = A.fx;
+        F.thump(t, root, 0.9);
+        F.tick(t, 900, 0.5);
+        F.whoosh(t, 0.12, 6000, 2000, 0.5);
+    }
+    function dread(A, t, s, bar, root) {
+        if (s === 0) A.music.sub(t, root, A.bar, 0.38);                  // the hum
+        if (s === 0 && bar % 2 === 1) A.music.sub(t, root + 12, A.bar, 0.06);
+    }
+    function disk(A, t) { var F = A.fx; F.tick(t, 2600 + Math.random() * 900, 0.07); if (Math.random() < 0.3) F.tick(t + 0.03, 1800, 0.05); }
+
+    /* ── FAKE CRASH ─────────────────────────────────────────────────────── */
+    var C_BASS = [36, 43, 41, 43];              // C · G · F · G
+    var C_CH = [[60, 64, 67], [59, 62, 67], [60, 65, 69], [59, 62, 67]];
+    var C_TUNE = [72, 76, 79, 76, 74, 79, 77, 74];
+
+    var fake = {
+        bpm: 120,
+        cues: {
+            board: function (A, t, s, bar) {
+                var M = A.music, k = bar % 4;
+                if (s === 0) M.bassClean(t, C_BASS[k], A.beat * 1.5, 0.5);
+                if (s === 4 || s === 12) C_CH[k].forEach(function (m) { M.keys(t, m, A.step * 2, 0.12); });
+                if (s % 4 === 2) M.hat(t, 0.05);
+            },
+            dread: function (A, t, s, bar) { dread(A, t, s, bar, 24); },
+            joke: function (A, t, s, bar) {
+                var M = A.music, k = bar % 4;
+                if (s === 0 || s === 8) M.bassClean(t, C_BASS[k] + (s === 8 ? 7 : 0), A.beat * 0.8, 0.5);
+                if (s === 4 || s === 12) C_CH[k].forEach(function (m) { M.keys(t, m, A.step * 1.5, 0.13); });
+                if (s % 4 === 2) M.hat(t, 0.08);
+                if (s === 4 || s === 12) M.wood(t, 0.25, 1.4);
+                if (s % 4 === 0) M.chime(t, C_TUNE[((bar % 2) * 4) + (s >> 2)], A.step * 2, 0.12);
+            }
+        },
+        sfx: {
+            click: function (A, t) { A.fx.wood(t, 0.4, 0.8); A.fx.chime(t, 84, 0.05, 0.06); },
+            freeze: function (A, t) { freeze(A, t, 24); },
+            tick: disk,
+            poke: function (A, t) { A.fx.keys(t, 48, 0.08, 0.35); A.fx.tick(t, 700, 0.2); },
+            reveal: function (A, t) {
+                var F = A.fx;
+                F.brass(t, 55, 0.12, 0.55); F.brass(t + 0.14, 60, 0.9, 0.6);
+                [64, 67, 72].forEach(function (m) { F.brass(t + 0.14, m, 0.9, 0.4); });
+                [72, 76, 79, 84].forEach(function (m, k) { F.chime(t + 0.14 + k * 0.08, m, 0.5, 0.35); });
+                F.cymbal(t + 0.14, 0.4); F.timp(t + 0.14, 36, 0.8);
+            },
+            bonus: function (A, t) { var F = A.fx; [79, 84, 88].forEach(function (m, k) { F.chime(t + k * 0.07, m, 0.3, 0.3); }); }
+        },
+        voices: []
+    };
+
+    /* ── THERMAL CRASH ──────────────────────────────────────────────────── */
+    var E_CH = [[52, 55, 59], [48, 52, 55], [50, 55, 59], [47, 50, 54]];    // Em · C · G/D · Bm
+    var E_BASS = [28, 24, 26, 23];
+
+    var thermal = {
+        bpm: 100,
+        cues: {
+            heat: function (A, t, s, bar) {
+                var M = A.music;
+                if (s === 0 && bar % 2 === 0) M.sub(t, 28, A.bar * 2, 0.35);
+                if (s % 4 === 0) M.thump(t, 28, 0.15 + Math.min(0.3, bar * 0.04));
+                if (s % 2 === 1) M.tick(t, 4000 + bar * 200, 0.04);
+            },
+            dread: function (A, t, s, bar) { dread(A, t, s, bar, 28); },
+            core: function (A, t, s, bar) {
+                var M = A.music, k = bar % 4;
+                if (s === 0) { M.sub(t, E_BASS[k], A.bar, 0.35); E_CH[k].forEach(function (m) { M.warm(t, m, A.bar, 0.26); }); }
+                if (s % 4 === 0) M.thump(t, 28, 0.35);
+                if (s % 2 === 0) M.chime(t, [83, 79, 76, 78][(s >> 1) % 4] + (bar % 2 ? 0 : -12), A.step, 0.06);
+            },
+            claimed: function (A, t, s, bar) {
+                var M = A.music;
+                if (s === 0 && bar % 2 === 0) [40, 52, 56, 59, 64].forEach(function (m) { M.warm(t, m, A.bar * 2, 0.3); });
+                if (s % 4 === 0) M.chime(t, [76, 80, 83, 88][(s >> 2) % 4], 0.3, 0.1);
+            },
+            closed: function (A, t, s, bar) {
+                if (s === 0 && bar % 2 === 0) { A.music.sub(t, 28, A.bar * 2, 0.3); [52, 55, 59].forEach(function (m) { A.music.warm(t, m, A.bar * 2, 0.2); }); }
+            }
+        },
+        sfx: {
+            overheat: function (A, t, dur) {
+                var F = A.fx; dur = dur || 1.4;
+                F.riser(t, dur, 52, 0.5);
+                for (var k = 0; k < 6; k++) F.whoosh(t + k * dur / 6, dur / 5, 1200 + k * 500, 1600 + k * 600, 0.35);
+            },
+            freeze: function (A, t) { freeze(A, t, 28); },
+            tick: disk,
+            poke: function (A, t) { A.fx.whoosh(t, 0.18, 5000, 9000, 0.3); A.fx.tick(t, 600, 0.2); },     // a sizzle
+            contained: function (A, t) { var F = A.fx; [52, 59, 64].forEach(function (m) { F.warm(t, m, 1.6, 0.8); }); F.chime(t, 76, 0.6, 0.3); },
+            crack: function (A, t) { var F = A.fx; F.thump(t, 28, 1); F.whoosh(t, 0.9, 400, 5000, 0.6); F.revcym(t, 0.4, 0.4); F.riser(t, 0.6, 64, 0.3); },
+            claim: function (A, t) {
+                var F = A.fx;
+                F.timp(t, 40, 1); F.cymbal(t, 0.6);
+                [52, 56, 59, 64].forEach(function (m) { F.brass(t, m, 1.2, 0.45); });
+                [76, 80, 83, 88, 92].forEach(function (m, k) { F.chime(t + k * 0.07, m, 0.6, 0.3); });
+            },
+            lost: function (A, t) { var F = A.fx; F.sub(t, 40, 1.6, 0.5, null, 28); F.keys(t, 59, 0.8, 0.3, null, 52); },
+            cool: function (A, t) { A.fx.whoosh(t, 0.6, 3000, 500, 0.25); }
+        },
+        voices: []
+    };
+
+    window.FakeCrashScore = fake;
+    window.ThermalCrashScore = thermal;
+})();
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   crash_scene.js — THE FAKE CRASH and THE THERMAL CRASH. One crash screen,
+   two events, two scores.
+
+   Both open the same way, because the point is a split second of real dread:
+     1 THE FREEZE   the game tears (fake) or overheats (thermal), the music dies
+                    on one dead click, and the screen goes blue. For the first
+                    second it does not say whose screen it is.
+     2 THE CRASH    ":(", the stop code, a percentage that climbs, stalls at the
+                    worst moments and ticks like a disk. A mains hum.
+                    Clicking during a crash is noticed. In the fake crash, enough
+                    clicks end it early ("Fine. You win."), which is the joke:
+                    the stop code is TOO_MANY_CLICKS.
+
+   FAKE    3 THE JOKE   ":(" turns into ":)". JUST KIDDING. +50% energy, "the
+                        simulation apologizes", a brass ta-da.
+   THERMAL 3 CONTAINED  "Thermal event contained. Nothing crashed." RECOVERED.
+           4 THE CRACK  the crash screen splits open. Behind it, the core: CLAIM
+                        CRASH DIVIDEND ×25 EPS for 30 minutes, "only accessible
+                        through system failure". The gap cools shut in 20 s.
+
+   ⭐ All of it is data: opts.lines (every string), opts.info (stop-code lines),
+      opts.bonus, opts.window, opts.pokes, opts.choices. See docs/CRASH_SCREENS.md.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function () {
+    'use strict';
+    var D = window.DuckScene;
+
+    function hex(n) { return n.toString(16).toUpperCase(); }
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+
+    var VARIANTS = {
+        fake: {
+            score: 'FakeCrashScore',
+            code: 'TOO_MANY_CLICKS',
+            info: function (o) {
+                return ['STOP CODE: TOO_MANY_CLICKS (0x' + hex(o.clicks || 13333) + ')', 'What failed: CLICK_HANDLER.exe',
+                        'Error in module: reality_v' + ((Math.random() * 9 + 1) | 0) + '.' + ((Math.random() * 9) | 0) + '.dll',
+                        'Faulty click address: 0x' + Math.random().toString(16).slice(2, 10).toUpperCase()];
+            },
+            lines: {
+                title: 'Your system ran into a problem and needs to restart.<br>We\'re just collecting some error info, and then we\'ll restart for you.',
+                pct: '{p}% complete',
+                poke: 'Additional click received during crash ({n})',
+                pokeAt: { 5: 'Please stop clicking.', 9: 'We can feel that.', 14: 'Fine. You win.' },
+                revealTitle: 'False alarm. Nothing crashed.<br>The simulation is fine. Everything is working as intended.',
+                revealPct: 'JUST KIDDING',
+                bonus: 'CRASH BONUS: +{amt} ENERGY · the simulation apologizes',
+                after: 'The simulation experienced a moment of self-doubt.\nYou received compensation. The button is fine.\nProbably.',
+                clicked: 'You clicked {n} times during a crash. Respect.'
+            },
+            pokes: 14                                        // this many clicks ends it early; 0 to never
+        },
+        thermal: {
+            score: 'ThermalCrashScore',
+            code: 'THERMAL_OVERLOAD',
+            info: function () {
+                return ['STOP CODE: THERMAL_OVERLOAD (0x' + hex(0xC0000 + ((Math.random() * 0xFFFF) | 0)) + ')', 'What failed: CPU_CORE_' + ((Math.random() * 16) | 0),
+                        'Temperature at failure: {temp}°C', 'Load at failure: 100%'];
+            },
+            lines: {
+                title: 'Your system ran into a problem and needs to restart.<br>We\'re just collecting some error info, and then we\'ll restart for you.',
+                pct: '{p}% complete',
+                warn: 'CPU 100%',
+                poke: 'Touching the CPU is not recommended ({n})',
+                pokeAt: { 6: 'It is very hot.' },
+                revealTitle: 'Thermal event contained. Nothing crashed.<br>The simulation kept one thing from the wreckage.',
+                revealPct: 'RECOVERED',
+                behind: 'BEHIND THE CRASH SCREEN',
+                claim: '◈ CLAIM CRASH DIVIDEND · ×25 EPS (30 min)',
+                only: 'ONLY ACCESSIBLE THROUGH SYSTEM FAILURE',
+                cooling: 'THE GAP IS COOLING',
+                dismiss: 'DISMISS CRASH SCREEN',
+                claimed: 'CRASH DIVIDEND CLAIMED',
+                claimedSub: '×25 EPS for 30 minutes · absurd.',
+                closedT: 'The gap closed.',
+                closedSub: 'It will open again the next time something melts.'
+            },
+            pokes: 0,
+            window: 20                                       // seconds the crack stays open
+        }
+    };
+
+    /* a QR-looking block: three finder squares and noise (it encodes nothing) */
+    function qr() {
+        var n = 25, s = '', seed = 7;
+        function r() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+        function finder(x, y) { return '<rect x="' + x + '" y="' + y + '" width="7" height="7" fill="none" stroke="currentColor"/><rect x="' + (x + 2) + '" y="' + (y + 2) + '" width="3" height="3"/>'; }
+        for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) {
+            var inF = (x < 8 && y < 8) || (x > 16 && y < 8) || (x < 8 && y > 16);
+            if (!inF && r() < 0.48) s += '<rect x="' + x + '" y="' + y + '" width="1" height="1"/>';
+        }
+        return '<svg viewBox="-1 -1 27 27" aria-hidden="true" fill="currentColor" shape-rendering="crispEdges">' + finder(0.5, 0.5) + finder(17.5, 0.5) + finder(0.5, 17.5) + s + '</svg>';
+    }
+
+    /* play(host, opts) → { done: Promise<{ variant, clicks, bonus, claimed }>, close() }
+       opts.variant  'fake' | 'thermal'
+       opts.state    { energy }             opts.clicks  the milestone that tripped it (fake)
+       opts.bonus    share of energy paid by the fake crash (0.5)
+       opts.window   seconds the thermal crack stays open (20)
+       opts.lines / opts.info / opts.pokes  overrides
+       opts.onBonus(amount) (fake) · opts.onClaim() (thermal) — apply them here
+       opts.see      false to start on black instead of over the game (for a host with nothing under it)
+       opts.audio    false for silence */
+    function play(host, opts) {
+        opts = opts || {};
+        var V = VARIANTS[opts.variant] || VARIANTS.fake;
+        var thermal = V === VARIANTS.thermal;
+        var st = opts.state || window.state || {};
+        var L = Object.assign({}, V.lines, opts.lines);
+        var info = opts.info || V.info(opts);
+        var pokesToEnd = opts.pokes != null ? opts.pokes : V.pokes;
+        var reduced = D.reduced();
+        var au = D.audio(opts, window[V.score]);
+        var dir = D.director();
+        var shell = D.shell(host, 'cr ' + (thermal ? 'cr-thermal' : 'cr-fake'), dir, au);
+        var root = shell.root, log = shell.log;
+        root.setAttribute('aria-label', thermal ? 'Thermal crash' : 'Simulation crash');
+        root.setAttribute('role', 'alertdialog');
+        shell.done();                                        // a crash has no skip button
+        if (opts.see !== false && root.parentNode) root.parentNode.classList.add('dks-see');
+        var timers = [];
+        function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
+        function sleep(ms) { return new Promise(function (r) { later(r, reduced ? Math.min(ms, 400) : ms); }); }
+        var temp = 98 + ((Math.random() * 9) | 0);
+
+        var tears = '';
+        for (var i = 0; i < 9; i++) tears += '<i style="top:' + rnd(0, 1040).toFixed(0) + 'px;height:' + rnd(10, 90).toFixed(0) + 'px;--dx:' + rnd(-160, 160).toFixed(0) + 'px;animation-delay:' + (i * 60) + 'ms"></i>';
+
+        root.insertAdjacentHTML('beforeend', ''
+          + '<div class="cr-pre">' + (thermal ? '<div class="cr-haze"><i></i><i></i><i></i></div><div class="cr-warn">' + D.esc(L.warn) + '</div>' : '<div class="cr-tears">' + tears + '</div>') + '</div>'
+          + '<div class="cr-screen">'
+          +   '<div class="cr-scan"></div><div class="cr-heat"></div>'
+          +   '<div class="cr-in">'
+          +     '<div class="cr-eyebrow">// SIMULATION FAULT &nbsp;|&nbsp; UNSCHEDULED</div>'
+          +     '<div class="cr-face"><span>:</span><span class="cr-paren">(</span></div>'
+          +     '<div class="cr-title">' + L.title + '</div>'
+          +     '<div class="cr-pct">' + D.esc(L.pct.replace('{p}', 0)) + '</div>'
+          +     '<div class="cr-low"><div class="cr-qr">' + qr() + '</div><div class="cr-text">'
+          +       '<div class="cr-info"></div><div class="cr-pokes"></div>'
+          +       '<div class="cr-link">For more information about this issue and possible fixes, visit<br>https://simulation.local/error/' + V.code + '</div></div></div>'
+          +     '<div class="cr-bonus"></div>'
+          +   '</div>'
+          + '</div>'
+          + (thermal ? '<div class="cr-core">'
+          +   '<div class="cr-behind">' + D.esc(L.behind) + '</div>'
+          +   '<div class="cr-orb"><i></i><i></i><b>×25</b></div>'
+          +   '<button type="button" class="cr-claim">' + D.esc(L.claim) + '</button>'
+          +   '<div class="cr-only">' + D.esc(L.only) + '</div>'
+          +   '<div class="cr-cool"><span>' + D.esc(L.cooling) + '</span><i><s></s></i></div>'
+          +   '<button type="button" class="cr-dismiss">' + D.esc(L.dismiss) + '</button>'
+          + '</div><div class="cr-shut cr-shut-a"></div><div class="cr-shut cr-shut-b"></div><div class="cr-crackline"></div>'
+          + '<div class="cr-after"><b></b><span></span></div>' : '')
+          + '<div class="cr-flash"></div>');
+
+        var $ = function (s) { return root.querySelector(s); };
+        var pctEl = $('.cr-pct'), infoEl = $('.cr-info'), pokesEl = $('.cr-pokes');
+        function renderInfo() { infoEl.textContent = info.join('\n').replace('{temp}', temp); }
+        renderInfo();
+
+        /* clicks during the crash */
+        var pokes = 0, crashed = false, revealed = false, endEarly;
+        var early = new Promise(function (r) { endEarly = r; });
+        root.addEventListener('pointerdown', function (e) {
+            if (!crashed || revealed || e.target.closest('button')) return;
+            pokes++;
+            au.sfx('poke');
+            var extra = L.pokeAt && L.pokeAt[pokes];
+            var line = D.h('div', extra ? 'cr-poke-x' : '', D.esc(extra || L.poke.replace('{n}', pokes)));
+            pokesEl.appendChild(line);
+            while (pokesEl.children.length > 3) pokesEl.removeChild(pokesEl.firstChild);
+            D.replay($('.cr-in'), 'cr-jolt');
+            if (pokesToEnd && pokes >= pokesToEnd) endEarly();
+        });
+
+        /* the percentage: irregular, with a stall where it hurts */
+        function count() {
+            return new Promise(function (resolve) {
+                var p = 0, stalls = { 37: 1200, 99: 1400 };
+                (function step() {
+                    if (revealed) return resolve();
+                    var add = Math.floor(rnd(3, 11));
+                    var next = Math.min(100, p + add);
+                    Object.keys(stalls).forEach(function (k) { if (p < +k && next >= +k) { next = +k; } });
+                    p = next;
+                    pctEl.textContent = L.pct.replace('{p}', p);
+                    au.sfx('tick');
+                    if (thermal && p % 2 === 0 && temp < 109 && Math.random() < 0.4) { temp++; renderInfo(); }
+                    if (p >= 100) return later(resolve, 700);
+                    later(step, stalls[p] && !reduced ? stalls[p] : (reduced ? 40 : 130));
+                })();
+            });
+        }
+
+        var result = { variant: thermal ? 'thermal' : 'fake', clicks: 0, bonus: 0, claimed: false };
+        var done = (async function () {
+            /* 1 · THE FREEZE */
+            root.classList.add('cr-s-pre');
+            if (thermal) { au.cue('heat'); au.sfx('overheat', 1.4); await sleep(1500); }
+            else await sleep(650);
+            au.cue('dread');
+            au.sfx('freeze');
+            root.classList.add('cr-s-crash');
+            root.parentNode && root.parentNode.classList.remove('dks-see');
+            crashed = true;
+            log('Your system ran into a problem and needs to restart.');
+            await sleep(1100);
+            root.classList.add('cr-s-owned');                // now it says whose screen it is
+
+            /* 2 · THE CRASH */
+            await Promise.race([count(), early]);
+            revealed = true;
+            result.clicks = pokes;
+
+            /* 3 · THE REVEAL */
+            root.classList.add('cr-s-reveal');
+            D.replay($('.cr-flash'), 'on');
+            $('.cr-title').innerHTML = L.revealTitle;
+            pctEl.textContent = L.revealPct;
+            log(L.revealPct + '. ' + L.revealTitle.replace(/<br>/g, ' '));
+            if (!thermal) {
+                au.sfx('reveal');
+                au.cue('joke');
+                var gain = (st.energy || 1) * (opts.bonus != null ? opts.bonus : 0.5);
+                result.bonus = gain;
+                if (typeof opts.onBonus === 'function') { try { opts.onBonus(gain); } catch (e) {} }
+                infoEl.textContent = L.after + (pokes ? '\n' + L.clicked.replace('{n}', pokes) : '');
+                pokesEl.textContent = '';
+                await sleep(700);
+                var b = $('.cr-bonus');
+                b.textContent = L.bonus.replace('{amt}', D.fmt(gain));
+                root.classList.add('cr-s-bonus');
+                au.sfx('bonus');
+                log(b.textContent);
+                await sleep(900);
+            } else {
+                au.sfx('contained');
+                au.cue('closed');
+                infoEl.textContent = info.join('\n').replace('{temp}', temp) + '\nStatus: CONTAINED';
+                pokesEl.textContent = '';
+                await sleep(2600);
+
+                /* 4 · THE CRACK */
+                root.classList.add('cr-s-crack');
+                au.sfx('crack');
+                await sleep(500);
+                au.cue('core');
+                root.classList.add('cr-s-core');
+                log(L.behind + ': ' + L.claim + '. ' + L.only + '.');
+                var win = opts.window || V.window;
+                var cool = $('.cr-cool s');
+                cool.style.transition = 'transform ' + win + 's linear';
+                requestAnimationFrame(function () { requestAnimationFrame(function () { cool.style.transform = 'scaleX(0)'; }); });
+                var coolTxt = $('.cr-cool span'), left = win;
+                coolTxt.textContent = L.cooling + ' · ' + left + 's';
+                var coolT = setInterval(function () { left = Math.max(0, left - 1); coolTxt.textContent = L.cooling + ' · ' + left + 's'; }, 1000);
+                timers.push(coolT);
+                try { $('.cr-claim').focus({ preventScroll: true }); } catch (e) {}
+                var pick = await new Promise(function (resolve) {
+                    $('.cr-claim').addEventListener('click', function () { resolve('claim'); });
+                    $('.cr-dismiss').addEventListener('click', function () { resolve('dismiss'); });
+                    later(function () { resolve('cooled'); }, win * 1000);
+                    if (win > 6) later(function () { root.classList.add('cr-hurry'); au.sfx('cool'); }, (win - 5) * 1000);
+                });
+                root.classList.remove('cr-hurry');
+                clearInterval(coolT);
+                cool.style.transition = 'none';
+                var after = $('.cr-after');
+                if (pick === 'claim') {
+                    result.claimed = true;
+                    if (typeof opts.onClaim === 'function') { try { opts.onClaim(); } catch (e) {} }
+                    au.sfx('claim');
+                    au.cue('claimed');
+                    D.replay($('.cr-flash'), 'on');
+                    root.classList.add('cr-s-claimed');
+                    after.querySelector('b').textContent = L.claimed;
+                    after.querySelector('span').textContent = L.claimedSub;
+                    log(L.claimed + '. ' + L.claimedSub);
+                    await sleep(1800);
+                } else {
+                    au.sfx(pick === 'cooled' ? 'lost' : 'cool');
+                    root.classList.add('cr-s-shut');
+                    if (pick === 'cooled') {
+                        after.querySelector('b').textContent = L.closedT;
+                        after.querySelector('span').textContent = L.closedSub;
+                        log(L.closedT);
+                        await sleep(1400);
+                    } else { await sleep(700); finish(); return result; }
+                }
+            }
+            var auto = opts.autoClose ? sleep(opts.autoClose).then(function () { return 'auto'; }) : null;
+            var row = D.choices(root, opts.choices || [{ id: 'continue', label: 'CONTINUE' }]);
+            result.action = await (auto ? Promise.race([row.show(), auto]) : row.show());
+            finish();
+            return result;
+        })();
+
+        function finish() { timers.forEach(function (t) { clearTimeout(t); clearInterval(t); }); shell.close(); }
+        return { done: done, close: finish };
+    }
+
+    window.CrashScene = { play: play, VARIANTS: VARIANTS };
+})();
+
+</script>
+<script>
+var host = document.getElementById('host'), out = document.getElementById('out'), scene = null;
+var begun = false;
+function begin() { begun = true; EventAudio.unlock(); start(); }
+document.getElementById('go').onclick = begin;
+document.getElementById('safe').onchange = function (e) { document.body.classList.toggle('safe-mode', e.target.checked); if (begun) start(); };
+var snd = document.getElementById('snd');
+snd.onclick = function () {
+    var m = !EventAudio.isMuted();
+    EventAudio.setMuted(m);
+    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.setAttribute('aria-pressed', String(!m));
+};
+var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
+               stats: { totalPlaytimeMs: 40 * 60000, itemsBought: 64 }, eps: 5e9, voidBranch: { a: 1, b: 1 }, _sporeHappiness: 12 };
+
+var msSel = document.getElementById('ms'), clicks = 0, crashed = false, music = null, energy = 3.2e14;
+function board() {
+    return '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en">' + DuckScene.fmt(energy) + '</b></span><span>TOTAL CLICKS<b id="tc"></b></span></div>'
+      + '<button class="acq" id="acq" type="button">CLICK</button>'
+      + '<div class="tip" id="tip">Click. Something happens at ' + (+msSel.value).toLocaleString('en-US') + '.</div></div><div class="sceneLayer" id="layer" hidden></div>';
+}
+function start() {
+    if (scene) scene.close();
+    if (music) music.stop();
+    crashed = false; energy = 3.2e14; out.textContent = '';
+    var goal = +msSel.value; clicks = goal - 6;
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = board();
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
+    document.getElementById('tc').textContent = clicks.toLocaleString('en-US');
+    music = EventAudio.session(FakeCrashScore); music.cue('board');
+    document.getElementById('acq').onclick = function () {
+        if (crashed) return;
+        clicks++; music.sfx('click');
+        document.getElementById('tc').textContent = clicks.toLocaleString('en-US');
+        if (clicks >= goal) trigger();
+    };
+}
+function trigger() {
+    if (crashed) return;
+    crashed = true;
+    if (music) { music.stop(); music = null; }
+    var layer = document.getElementById('layer');
+    layer.hidden = false;
+    scene = CrashScene.play(layer, { variant: 'fake', clicks: +msSel.value, state: { energy: energy },
+        onBonus: function (g) { energy += g; document.getElementById('en').textContent = DuckScene.fmt(energy); } });
+    scene.done.then(function (r) {
+        layer.hidden = true;
+        out.textContent = 'Crash bonus +' + DuckScene.fmt(r.bonus) + ' energy' + (r.clicks ? '; you clicked ' + r.clicks + ' times during the crash' : '') + '.';
+        document.getElementById('tip').textContent = 'Nothing crashed. (Reset board to crash again.)';
+    });
+}
+document.getElementById('trigger').onclick = function () { if (!begun) begin(); trigger(); };
+msSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;
+</script>
