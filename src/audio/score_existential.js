@@ -1,132 +1,181 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    score_existential.js — THE EXISTENTIAL CRISIS's music and sound.
 
-   The joke is the silence. A bright little clicker loop plays as the counter
-   rolls to 1,000,000 — and then stops dead, mid-bar. What follows is almost
-   nothing: a held low note, a few far-apart bells, a key typing a question.
+   ONE KEY, TWO MOODS. Everything is built on D, so nothing in the scene is out
+   of tune with anything else:
+     · before the break, the game's cheerful loop is in D MAJOR (D · Bm · G · A);
+     · at the break it TAPE-STOPS — the same chord slides down an octave and dies;
+     · after it, the same tonic in D MINOR (Dm · B♭ · Gm · A), slow and quiet.
+   Every effect is a pitched note in that key: the clicks climb the D major
+   arpeggio, the falling digits are a descending D minor chime, the typed
+   question walks a muted D minor figure, the fragments sparkle on a D major
+   pentatonic. The only unpitched sounds are wood, breath and noise risers.
 
-   CUES      board (the cheerful loop that gets cut) · question (C minor,
-             barely there) · after_vignette · after_shift · after_figure ·
-             after_drain (each answer leaves its own room tone behind)
-   EFFECTS   click · stall · key · reveal · hover(i) · hold(i) · release ·
-             choose_vignette · choose_shift · choose_figure · choose_drain ·
-             count · shard
-   Each answer has its own chord, heard on hover and again, louder, when held.
+   The four answers each have a chord on D, heard on hover and swelling while
+   held:  POWER  open octaves and a fifth, low (D1 D2 A2 D3)
+          NUMBERS  F major 7 — cool, clean, counting
+          FUN    D major add 9 — the major key coming back
+          VOID   a hollow fifth with no third (D A E): nothing to resolve to
+
+   Instruments: keys (soft electric piano), warm (filtered pad), sub, thump,
+   chime (harmonic, not metallic), riser, breath — event_audio.js.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
+    var _ = null;
 
-    /* the four answers' chords: POWER (stacked fifths, hard), NUMBERS (clean
-       major 7th), FUN (bright major), VOID (an unresolved cluster) */
-    var CHORDS = [[48, 55, 62, 67], [53, 57, 60, 64], [60, 64, 67, 72], [49, 50, 56, 61]];
+    /* D major: D · Bm · G · A — [bass, chord tones] */
+    var BOARD = [[38, 62, 66, 69], [35, 62, 66, 71], [43, 62, 67, 71], [45, 61, 64, 69]];
+    var BOARD_TUNE = [
+        [74, _, _, _, 78, _, 76, _, 74, _, _, _, 69, _, _, _],
+        [71, _, _, _, 74, _, 73, _, 71, _, _, _, 66, _, _, _],
+        [67, _, _, _, 71, _, 74, _, 79, _, _, _, 78, _, _, _],
+        [76, _, _, _, 73, _, 69, _, 73, _, 76, _, _, _, _, _]
+    ];
+    /* D natural minor: Dm · B♭ · Gm · Am, voice-led around D4. ⚠ Am, not A major: the
+       major V's C♯ was measured clashing with whichever answer the player hovered. */
+    var MINOR = [[38, 57, 62, 65], [34, 58, 62, 65], [31, 58, 62, 67], [33, 57, 60, 64]];
+    var CHORDS = [[26, 38, 45, 50], [53, 57, 60, 64], [62, 66, 69, 76], [38, 45, 52]];
+    var ARP = [74, 78, 81, 86];                   // the clicks climb this
+    var LETTERS = [62, 65, 69, 65, 62, 57];       // the question walks this
+    var SPARKLE = [86, 88, 90, 93, 95, 98];       // D major pentatonic, up high
+
+    var clickN = 0, letterN = 0;
 
     var cues = {
+        /* the game as the player knows it — bright, a little proud of itself */
         board: function (A, t, s, bar) {
-            var M = A.music;
-            var prog = [[48, 60, 64, 67], [45, 57, 60, 64], [41, 57, 60, 65], [43, 55, 59, 62]][bar % 4];
-            if (s % 4 === 0) M.kick(t, 0.6);
-            if (s % 4 === 2) M.hat(t, 0.4);
-            if (s % 8 === 4) M.snare(t, 0.3);
-            if (s % 4 === 0) M.bass(t, prog[0], A.step * 2, 0.6);
-            if (s % 2 === 0) M.pluck(t, prog[1 + (s >> 1) % 3] + 12, A.step, 0.3);
+            var M = A.music, c = BOARD[bar % 4];
+            if (s === 0 || s === 8) M.thump(t, 38, 0.45);
+            if (s % 4 === 2) M.hat(t, 0.18);
+            if (s % 4 === 0) M.bass(t, c[0], A.step * 2.5, 0.7);
+            if (s % 2 === 0) M.keys(t, c[1 + (s >> 1) % 3], A.step * 1.5, 0.45);
+            var m = BOARD_TUNE[bar % 4][s];
+            if (m) M.chime(t, m, A.step * 2, 0.65);
         },
+        /* the question: half-time, D minor, a heartbeat under it */
         question: function (A, t, s, bar) {
-            var M = A.music;
-            if (s === 0 && bar % 2 === 0) M.pad(t, 36, A.bar * 2, 0.7);
-            if (s === 0 && bar % 2 === 1) M.pad(t, 43, A.bar * 2, 0.5);
-            if (s === 8 && bar % 3 === 0) M.bell(t, [75, 72, 79, 74][(bar / 3 | 0) % 4], 0.8, 0.22);
+            var M = A.music, c = MINOR[(bar >> 1) % 4];
+            if (s === 0 && bar % 2 === 0) {
+                M.sub(t, c[0], A.bar * 2, 0.6);
+                for (var k = 1; k < 4; k++) M.warm(t, c[k], A.bar * 2, 0.55);
+            }
+            if (s === 0) M.thump(t, 26, 0.32);
+            if (s === 3) M.thump(t, 26, 0.18);
+            if (s === 8 && bar % 2 === 1) M.keys(t, c[3] + 12, A.beat * 3, 0.22);
         },
-        after_vignette: function (A, t, s, bar) {            // a low pulse that does not stop
+        /* the answers wait: only the root and the heartbeat. Each answer's chord colours the
+           silence on its own when hovered, with nothing underneath to clash against. */
+        answers: function (A, t, s, bar) {
             var M = A.music;
-            if (s === 0 || s === 6) M.kick(t, s === 0 ? 0.5 : 0.3);
-            if (s === 0 && bar % 2 === 0) M.pad(t, 36, A.bar * 2, 0.6);
-            if (s === 0 && bar % 4 === 2) M.brass(t, 43, A.bar * 0.8, 0.3);
+            if (s === 0 && bar % 2 === 0) { M.sub(t, 26, A.bar * 2, 0.55); M.sub(t, 38, A.bar * 2, 0.2); }
+            if (s === 0) M.thump(t, 26, 0.3);
+            if (s === 3) M.thump(t, 26, 0.16);
         },
-        after_shift: function (A, t, s, bar) {               // counting, slightly out of time
+        /* what each answer leaves behind */
+        after_vignette: function (A, t, s, bar) {                // POWER: a low pulse that does not stop
             var M = A.music;
-            if (s % 4 === 1) M.tick(t + 0.012, 2600, 0.4);
-            if (s === 0 && bar % 2 === 0) M.pad(t, 41, A.bar * 2, 0.5);
-            if (s % 8 === 0) M.pluck(t, [65, 69, 72, 76][bar % 4], A.step, 0.2);
+            if (s === 0 || s === 8) M.thump(t, 26, s === 0 ? 0.5 : 0.3);
+            if (s === 0 && bar % 2 === 0) { M.sub(t, 26, A.bar * 2, 0.5); M.sub(t, 45, A.bar * 2, 0.25); M.sub(t, 50, A.bar * 2, 0.2); }
+            if (s === 12 && bar % 4 === 3) M.keys(t, 57, A.beat, 0.25, null, 62);
         },
-        after_figure: function (A, t, s, bar) {              // a music box, wound by someone small
+        after_shift: function (A, t, s, bar) {                   // NUMBERS: F major 7, counting softly
             var M = A.music;
-            var tune = [72, 76, 79, 76, 77, 74, 72, null, 72, 76, 79, 84, 83, 79, 77, null];
+            if (s % 2 === 0) M.keys(t, [65, 69, 72, 76][(s >> 1) % 4], A.step, 0.16);
+            if (s === 0 && bar % 2 === 0) { M.warm(t, 53, A.bar * 2, 0.4); M.sub(t, 41, A.bar * 2, 0.35); }
+        },
+        after_figure: function (A, t, s, bar) {                  // FUN: a music box in D major
+            var M = A.music;
+            var tune = [74, 78, 81, 78, 79, 76, 74, _, 74, 78, 81, 86, 85, 81, 79, _];
             var m = tune[(bar % 2) * 8 + (s >> 1)];
-            if (s % 2 === 0 && m) M.bell(t, m, 0.3, 0.28);
-            if (s === 0 && bar % 2 === 0) M.pad(t, 48, A.bar * 2, 0.35);
+            if (s % 2 === 0 && m) M.chime(t, m, 0.3, 0.32);
+            if (s === 0 && bar % 2 === 0) { M.warm(t, 62, A.bar * 2, 0.35); M.warm(t, 66, A.bar * 2, 0.3); }
         },
-        after_drain: function (A, t, s, bar) {               // only the drone is left
-            if (s === 0 && bar % 2 === 0) A.music.pad(t, 25, A.bar * 2, 0.8);
+        after_drain: function (A, t, s, bar) {                   // VOID: only an open fifth is left, pure sines
+            if (s === 0 && bar % 2 === 0) { A.music.sub(t, 26, A.bar * 2, 0.5); A.music.sub(t, 45, A.bar * 2, 0.22); }
+        },
+        after_none: function (A, t, s, bar) {
+            if (s === 0 && bar % 2 === 0) A.music.warm(t, 50, A.bar * 2, 0.4);
         }
     };
 
     var sfx = {
-        click: function (A, t) { A.fx.tick(t, 1400, 0.7); A.fx.wood(t, 0.25, 2.4); },
-        stall: function (A, t) {
-            var F = A.fx;
-            F.tick(t, 1400, 0.7);
-            F.brass(t + 0.05, 36, 2.6, 0.5);
-            F.whoosh(t, 1.6, 3000, 200, 0.4);
+        /* 1 · the break */
+        click: function (A, t) {
+            A.fx.chime(t, ARP[clickN++ % 4], 0.08, 0.45);
+            A.fx.wood(t, 0.12, 2.6);
         },
-        key: function (A, t) { A.fx.wood(t, 0.35, 1.6); A.fx.timp(t, 26, 0.18); },        // each letter lands
-        key_soft: function (A, t) { A.fx.wood(t, 0.12, 2.8); },
-        glitch: function (A, t) {                                                 // the counter tearing
+        glitch: function (A, t) {                                       // the loop tape-stops and stutters
             var F = A.fx;
-            for (var k = 0; k < 9; k++) {
-                F.syllable(t + k * 0.09, { f: 60 + Math.random() * 900, type: 'square', formant: 400 + Math.random() * 3000, q: 1, up: 1, down: 1.6, len: 0.07, gain: 0.35 }, 1);
-                if (k % 2) F.hat(t + k * 0.09, 0.9);
-            }
-            F.whoosh(t, 0.9, 200, 6000, 0.6);
+            [62, 66, 69, 74].forEach(function (m) { F.keys(t, m, 0.85, 0.5, null, m - 12); });
+            F.sub(t, 38, 0.85, 0.6, null, 26);
+            for (var k = 0; k < 7; k++) F.chime(t + k * (0.11 - k * 0.008), 86, 0.03, 0.5 - k * 0.06);
+            F.riser(t, 0.8, 62, 0.25);
         },
-        cut: function (A, t) { A.fx.kick(t, 1); A.fx.tick(t, 60, 0.6); },        // then nothing at all
-        heartbeat: function (A, t) { A.fx.kick(t, 0.9); A.fx.kick(t + 0.22, 0.55); },
-        shatter: function (A, t) {
+        cut: function (A, t) { A.fx.thump(t, 26, 1); },                 // then nothing at all
+        heartbeat: function (A, t) { A.fx.thump(t, 26, 0.9); A.fx.thump(t + 0.24, 26, 0.55); },
+        shatter: function (A, t) {                                      // the digits fall: D minor, descending
+            [86, 81, 77, 74, 69, 65, 62].forEach(function (m, k) { A.fx.chime(t + k * 0.16, m, 0.4, 0.38 - k * 0.03); });
+        },
+
+        /* 2 · the question */
+        key: function (A, t) { A.fx.keys(t, LETTERS[letterN++ % LETTERS.length], 0.12, 0.3); A.fx.thump(t, 38, 0.12); },
+        key_soft: function (A, t) { A.fx.keys(t, 74, 0.05, 0.1); },
+        whisper: function (A, t) { A.fx.breath(t, 0.6 + Math.random() * 0.4, 0.3, Math.random() < 0.5 ? 'ah' : 'oo'); },
+
+        /* 3 · the answers */
+        reveal: function (A, t) { [62, 65, 69, 74].forEach(function (m, i) { A.fx.chime(t + i * 0.2, m + 12, 0.5, 0.32); }); },
+        hover: function (A, t, i) {
+            var c = CHORDS[i % 4], top = c[c.length - 1];
+            A.fx.chime(t, top < 60 ? top + 24 : top + 12, 0.3, 0.26);
+            A.fx.sub(t, c[0] < 30 ? c[0] + 12 : c[0], 0.4, 0.25);
+        },
+        hold: function (A, t, i) {
+            var c = CHORDS[i % 4];
+            if (i % 4 === 3) c.forEach(function (m) { A.fx.sub(t, m, 1.1, 0.6); });   // VOID stays hollow: pure sines
+            else c.forEach(function (m) { A.fx.warm(t, m < 36 ? m + 12 : m, 1.1, 0.75); });
+            A.fx.riser(t, 1.1, c[1] || c[0], 0.6);
+        },
+        release: function (A, t) { A.fx.breath(t, 0.3, 0.2, 'oo'); },
+
+        /* 4 · the consequences */
+        choose_vignette: function (A, t) {                              // POWER: the floor drops, octaves on D
             var F = A.fx;
-            [96, 91, 88, 84, 79, 76, 72].forEach(function (m, k) { F.bell(t + k * 0.14, m, 0.3, 0.3); });
-            F.whoosh(t, 2.2, 3000, 150, 0.4);
+            F.thump(t, 26, 1); F.sub(t, 26, 2.4, 1);
+            [38, 45, 50].forEach(function (m) { F.warm(t, m, 2.2, 1.3); });
+            [38, 45, 50, 57].forEach(function (m) { F.keys(t, m, 1.4, 0.75); });   // struck octaves and fifths, no brass: it adds a third
+            F.timp(t, 38, 0.9); F.cymbal(t, 0.35);
+            F.timp(t + 0.55, 33, 0.7);
+            F.keys(t + 1.1, 57, 0.6, 0.5, null, 62);
         },
-        whisper: function (A, t) {
+        choose_shift: function (A, t) {                                 // NUMBERS: F major 7 climbing two octaves
+            [65, 69, 72, 76, 77, 81, 84, 88].forEach(function (m, k) { A.fx.chime(t + k * 0.065, m, 0.12, 0.4); });
+            A.fx.sub(t, 41, 1.2, 0.5);
+        },
+        count: function (A, t, k) { A.fx.chime(t, [77, 81, 84, 88][k % 4], 0.04, 0.18); },
+        fracture: function (A, t) {
             var F = A.fx;
-            for (var k = 0; k < 3; k++) F.whoosh(t + k * 0.16, 0.22, 1400 + Math.random() * 800, 2400 + Math.random() * 800, 0.18);
+            F.thump(t, 26, 1); F.wood(t, 0.8, 0.7);
+            [38, 45, 50].forEach(function (m) { F.keys(t, m, 0.3, 0.7); });
+            F.whoosh(t, 0.35, 4000, 600, 0.5);
         },
-        fracture: function (A, t) { var F = A.fx; F.wood(t, 1, 0.6); F.whoosh(t, 0.3, 6000, 600, 0.9); F.kick(t, 0.8); F.cymbal(t, 0.5); },
+        choose_figure: function (A, t) {                                // FUN: the major key comes back
+            [74, 78, 81, 86, 88].forEach(function (m, k) { A.fx.chime(t + k * 0.09, m, 0.35, 0.42); });
+            [62, 66, 69].forEach(function (m) { A.fx.warm(t + 0.3, m, 1.4, 0.8); });
+        },
+        shard: function (A, t) { A.fx.chime(t, SPARKLE[(Math.random() * SPARKLE.length) | 0], 0.08, 0.22); },
         figure: function (A, t) {
             var F = A.fx;
-            [60, 64, 67].forEach(function (m) { F.pad(t, m, 2, 0.8); });
-            F.syllable(t + 1.6, { f: 880, type: 'sine', formant: 1900, q: 1, up: 0.85, down: 1.4, len: 0.12, gain: 0.25, dry: 0.7 }, 1);
+            [62, 66, 69, 74].forEach(function (m) { F.warm(t, m, 2.4, 0.7); });
+            F.chime(t + 1.7, 86, 0.2, 0.25); F.chime(t + 1.85, 81, 0.4, 0.2);    // a small, curious sound
         },
-        crack: function (A, t) { var F = A.fx; F.wood(t, 1, 0.7); F.wood(t + 0.05, 0.6, 0.5); F.whoosh(t, 1.4, 2400, 100, 0.5); },
-        reveal: function (A, t) { CHORDS.forEach(function (c, i) { A.fx.bell(t + i * 0.18, c[3] + 12, 0.4, 0.22); }); },
-        hover: function (A, t, i) { var c = CHORDS[i % 4]; A.fx.bell(t, c[3] + 12, 0.3, 0.2); },
-        hold: function (A, t, i) { CHORDS[i % 4].forEach(function (m) { A.fx.pad(t, m, 0.9, 1.1); }); A.fx.whoosh(t, 0.9, 300, 2600, 0.4); },
-        release: function (A, t) { A.fx.whoosh(t, 0.25, 1500, 400, 0.25); },
-        choose_vignette: function (A, t) {                   // POWER
+        choose_drain: function (A, t) {                                 // VOID: the minor chord tape-stops into nothing
             var F = A.fx;
-            [36, 43, 48, 55].forEach(function (m) { F.brass(t, m, 1.8, 1); });
-            F.kick(t, 1); F.timp(t, 36, 1); F.cymbal(t, 0.7);
-            F.brass(t + 0.95, 60, 0.9, 0.9, null, 67);
-            F.kick(t + 0.5, 0.9); F.timp(t + 0.5, 31, 0.8);
+            [50, 57, 62, 65].forEach(function (m) { F.warm(t, m, 2.4, 1.1, null, m - 12); F.keys(t, m, 2.2, 0.35, null, m - 12); });
+            F.sub(t, 38, 2.6, 0.8, null, 26);
         },
-        choose_shift: function (A, t) {                     // NUMBERS
-            var F = A.fx;
-            for (var k = 0; k < 16; k++) F.pluck(t + k * 0.055, 60 + k * 2, 0.08, 0.45);
-            F.whoosh(t + 0.9, 0.2, 5000, 800, 0.8);
-            F.wood(t + 1.0, 0.7, 0.8); F.wood(t + 1.06, 0.5, 0.9);
-        },
-        choose_figure: function (A, t) {                     // FUN
-            var F = A.fx;
-            [72, 76, 79, 84, 88].forEach(function (m, k) { F.bell(t + k * 0.08, m, 0.3, 0.4); });
-            F.syllable(t + 0.9, { f: 880, type: 'sine', formant: 1900, q: 1, up: 0.85, down: 1.4, len: 0.12, gain: 0.25, dry: 0.7 }, 1);
-        },
-        choose_drain: function (A, t) {                      // VOID
-            var F = A.fx;
-            [48, 55, 60, 64].forEach(function (m) { F.brass(t, m, 2.2, 0.6, null, m - 7); });
-            F.whoosh(t, 2.6, 2400, 120, 0.5);
-            F.timp(t + 2.2, 24, 0.7);
-        },
-        choose_none: function (A, t) { A.fx.bell(t, 72, 0.6, 0.4); },
-        count: function (A, t, k) { A.fx.tick(t, 900 + k * 40, 0.5); },
-        shard: function (A, t) { A.fx.bell(t, 84 + Math.floor(Math.random() * 12), 0.1, 0.25); }
+        crack: function (A, t) { A.fx.wood(t, 0.9, 0.7); A.fx.wood(t + 0.05, 0.5, 0.5); A.fx.thump(t, 26, 0.8); A.fx.breath(t + 0.1, 1.6, 0.25, 'oo'); },
+        choose_none: function (A, t) { A.fx.chime(t, 74, 0.6, 0.4); }
     };
 
     window.ExistentialScore = { bpm: 120, cues: cues, sfx: sfx, voices: [] };

@@ -40,7 +40,7 @@
           markText: 'The simulation has fractured. Alignment is permanently off by 2 pixels. You did this.' },
         { key: 'FUN',     glyph: '◈', label: 'FUN',     desc: 'It was always about this.',
           gift: '+25', giftSub: 'FRAGMENTS · CORRECT ANSWER', mark: 'figure', color: '#7fdc8a',
-          markText: 'A small duck watches from below. It has always been there.' },
+          markText: 'A figure watches from below. It has always been there.' },
         { key: 'VOID',    glyph: '✕', label: 'VOID',    desc: 'The flesh is a bottleneck.',
           gift: '×3', giftSub: 'PASSIVE FOREVER · ACQUIRE DISABLED', mark: 'drain', color: '#a4a4b4',
           markText: 'Colour drains from the simulation. The numbers remain. Colour was never the point.' }
@@ -332,6 +332,7 @@
             /* 4 · THE ANSWERS — no timer; it waits */
             shell.done();
             root.classList.add('exs-s-answers');
+            au.cue('answers');
             grid.classList.add('dks-on');
             hint.classList.add('dks-on');
             au.sfx('reveal');

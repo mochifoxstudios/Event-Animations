@@ -45,3 +45,26 @@ ExistentialScene.play(ov, {
 ```
 
 The scene already states each mark, so `_applyScar` doesn't need to show its notifications as well.
+
+**One text change to carry into game.js:** the FUN mark now reads *"A figure watches from below. It has always been there."*
+The game's own `_applyScar('FUN')` notification still says *"a small duck watches from below"*, and the figure's
+tooltip says *"The duck approves."* Change both to match.
+
+## Sound
+
+Everything is in one key, so nothing is out of tune with anything else. Before the break the music is in D major,
+it tape-stops at the break, and everything after is in D natural minor. Every effect is a note in that key:
+- the clicks climb a D major arpeggio;
+- the falling digits are a descending D minor chime;
+- the typed question walks a muted D minor figure;
+- the fragments sparkle on a D major pentatonic scale.
+
+While the answers wait, only the low D drone and the heartbeat play, so each answer's chord colours the silence
+without clashing with anything:
+- POWER: open octaves on D;
+- NUMBERS: F major 7;
+- FUN: D major add 9;
+- VOID: a hollow fifth, in pure sine tones.
+
+The tuning was checked by reading the frequency spectrum at every phase. All four answers were measured.
+

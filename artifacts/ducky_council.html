@@ -1464,6 +1464,78 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             o.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur);
             if (p.dry) { var dg = out(B(bus)); perc(dg, t, (p.gain || 0.22) * v * p.dry, 0.004, t + dur); var o2 = osc('sine', f0 * (p.up || 1.3), t, t + dur + 0.02, dg); o2.frequency.exponentialRampToValueAtTime(f0 * (p.down || 0.8), t + dur); }
         };
+        /* ── softer voices, for scores that need to be in tune and quiet ─────── */
+        /* warm electric piano: sine + a little octave triangle, filter closing */
+        I.keys = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 2400);
+            f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(800, t + 0.7);
+            var g = out(B(bus), 0.3); f.connect(g);
+            perc(g, t, 0.22 * v, 0.004, t + dur + 0.9);
+            var hg = ctx.createGain(); hg.gain.value = 0.22; hg.connect(f);
+            var o1 = osc('sine', mf(m), t, t + dur + 1, f);
+            var o2 = osc('sine', mf(m) * 2, t, t + dur + 1, hg);
+            if (slideTo != null) { o1.frequency.exponentialRampToValueAtTime(mf(slideTo), t + dur); o2.frequency.exponentialRampToValueAtTime(mf(slideTo) * 2, t + dur); }
+        };
+        /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
+           ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
+           and under a minor or a hollow chord that third was measured clashing (C♯ against
+           an F major 7's C; a C♯ turning VOID's open fifth into A major). */
+        I.warm = function (t, m, dur, v, bus, slideTo) {
+            var f = filt('lowpass', 760, 0.5);
+            var g = out(B(bus), 0.55); f.connect(g);
+            sustain(g, t, 0.11 * v, Math.min(1.2, dur / 2), dur, 1.8);
+            [[-6, 'sine', 1], [6, 'sine', 1], [0, 'triangle', 0.2]].forEach(function (d) {
+                var c = d[0], vg = ctx.createGain(); vg.gain.value = d[2]; vg.connect(f);
+                var o = osc(d[1], mf(m) * Math.pow(2, c / 1200), t, t + dur + 2, vg);
+                if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo) * Math.pow(2, c / 1200), t + dur);
+            });
+            var sg = ctx.createGain(); sg.gain.value = 0.6; sg.connect(f);
+            var so = osc('sine', mf(m - 12), t, t + dur + 2, sg);
+            if (slideTo != null) so.frequency.exponentialRampToValueAtTime(mf(slideTo - 12), t + dur);
+        };
+        /* a pure low sine with a swell — drones and floors */
+        I.sub = function (t, m, dur, v, bus, slideTo) {
+            var g = out(B(bus));
+            sustain(g, t, 0.32 * v, 0.05, dur, 0.6);
+            var o = osc('sine', mf(m), t, t + dur + 0.7, g);
+            if (slideTo != null) o.frequency.exponentialRampToValueAtTime(mf(slideTo), t + dur);
+        };
+        /* a tuned body thump: a heartbeat, a floor dropping */
+        I.thump = function (t, m, v, bus) {
+            var g = out(B(bus), 0.1);
+            perc(g, t, 0.75 * v, 0.004, t + 0.45);
+            var o = osc('sine', mf(m) * 2.2, t, t + 0.5, g);
+            o.frequency.exponentialRampToValueAtTime(mf(m), t + 0.05);
+        };
+        /* a clean, harmonic chime (the FM bell is metallic; this one is in tune) */
+        I.chime = function (t, m, dur, v, bus) {
+            [[1, 1, 1], [2, 0.32, 0.6], [3, 0.12, 0.4], [4, 0.05, 0.3]].forEach(function (p) {
+                var g = out(B(bus), 0.45);
+                perc(g, t, 0.13 * v * p[1], 0.002, t + (dur + 1.2) * p[2]);
+                osc('sine', mf(m) * p[0], t, t + dur + 1.3, g);
+            });
+        };
+        /* tuned noise rising through a resonant band, under a quiet rising sine */
+        I.riser = function (t, dur, m, v, bus) {
+            var bp = filt('bandpass', mf(m), 9);
+            bp.frequency.setValueAtTime(mf(m), t); bp.frequency.exponentialRampToValueAtTime(mf(m + 24), t + dur);
+            var g = out(B(bus), 0.35); bp.connect(g);
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.35 * v, t + dur); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
+            noise(t, t + dur + 0.2, bp);
+            var sg = out(B(bus), 0.2);
+            sg.gain.setValueAtTime(0.0001, t); sg.gain.linearRampToValueAtTime(0.05 * v, t + dur); sg.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
+            var o = osc('sine', mf(m), t, t + dur + 0.2, sg); o.frequency.exponentialRampToValueAtTime(mf(m + 12), t + dur);
+        };
+        /* breath through a fixed vowel — whispers */
+        I.breath = function (t, dur, v, vowel, bus) {
+            var F = vowel === 'oo' ? [[350, 8], [800, 10]] : [[750, 7], [1150, 9]];
+            F.forEach(function (fm, k) {
+                var bp = filt('bandpass', fm[0], fm[1]);
+                var g = out(B(bus), 0.6); bp.connect(g);
+                g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime((k ? 0.35 : 0.5) * v, t + dur * 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                noise(t, t + dur + 0.05, bp);
+            });
+        };
         return I;
     }
 
