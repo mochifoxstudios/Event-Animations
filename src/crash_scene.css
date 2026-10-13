@@ -2,7 +2,6 @@
    crash_scene.css — THE FAKE CRASH and THE THERMAL CRASH on the 1920×1080 canvas.
    The cut to blue is instant on purpose: no fade, no transition. That is the dread.
    ═══════════════════════════════════════════════════════════════════════════ */
-.dks-fit.dks-see { background: transparent; }
 .dks.cr {
     --blue: #0b3184;
     --dks-ink: #ffffff;

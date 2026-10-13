@@ -16,6 +16,7 @@
    edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
    the sizes below mean the same thing on every monitor. */
 .dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-fit.dks-see { background: transparent; }                                       /* a scene drawn over the live game */
 .dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
 
 .dks {

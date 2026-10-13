@@ -26,7 +26,6 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
    crash_scene.css — THE FAKE CRASH and THE THERMAL CRASH on the 1920×1080 canvas.
    The cut to blue is instant on purpose: no fade, no transition. That is the dread.
    ═══════════════════════════════════════════════════════════════════════════ */
-.dks-fit.dks-see { background: transparent; }
 .dks.cr {
     --blue: #0b3184;
     --dks-ink: #ffffff;
@@ -197,6 +196,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
    edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
    the sizes below mean the same thing on every monitor. */
 .dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-fit.dks-see { background: transparent; }                                       /* a scene drawn over the live game */
 .dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
 
 .dks {

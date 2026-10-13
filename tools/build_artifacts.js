@@ -414,6 +414,51 @@ document.getElementById('trigger').onclick = function () { if (!begun) begin(); 
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/thermal_crash.html'), thermalCrash);
+const eyePage = page({
+    title: 'Eye of the Storm',
+    scene: 'src/eye_scene.js',
+    score: 'src/audio/score_eye.js',
+    extraCss: 'src/eye_scene.css',
+    extraInline: BOARD_CSS,
+    accent: '#9cd0ff',
+    gateLabel: '▶ ENTER THE STORM',
+    blurb: 'Deep in a chaotic session, the storm stops. Sixty seconds of clear sky: instability 0, energy output ×10. Breathe with it, or use it.',
+    note: 'Hold (pointer or Space) while the orb grows and release while it shrinks: every breath in time weakens the storm that returns (40% down to 12% of what it was). Or USE THE CALM to play the board at ×10 with the eye waiting in the corner.',
+    controls: `<div class="grp"><label for="dur">Calm</label><select id="dur"><option value="60">60 s (as in the game)</option><option value="20">20 s (preview)</option></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var durSel = document.getElementById('dur'), energy = 2.4e12, eps = 5e9, mult = 1, tickT = null, instab = 74;
+var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en"></b></span><span>EPS<b id="eps"></b></span><span>INSTABILITY<b id="inst"></b></span></div>'
+  + '<button class="acq" id="acq" type="button">ACQUIRE</button>'
+  + '<div class="tip" id="tip">The storm is loud tonight.</div></div><div class="sceneLayer" id="layer"></div>';
+function hud() {
+    document.getElementById('en').textContent = DuckScene.fmt(energy);
+    document.getElementById('eps').textContent = DuckScene.fmt(eps * mult) + (mult > 1 ? ' ×' + mult : '');
+    document.getElementById('inst').textContent = Math.round(instab) + '%';
+}
+function start() {
+    if (scene) scene.close();
+    clearInterval(tickT);
+    energy = 2.4e12; mult = 1; instab = 74; out.textContent = '';
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = BOARD;
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
+    hud();
+    tickT = setInterval(function () { energy += eps * mult / 10; hud(); }, 100);
+    document.getElementById('acq').onclick = function () { energy += eps * mult * 2; hud(); };
+    var layer = document.getElementById('layer');
+    layer.hidden = false;
+    scene = EyeScene.play(layer, { duration: +durSel.value, state: { instability: instab, eps: eps },
+        onStart: function () { mult = 10; instab = 0; hud(); },
+        onMini: function (on) { document.getElementById('tip').textContent = on ? 'The calm is yours: ×10. The eye waits in the corner.' : 'The storm is loud tonight.'; },
+        onEnd: function (r) { mult = 1; instab = r.returnsAt; hud(); out.textContent = 'The storm returned at ' + r.returnsAt + '% (from ' + r.before + '%). Breaths in time: ' + r.breaths + '. Time spent using the calm: ' + r.minimized + ' s.'; } });
+    scene.done.then(function () { layer.hidden = true; document.getElementById('tip').textContent = 'The storm is back. (Replay to find the eye again.)'; });
+}
+durSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/eye_of_the_storm.html'), eyePage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);
