@@ -258,6 +258,32 @@ oppSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/prisoners_dilemma.html'), dilemmaPage);
+const severancePage = page({
+    title: 'Severance Package',
+    scene: 'src/severance_scene.js',
+    score: 'src/audio/score_severance.js',
+    extraCss: 'src/severance_scene.css',
+    accent: '#66aadd',
+    gateLabel: '▶ JOIN THE MEETING',
+    blurb: 'You are close to another reset. The Simulation Overseers would like a quick chat. They have hold music.',
+    note: 'SIGN, DECLINE, or ASK FOR MORE once: you go on hold and they come back with a better offer or their final one. Read the fine print on the letter. In the game, signing closes the game and the package is paid on next launch.',
+    controls: `<div class="grp"><label for="neg">Asking for more</label><select id="neg"><option value="">Random (65% raised)</option>
+        <option value="raised">They raise it</option><option value="final">Final offer</option></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var negSel = document.getElementById('neg');
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    scene = SeveranceScene.play(host, { state: SAMPLE, forceNegotiation: negSel.value || undefined,
+        onAccept: function (o) { out.textContent = 'Signed: +' + o.lp + ' LP, +' + o.data + ' DATA on next launch. (The game would close here.)'; },
+        onDecline: function () { out.textContent = 'Declined. The run carries on.'; } });
+    scene.done.then(function (r) { if (r.negotiated) out.textContent += ' Negotiation: ' + r.negotiated + '.'; });
+}
+negSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/severance_package.html'), severancePage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);
