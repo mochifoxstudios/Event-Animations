@@ -25,7 +25,7 @@ Load order: the three art files, then `duck_scene_core.js`, then the two scenes.
 1. **Convene.** The lights come up and the members come in, each in character. Four waddle in. Rubber III glides, because a toy has no legs. The Abstainer is simply there. The Chairman arrives last and calls the session to order.
 2. **The record.** Dr. Mallard reads the five scored metrics into a ledger (clicks, prestiges, energy, city, instability), and the points light up one by one. *New: the player sees what is being graded.* The total stays hidden.
 3. **Debate.** The tier's lines play in speech bubbles over whoever is speaking, and the rest of the bench turns to look.
-4. **Vote.** Placards go up one at a time. Rubber III holds his upside down. The Abstainer raises nothing, except in Platinum and Quacked, where the bench turns to watch him vote.
+4. **Vote.** Placards go up one at a time. Rubber III holds his upside down. When the Abstainer's turn comes, the bench looks over and he raises a dashed ABSTAINS card ("THE ABSTAINER ABSTAINS. HE ALWAYS HAS."). Only in Platinum and Quacked does he actually vote, and the bench turns to watch.
 5. **Ruling.** The gavel comes down, the score runs along a grade track, and the medal drops. In Platinum, the sigil the verdict text describes actually rotates above the chamber. In Quacked, the room turns red and a feather falls.
 6. **Accept.** The player closes it. Rewards are applied at the gavel, as before.
 
@@ -52,6 +52,7 @@ The colour follows the register: Sentencers red, Bureaucrats teal, Philosophers 
 | Average Operator | The court finds nothing remarkable and **flips a coin** | The old instability-weighted roll |
 
 Both scenes:
+- **Screen:** both fill a 1920×1080 canvas scaled to the screen, and ultrawide screens get dark side edges (`DuckScene.fit`).
 - **Skipping:** click anywhere to finish the current line, Space/Enter does the same, and **SKIP ▸▸** jumps to the decision.
 - **Reduced motion:** under reduced motion, `safe-mode` or `accessibility-mode`, everything still appears, but nothing moves.
 - **Style constraints:** only `transform` and `opacity` are animated, and the art draws in `currentColor`.

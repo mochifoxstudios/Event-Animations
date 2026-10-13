@@ -110,6 +110,7 @@
             else F.wood(t + 0.04, 0.35, 1.8);
             if (seat === 2) F.syllable(t + 0.12, VOICES[2], 0.8);       // Rubber III squeaks his vote
         },
+        abstains: function (A, t) { A.fx.bell(t, 62, 0.6, 0.18); A.fx.whoosh(t, 0.6, 900, 500, 0.15); },   // a polite nothing
         abstainer_votes: function (A, t) { A.fx.whoosh(t, 0.9, 3000, 300, 0.5); A.fx.timp(t + 0.1, 36, 0.5); },
         score: function (A, t, i) { A.fx.tick(t, 1200 + i * 90, 0.6); },
         medal: function (A, t) { A.fx.bell(t, 96, 0.1, 0.5); A.fx.bell(t + 0.05, 91, 0.2, 0.4); },

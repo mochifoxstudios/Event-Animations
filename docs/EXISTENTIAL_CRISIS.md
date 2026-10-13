@@ -7,20 +7,24 @@ The scene also needs `duck_scene_core.js`, `duck_scenes.css` and `event_audio.js
 
 ## The scene
 
-1. **Stall:** the click counter rolls onto 1,000,000 and freezes. The cheerful music cuts out mid-bar.
-2. **Question:** "What is the purpose of clicking?" types out over near-silence.
-3. **Choice:** four answers.
-   - Hovering an answer previews its mark: a red edge (POWER), a 2 px slip (NUMBERS), a figure peeking up (FUN), or colour draining (VOID).
-   - Each answer has its own chord.
-   - Choosing is **press and hold** (0.9 s), because the choice is permanent and VOID disables ACQUIRE.
-4. **Consequence:** the other three answers fall away and the chosen one plays out.
-   - POWER: ×1.5 slams in red.
-   - NUMBERS: the energy counter doubles and the frame fractures.
-   - FUN: 25 fragments burst out and the figure rises.
-   - VOID: colour drains and ACQUIRE greys out.
-5. **The mark:** the mark's text is shown once, then CONTINUE. Each answer leaves its own background tone.
+1. **The break:** the counter rolls onto 1,000,000, glitches (a red and cyan split, then tearing bands), and **cuts to black**. Total silence.
+2. **The fall:** out of the dark, the seven digits come loose and fall away to a heartbeat. A field of numbers starts rising out of the abyss.
+3. **The question:** "What is the purpose of clicking?" lands one heavy letter at a time. The camera slowly pushes in, and whispers surface at the edges ("who is counting?", "you could stop.", "it would not notice.").
+4. **The answers:** four large answers.
+   - **Hovering changes the world:**
+     - POWER: the numbers turn red and race, and the edges burn.
+     - NUMBERS: the numbers multiply outward and the frame slips.
+     - FUN: glitter falls and a figure peeks up.
+     - VOID: the numbers stop, and the colour drains.
+   - **Choosing is press and hold** (1.1 s), and the frame closes in while you hold.
+5. **The consequence:** a full-screen moment for each answer.
+   - POWER: shockwave rings and a ×1.5 with a chromatic split.
+   - NUMBERS: a flood of numbers, the energy counter doubling, then the screen fractures.
+   - FUN: 25 fragments burst, and the figure rises into a spotlight and tilts its head.
+   - VOID: the colour drains, a giant ACQUIRE ring cracks and dies, then silence.
+6. **The mark:** stated once, then CONTINUE. Each answer leaves its own background tone.
 
-The gifts, marks and texts are the game's own (`ExistentialCrisis.PATHS` / `_applyScar`).
+Whispers, the question and the answers are all data: `opts.whispers`, `opts.question`, `opts.paths`.
 
 ## Wiring it into game.js
 

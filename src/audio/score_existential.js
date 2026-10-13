@@ -68,7 +68,34 @@
             F.brass(t + 0.05, 36, 2.6, 0.5);
             F.whoosh(t, 1.6, 3000, 200, 0.4);
         },
-        key: function (A, t) { A.fx.wood(t, 0.18, 2.8); A.fx.hat(t, 0.25); },
+        key: function (A, t) { A.fx.wood(t, 0.35, 1.6); A.fx.timp(t, 26, 0.18); },        // each letter lands
+        key_soft: function (A, t) { A.fx.wood(t, 0.12, 2.8); },
+        glitch: function (A, t) {                                                 // the counter tearing
+            var F = A.fx;
+            for (var k = 0; k < 9; k++) {
+                F.syllable(t + k * 0.09, { f: 60 + Math.random() * 900, type: 'square', formant: 400 + Math.random() * 3000, q: 1, up: 1, down: 1.6, len: 0.07, gain: 0.35 }, 1);
+                if (k % 2) F.hat(t + k * 0.09, 0.9);
+            }
+            F.whoosh(t, 0.9, 200, 6000, 0.6);
+        },
+        cut: function (A, t) { A.fx.kick(t, 1); A.fx.tick(t, 60, 0.6); },        // then nothing at all
+        heartbeat: function (A, t) { A.fx.kick(t, 0.9); A.fx.kick(t + 0.22, 0.55); },
+        shatter: function (A, t) {
+            var F = A.fx;
+            [96, 91, 88, 84, 79, 76, 72].forEach(function (m, k) { F.bell(t + k * 0.14, m, 0.3, 0.3); });
+            F.whoosh(t, 2.2, 3000, 150, 0.4);
+        },
+        whisper: function (A, t) {
+            var F = A.fx;
+            for (var k = 0; k < 3; k++) F.whoosh(t + k * 0.16, 0.22, 1400 + Math.random() * 800, 2400 + Math.random() * 800, 0.18);
+        },
+        fracture: function (A, t) { var F = A.fx; F.wood(t, 1, 0.6); F.whoosh(t, 0.3, 6000, 600, 0.9); F.kick(t, 0.8); F.cymbal(t, 0.5); },
+        figure: function (A, t) {
+            var F = A.fx;
+            [60, 64, 67].forEach(function (m) { F.pad(t, m, 2, 0.8); });
+            F.syllable(t + 1.6, { f: 880, type: 'sine', formant: 1900, q: 1, up: 0.85, down: 1.4, len: 0.12, gain: 0.25, dry: 0.7 }, 1);
+        },
+        crack: function (A, t) { var F = A.fx; F.wood(t, 1, 0.7); F.wood(t + 0.05, 0.6, 0.5); F.whoosh(t, 1.4, 2400, 100, 0.5); },
         reveal: function (A, t) { CHORDS.forEach(function (c, i) { A.fx.bell(t + i * 0.18, c[3] + 12, 0.4, 0.22); }); },
         hover: function (A, t, i) { var c = CHORDS[i % 4]; A.fx.bell(t, c[3] + 12, 0.3, 0.2); },
         hold: function (A, t, i) { CHORDS[i % 4].forEach(function (m) { A.fx.pad(t, m, 0.9, 1.1); }); A.fx.whoosh(t, 0.9, 300, 2600, 0.4); },
@@ -78,6 +105,7 @@
             [36, 43, 48, 55].forEach(function (m) { F.brass(t, m, 1.8, 1); });
             F.kick(t, 1); F.timp(t, 36, 1); F.cymbal(t, 0.7);
             F.brass(t + 0.95, 60, 0.9, 0.9, null, 67);
+            F.kick(t + 0.5, 0.9); F.timp(t + 0.5, 31, 0.8);
         },
         choose_shift: function (A, t) {                     // NUMBERS
             var F = A.fx;

@@ -37,12 +37,23 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
    Everything is scoped under .dks so nothing leaks into the rest of game.css.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── THE 16:9 CANVAS ─────────────────────────────────────────────────────
+   Every scene is laid out on a fixed 1920×1080 canvas and scaled to fit the
+   screen (D.fit). Wider or taller screens — 3440×1440 included — get dark
+   edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
+   the sizes below mean the same thing on every monitor. */
+.dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
+
 .dks {
+    --r: 26px;
+    --vh: 10.8px;
+    --vw: 19.2px;
     --dks-ink: #e8c547;
     --dks-dim: rgba(232, 197, 71, 0.45);
     --dks-bg: #07060a;
     --dks-paper: #12100a;
-    --seat-h: min(clamp(6.2rem, 23vh, 12.5rem), calc((100vw - 40px) * 0.25));   /* five seats always fit the width */
+    --seat-h: 340px;                                   /* on the 1080 canvas: the bench is the scene */
     --seat-w: calc(var(--seat-h) * 112 / 150);
     --duck: calc(var(--seat-h) * 0.47);
     --duck-bottom: calc(var(--seat-h) * 42 / 150);
@@ -54,7 +65,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     width: 100%;
     min-height: 100%;
     box-sizing: border-box;
-    padding: clamp(10px, 2.2vh, 26px) 16px clamp(10px, 2vh, 22px);
+    padding: 34px 60px 30px;
+    justify-content: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -63,6 +75,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     font-family: 'Courier New', monospace;
     text-align: center;
     overflow: hidden;
+    overflow: clip;                                    /* nothing inside may scroll the scene */
     user-select: none;
 }
 .dks *, .dks *::before, .dks *::after { box-sizing: border-box; }
@@ -70,18 +83,18 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks .pf { fill: currentColor; fill-opacity: 0.08; }
 
 /* ── header ─────────────────────────────────────────────────────────────── */
-.dks-eyebrow { font-size: 0.56rem; letter-spacing: 6px; opacity: 0.55; }
-.dks-title   { font-size: clamp(0.95rem, 2.4vh, 1.25rem); letter-spacing: 6px; font-weight: 900; margin: 4px 0 2px; }
-.dks-sub     { font-size: 0.58rem; letter-spacing: 3px; opacity: 0.6; }
+.dks-eyebrow { font-size: calc(0.56 * var(--r)); letter-spacing: 6px; opacity: 0.55; }
+.dks-title   { font-size: clamp(calc(0.95 * var(--r)), calc(2.4 * var(--vh)), calc(1.25 * var(--r))); letter-spacing: 6px; font-weight: 900; margin: 4px 0 2px; }
+.dks-sub     { font-size: calc(0.58 * var(--r)); letter-spacing: 3px; opacity: 0.6; }
 .dks-on-in .dks-title { animation: dks-stamp-title 0.55s cubic-bezier(.2,1.6,.4,1) both; }
 
 /* ── stage ──────────────────────────────────────────────────────────────── */
 .dks-stage {
     position: relative;
     width: 100%;
-    max-width: 52rem;
-    margin-top: clamp(4px, 1vh, 10px);
-    padding-top: clamp(4.6rem, 13vh, 7.6rem);          /* headroom for speech bubbles */
+    max-width: 1700px;
+    margin-top: clamp(4px, calc(1 * var(--vh)), 10px);
+    padding-top: clamp(calc(4.6 * var(--r)), calc(13 * var(--vh)), calc(7.6 * var(--r)));          /* headroom for speech bubbles */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -153,7 +166,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     position: absolute;
     bottom: calc(100% - var(--seat-h) * 0.04);
     left: 50%;
-    width: min(21rem, 78vw);
+    width: min(calc(21 * var(--r)), calc(78 * var(--vw)));
     transform: translateX(-50%);
     pointer-events: none;
     z-index: 5;
@@ -185,8 +198,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transform: rotate(45deg);
 }
 .dks-bubble.dks-on { display: block; animation: dks-pop 0.22s cubic-bezier(.2,1.5,.5,1) both; }
-.dks-who { font-size: 0.5rem; letter-spacing: 3px; opacity: 0.6; margin-bottom: 3px; }
-.dks-say { font-size: clamp(0.66rem, 1.6vh, 0.78rem); line-height: 1.5; color: #e9e6dc; min-height: 1.2em; }
+.dks-who { font-size: calc(0.5 * var(--r)); letter-spacing: 3px; opacity: 0.6; margin-bottom: 3px; }
+.dks-say { font-size: clamp(calc(0.66 * var(--r)), calc(1.6 * var(--vh)), calc(0.78 * var(--r))); line-height: 1.5; color: #e9e6dc; min-height: 1.2em; }
 .dks-bubble.dks-action .dks-say { font-style: italic; color: #aab0c4; }
 .dks-bubble.dks-murmur { padding: 3px 10px; }
 .dks-bubble.dks-murmur .dks-who { display: none; }
@@ -194,7 +207,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-caption {
     min-height: 1.6em;
     margin-top: 8px;
-    font-size: 0.62rem;
+    font-size: calc(0.62 * var(--r));
     letter-spacing: 3px;
     opacity: 0.75;
 }
@@ -211,7 +224,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 }
 .dks-placard {
     padding: 3px 7px;
-    font-size: clamp(0.46rem, 1.15vh, 0.56rem);
+    font-size: clamp(calc(0.46 * var(--r)), calc(1.15 * var(--vh)), calc(0.56 * var(--r)));
     letter-spacing: 2px;
     font-weight: 900;
     color: #0b0a0c;
@@ -225,7 +238,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-placard.abstain { --c: var(--abstain); }
 .dks-placard.upside  { transform: rotate(180deg); }            /* the Council is not sure what Rubber III is */
 .dks-placard.upside  { animation-name: dks-placard-upside; }
-.dks-placard.silent  { background: none; color: var(--abstain); box-shadow: none; font-weight: 400; }
+.dks-placard.never   { background: rgba(10, 9, 14, 0.85); color: var(--abstain); box-shadow: none; border: 1px dashed var(--abstain); }
 
 .dks-gavel {
     position: absolute;
@@ -267,13 +280,13 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     justify-content: center;
     align-items: stretch;
     width: 100%;
-    max-width: 52rem;
-    margin-top: clamp(6px, 1.4vh, 14px);
+    max-width: calc(52 * var(--r));
+    margin-top: clamp(6px, calc(1.4 * var(--vh)), 14px);
     flex-wrap: wrap;
 }
 .dks-panel {
-    flex: 1 1 18rem;
-    max-width: 25rem;
+    flex: 1 1 calc(18 * var(--r));
+    max-width: calc(25 * var(--r));
     padding: 10px 14px;
     border: 1px solid var(--dks-dim);
     border-radius: 8px;
@@ -284,12 +297,12 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transition: opacity 0.4s, transform 0.4s;
 }
 .dks-panel.dks-on { opacity: 1; transform: none; }
-.dks-panel-h { font-size: 0.5rem; letter-spacing: 4px; opacity: 0.6; margin-bottom: 8px; }
+.dks-panel-h { font-size: calc(0.5 * var(--r)); letter-spacing: 4px; opacity: 0.6; margin-bottom: 8px; }
 
-.dks-actions { display: flex; gap: 10px; justify-content: center; margin-top: clamp(8px, 1.6vh, 16px); min-height: 2.4rem; }
+.dks-actions { display: flex; gap: 10px; justify-content: center; margin-top: clamp(8px, calc(1.6 * var(--vh)), 16px); min-height: calc(2.4 * var(--r)); }
 .dks-btn {
     font: inherit;
-    font-size: 0.66rem;
+    font-size: calc(0.66 * var(--r));
     letter-spacing: 3px;
     font-weight: 900;
     padding: 9px 20px;
@@ -303,12 +316,12 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-btn:hover, .dks-btn:focus-visible { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); outline: none; }
 .dks-btn[hidden] { display: none; }
 .dks-btn.dks-alt { color: #bb88dd; }
-.dks-btn-note { font-size: 0.48rem; letter-spacing: 1px; opacity: 0.5; margin-top: 4px; }
+.dks-btn-note { font-size: calc(0.48 * var(--r)); letter-spacing: 1px; opacity: 0.5; margin-top: 4px; }
 .dks-skip {
     position: absolute;
     top: 10px; right: 14px;
     font: inherit;
-    font-size: 0.5rem;
+    font-size: calc(0.5 * var(--r));
     letter-spacing: 3px;
     color: inherit;
     background: none;
@@ -320,14 +333,14 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 }
 .dks-skip:hover { opacity: 1; }
 .dks-skip[hidden] { display: none; }
-.dks-hint { position: absolute; bottom: 6px; left: 0; right: 0; font-size: 0.46rem; letter-spacing: 2px; opacity: 0.35; pointer-events: none; }
+.dks-hint { position: absolute; bottom: 6px; left: 0; right: 0; font-size: calc(0.46 * var(--r)); letter-spacing: 2px; opacity: 0.35; pointer-events: none; }
 .dks-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ═══ THE DUCKY COUNCIL ════════════════════════════════════════════════════ */
 .dks-council { --dks-ink: #e8c547; --dks-dim: rgba(232, 197, 71, 0.35); }
 
 /* the ledger */
-.dks-ledger-row { display: grid; grid-template-columns: 6.6rem 1fr auto; align-items: center; gap: 8px; font-size: 0.6rem; letter-spacing: 1px; min-height: 1.45rem; opacity: 0; transition: opacity 0.3s; }
+.dks-ledger-row { display: grid; grid-template-columns: calc(6.6 * var(--r)) 1fr auto; align-items: center; gap: 8px; font-size: calc(0.6 * var(--r)); letter-spacing: 1px; min-height: calc(1.45 * var(--r)); opacity: 0; transition: opacity 0.3s; }
 .dks-ledger-row.dks-on { opacity: 1; }
 .dks-ledger-row .lv { color: #d8d3c0; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dks-pips { display: flex; gap: 3px; }
@@ -339,20 +352,20 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-track { position: relative; margin-top: 10px; opacity: 0; transition: opacity 0.4s; }
 .dks-track.dks-on { opacity: 1; }
 .dks-bands { display: flex; height: 16px; border-radius: 3px; overflow: hidden; }
-.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: 0.42rem; line-height: 16px; letter-spacing: 1px; color: #0b0a0c; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
+.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: calc(0.42 * var(--r)); line-height: 16px; letter-spacing: 1px; color: #0b0a0c; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
 .dks-band.dks-hit { opacity: 1; }
 .dks-rail { position: absolute; left: 0; top: -5px; width: 100%; height: 26px; transform: translateX(0%); transition: transform 1.1s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
 .dks-rail::before { content: ''; position: absolute; left: -1px; top: 0; width: 2px; height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
-.dks-score { margin-top: 6px; font-size: 0.56rem; letter-spacing: 3px; opacity: 0.75; }
+.dks-score { margin-top: 6px; font-size: calc(0.56 * var(--r)); letter-spacing: 3px; opacity: 0.75; }
 
 /* the medal and ruling */
 .dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.dks-medal { width: clamp(3.4rem, 9vh, 4.6rem); height: clamp(3.4rem, 9vh, 4.6rem); color: var(--grade, var(--dks-ink)); }
+.dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
 .dks-medal svg { width: 100%; height: 100%; }
 .dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
-.dks-grade-label { margin-top: 4px; font-size: 0.8rem; letter-spacing: 3px; font-weight: 900; color: var(--grade); }
-.dks-reward { margin-top: 3px; font-size: 0.58rem; letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
-.dks-lines { margin-top: 8px; font-size: 0.6rem; line-height: 1.6; color: #c8c4b4; }
+.dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
+.dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
+.dks-lines { margin-top: 8px; font-size: calc(0.6 * var(--r)); line-height: 1.6; color: #c8c4b4; }
 .dks-lines div { opacity: 0; transition: opacity 0.5s; }
 .dks-lines div.dks-on { opacity: 1; }
 
@@ -364,7 +377,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-grade-tarnished .dks-backdrop { opacity: 0.4; transition: opacity 1s; }
 .dks-grade-quacked { --dks-ink: #ff7a55; }
 .dks-grade-quacked .dks-backdrop { opacity: 0.3; transition: opacity 1s; }
-.dks-feather { position: absolute; top: 0; left: 62%; width: 1.4rem; height: 2.4rem; color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
+.dks-feather { position: absolute; top: 0; left: 62%; width: calc(1.4 * var(--r)); height: calc(2.4 * var(--r)); color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
 .dks-grade-quacked .dks-feather { animation: dks-feather 6.5s 0.4s ease-in-out both; }
 
 /* ═══ THE DUCK TRIBUNAL ════════════════════════════════════════════════════ */
@@ -401,22 +414,22 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-confer-dots i.dks-on { background: currentColor; }
 
 /* the dock and the docket */
-.dks-dock { flex: 0 0 auto; width: clamp(7rem, 15vh, 9rem); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
+.dks-dock { flex: 0 0 auto; width: clamp(calc(7 * var(--r)), calc(15 * var(--vh)), calc(9 * var(--r))); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
 .dks-dock svg { width: 100%; height: auto; }
 .dks .tb-dock-floor.pf { fill-opacity: 0.12; stroke: none; }
 .dks .tb-dock-rail, .dks .tb-dock-post { stroke-width: 2; }
-.dks-dock-label { font-size: 0.42rem; letter-spacing: 1px; line-height: 1.5; opacity: 0.6; margin-top: 4px; max-width: 9rem; }
+.dks-dock-label { font-size: calc(0.42 * var(--r)); letter-spacing: 1px; line-height: 1.5; opacity: 0.6; margin-top: 4px; max-width: calc(9 * var(--r)); }
 
 .dks-docket {
     position: relative;
-    flex: 1 1 20rem;
-    max-width: 28rem;
+    flex: 1 1 calc(20 * var(--r));
+    max-width: calc(28 * var(--r));
     padding: 12px 16px;
     background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
     border: 1px solid var(--dks-dim);
     border-radius: 4px;
     text-align: left;
-    font-size: 0.6rem;
+    font-size: calc(0.6 * var(--r));
     letter-spacing: 1px;
     line-height: 1.7;
     color: #c9cbd6;
@@ -425,17 +438,17 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transition: opacity 0.45s, transform 0.45s cubic-bezier(.2,1.3,.5,1);
 }
 .dks-docket.dks-on { opacity: 1; transform: rotate(-0.6deg); }
-.dks-docket-h { display: flex; justify-content: space-between; font-size: 0.48rem; letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
+.dks-docket-h { display: flex; justify-content: space-between; font-size: calc(0.48 * var(--r)); letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
 .dks-docket .k { color: var(--dks-ink); opacity: 0.7; letter-spacing: 2px; }
 .dks-docket .ev { color: #9da3b8; font-style: italic; min-height: 1.7em; }
-.dks-stampslot { display: block; min-height: 2.1rem; margin: 4px 0 8px; }
+.dks-stampslot { display: block; min-height: calc(2.1 * var(--r)); margin: 4px 0 8px; }
 .dks-stamp {
     display: inline-block;
     padding: 2px 10px;
     border: 2px solid var(--stamp, var(--dks-ink));
     color: var(--stamp, var(--dks-ink));
     border-radius: 3px;
-    font-size: 0.9rem;
+    font-size: calc(0.9 * var(--r));
     letter-spacing: 3px;
     font-weight: 900;
     transform: rotate(-4deg);
@@ -494,9 +507,6 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks.dks-reduced *, .dks.dks-reduced *::before, .dks.dks-reduced *::after { animation: none !important; transition-property: opacity !important; }
 .dks.dks-reduced .dks-convene .dks-duck, .dks.dks-reduced.dks-convene .dks-duck { opacity: 1; }
 
-@media (max-width: 640px) {
-    .dks-dock { display: none; }
-}
 </style>
 <div class="viewer">
   <div class="ctl">
@@ -1772,6 +1782,38 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         };
     };
 
+    /* ── THE 16:9 CANVAS ─────────────────────────────────────────────────────
+       Puts `inner` (laid out at 1920×1080) inside a frame that fills `host`, and
+       scales it to fit, centred. The frame's own background is the dark edge a
+       21:9 or a portrait screen sees. */
+    D.W = 1920; D.H = 1080;
+    D.fit = function (host, inner) {
+        var frame = D.h('div', 'dks-fit');
+        frame.appendChild(inner);
+        host.appendChild(frame);
+        function size() {
+            var w = frame.clientWidth, h = frame.clientHeight;
+            if (!w || !h) return;
+            var s = Math.min(w / D.W, h / D.H);
+            inner.style.transform = 'translate(' + ((w - D.W * s) / 2) + 'px,' + ((h - D.H * s) / 2) + 'px) scale(' + s + ')';
+        }
+        /* the canvas is larger than the frame in layout terms (it is scaled by a transform), so a focused
+           button could scroll the frame and shift the whole scene; it never may */
+        [frame, inner].forEach(function (el) {
+            el.addEventListener('scroll', function () { el.scrollTop = 0; el.scrollLeft = 0; });
+        });
+        var ro = window.ResizeObserver ? new ResizeObserver(size) : null;
+        if (ro) ro.observe(frame); else window.addEventListener('resize', size);
+        size();
+        return {
+            frame: frame,
+            remove: function () {
+                if (ro) ro.disconnect(); else window.removeEventListener('resize', size);
+                if (frame.parentNode) frame.parentNode.removeChild(frame);
+            }
+        };
+    };
+
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
     D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
@@ -1799,12 +1841,12 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         document.addEventListener('keydown', onKey, true);
 
         host.innerHTML = '';
-        host.appendChild(root);
+        var fit = D.fit(host, root);
         return {
             root: root,
             log: function (line) { var d = D.h('div'); d.textContent = line; log.appendChild(d); },
             done: function () { skipBtn.hidden = true; hint.style.display = 'none'; },
-            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
+            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); fit.remove(); }
         };
     };
 

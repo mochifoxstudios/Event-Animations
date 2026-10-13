@@ -10,6 +10,7 @@ crisis is on screen.
 Status: ✅ animated · 🔨 in progress · ⬜ not started
 
 Every event gets its own scene, its own synthesised score and effects (`src/audio/`), and its own viewable page. Text, decisions and sound are data: see `docs/CUSTOMIZING.md`.
+Every scene is laid out on a fixed **1920×1080 canvas** scaled to fill the screen. Ultrawide (3440×1440) and other shapes keep 16:9 with dark edges.
 
 ---
 

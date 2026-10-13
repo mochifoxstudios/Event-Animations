@@ -134,18 +134,18 @@ document.getElementById('replay').onclick = begin;`
 
 fs.mkdirSync(path.join(ROOT, 'artifacts'), { recursive: true });
 const BOARD_CSS = `
-.board { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px; transition: filter 0.8s, opacity 0.8s; }
-.board.blur { filter: blur(7px); opacity: 0.55; }
-.board .hud { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; font-size: 12px; letter-spacing: 3px; color: var(--muted); }
-.board .hud b { display: block; font-size: 22px; letter-spacing: 2px; color: var(--fg); font-variant-numeric: tabular-nums; }
-.board .acq { width: 170px; height: 170px; border-radius: 50%; border: 2px solid #ffcc55; background: radial-gradient(circle at 40% 35%, rgba(255,204,85,0.25), rgba(255,204,85,0.04) 70%); color: #ffcc55; font: inherit; font-weight: 900; font-size: 15px; letter-spacing: 5px; cursor: pointer; transition: transform 0.08s; }
+.dks-fit > .board { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.board { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,204,85,0.06), transparent 70%), #07060a; transition: filter 0.8s, opacity 0.8s; }
+.board.blur { filter: blur(10px); opacity: 0.5; }
+.board .hud { display: flex; gap: 90px; justify-content: center; font-size: 22px; letter-spacing: 6px; color: var(--muted); }
+.board .hud b { display: block; margin-top: 6px; font-size: 56px; letter-spacing: 3px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.board .acq { width: 380px; height: 380px; border-radius: 50%; border: 4px solid #ffcc55; background: radial-gradient(circle at 40% 35%, rgba(255,204,85,0.28), rgba(255,204,85,0.04) 70%); color: #ffcc55; font: inherit; font-weight: 900; font-size: 34px; letter-spacing: 10px; cursor: pointer; box-shadow: 0 0 90px -30px #ffcc55; transition: transform 0.08s; }
 .board .acq:active { transform: scale(0.95); }
 .board .acq:disabled { opacity: 0.15; cursor: default; }
-.board .gens { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 8px; width: min(36rem, 100%); font-size: 11px; letter-spacing: 1px; color: var(--muted); }
-.board .gens div { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; }
-.board .tip { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-align: center; }
-.sceneLayer { position: absolute; inset: 0; display: flex; }
-.sceneLayer > .dks { flex: 1; }
+.board .gens { display: grid; grid-template-columns: repeat(3, 320px); gap: 20px; font-size: 22px; letter-spacing: 2px; color: var(--muted); }
+.board .gens div { border: 1px solid var(--line); border-radius: 8px; padding: 16px 22px; display: flex; justify-content: space-between; }
+.board .tip { font-size: 22px; letter-spacing: 3px; color: var(--muted); text-align: center; max-width: 1400px; }
+.sceneLayer { position: absolute; inset: 0; }
 .sceneLayer[hidden] { display: none; }
 `;
 const existential = page({
@@ -170,7 +170,10 @@ function start() {
     if (scene) scene.close();
     if (music) music.stop();
     crisis = false; clicks = 999990; out.textContent = '';
-    host.innerHTML = BOARD;
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = BOARD;
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
     music = EventAudio.session(ExistentialScore); music.cue('board');
     document.getElementById('acq').onclick = function () {
         if (crisis) return;

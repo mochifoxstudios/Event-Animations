@@ -393,9 +393,19 @@
                 if (j === ABSTAINER && vote !== 'ABSTAIN') {
                     /* a first: the bench turns to watch him */
                     D.look(seats, ABSTAINER, [ABSTAINER]);
-                    caption.textContent = 'THE ABSTAINER IS VOTING';
+                    caption.textContent = 'THE ABSTAINER IS VOTING. THIS HAS NEVER HAPPENED.';
                     sound('abstainer_votes');
                     await dir.wait(900);
+                }
+                if (j === ABSTAINER && vote === 'ABSTAIN') {
+                    /* he has never voted — the bench looks over out of habit, and he does not */
+                    D.look(seats, ABSTAINER, [ABSTAINER]);
+                    await dir.wait(600);
+                    raise(j, vote);
+                    caption.textContent = 'THE ABSTAINER ABSTAINS. HE ALWAYS HAS.';
+                    log('The Abstainer abstains.');
+                    await dir.wait(1300);
+                    continue;
                 }
                 raise(j, vote);
                 log(NAMES[j] + ' votes ' + vote);
@@ -441,7 +451,8 @@
             seats[j].prop.innerHTML = '';
             if (j === ABSTAINER && vote === 'ABSTAIN') {
                 /* the Abstainer abstains by raising nothing at all */
-                seats[j].prop.appendChild(D.h('div', 'dks-placard silent', '…'));
+                seats[j].prop.appendChild(D.h('div', 'dks-placard never', 'ABSTAINS'));
+                sound('abstains');
                 return;
             }
             var card = D.h('div', 'dks-placard ' + cls + (j === RUBBER ? ' upside' : ''), vote);

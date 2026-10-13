@@ -228,6 +228,38 @@
         };
     };
 
+    /* ── THE 16:9 CANVAS ─────────────────────────────────────────────────────
+       Puts `inner` (laid out at 1920×1080) inside a frame that fills `host`, and
+       scales it to fit, centred. The frame's own background is the dark edge a
+       21:9 or a portrait screen sees. */
+    D.W = 1920; D.H = 1080;
+    D.fit = function (host, inner) {
+        var frame = D.h('div', 'dks-fit');
+        frame.appendChild(inner);
+        host.appendChild(frame);
+        function size() {
+            var w = frame.clientWidth, h = frame.clientHeight;
+            if (!w || !h) return;
+            var s = Math.min(w / D.W, h / D.H);
+            inner.style.transform = 'translate(' + ((w - D.W * s) / 2) + 'px,' + ((h - D.H * s) / 2) + 'px) scale(' + s + ')';
+        }
+        /* the canvas is larger than the frame in layout terms (it is scaled by a transform), so a focused
+           button could scroll the frame and shift the whole scene; it never may */
+        [frame, inner].forEach(function (el) {
+            el.addEventListener('scroll', function () { el.scrollTop = 0; el.scrollLeft = 0; });
+        });
+        var ro = window.ResizeObserver ? new ResizeObserver(size) : null;
+        if (ro) ro.observe(frame); else window.addEventListener('resize', size);
+        size();
+        return {
+            frame: frame,
+            remove: function () {
+                if (ro) ro.disconnect(); else window.removeEventListener('resize', size);
+                if (frame.parentNode) frame.parentNode.removeChild(frame);
+            }
+        };
+    };
+
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
     D.shell = function (host, cls, dir, au) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
@@ -255,12 +287,12 @@
         document.addEventListener('keydown', onKey, true);
 
         host.innerHTML = '';
-        host.appendChild(root);
+        var fit = D.fit(host, root);
         return {
             root: root,
             log: function (line) { var d = D.h('div'); d.textContent = line; log.appendChild(d); },
             done: function () { skipBtn.hidden = true; hint.style.display = 'none'; },
-            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); if (root.parentNode) root.parentNode.removeChild(root); }
+            close: function () { dir.kill(); if (au) au.stop(); document.removeEventListener('keydown', onKey, true); fit.remove(); }
         };
     };
 
