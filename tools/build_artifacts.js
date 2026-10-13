@@ -231,30 +231,6 @@ varSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/null_interrogation.html'), nullPage);
-const breachPage = page({
-    title: 'Reality Breach',
-    scene: 'src/breach_scene.js',
-    score: 'src/audio/score_breach.js',
-    extraCss: 'src/breach_scene.css',
-    accent: '#ff2d6a',
-    gateLabel: '▶ FIGHT WITH SOUND',
-    blurb: 'A boss tears through reality and eats your income. Click it 36 to 44 times before it escapes. Its eye follows your cursor.',
-    note: 'Click the breach (or Tab to it and press Enter). Phase II at two thirds: it moves and dodges. Phase III at one third: it is enraged. Choose a short fight to see what happens when it escapes.',
-    controls: `<div class="grp"><label for="life">Fight</label><select id="life">
-        <option value="45">45 seconds (the game)</option><option value="12">12 seconds (watch it escape)</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
-    script: `
-var lifeSel = document.getElementById('life');
-function start() {
-    if (scene) scene.close();
-    out.textContent = '';
-    scene = BreachScene.play(host, { state: { energy: 3.2e14, eps: 5e9 }, life: +lifeSel.value,
-        onResult: function (r) { out.textContent = r.won ? 'Sealed: +' + DuckScene.fmt(r.back + r.bounty) + ' E, +' + r.frags + ' fragments' : 'Escaped: it kept ' + DuckScene.fmt(r.kept) + ' E, +15% instability'; } });
-}
-lifeSel.onchange = function () { if (begun) start(); };
-document.getElementById('replay').onclick = begin;`
-});
-fs.writeFileSync(path.join(ROOT, 'artifacts/reality_breach.html'), breachPage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);
