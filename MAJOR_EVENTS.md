@@ -35,7 +35,7 @@ The End is out of scope.*
 
 | Event | Status | Trigger | What happens |
 |---|---|---|---|
-| **Reality Breach** | ⬜ | 30 min into a run, then every 35–55 min | Warning band, then boss bar. 36–44 hits in 45 s. Eats 10/20/30% of income; kill it to get it back plus a bonus, or it escapes with it (+15% instability). Doesn't currently move |
+| **Reality Breach** | ✅ [page](https://claude.ai/artifact/BAeFyogAWuhriScZfKY3G5) · `docs/REALITY_BREACH.md` | 30 min into a run, then every 35–55 min | Warning band, then boss bar. 36–44 hits in 45 s. Eats 10/20/30% of income; kill it to get it back plus a bonus, or it escapes with it (+15% instability). Doesn't currently move |
 | **Firewall Entity** | ⬜ | Once per save | Full-screen "INVINCIBLE" wall that ignores clicks. Beaten by inspecting the page (F12 / Ctrl+Shift+I / right-click opens a built-in inspector) and deleting its element → permanent ×8 income |
 | **Prisoner's Dilemma** | ⬜ | After first prestige | An operator "appears on your frequency". Currently no choice: auto "MUTUAL COOPERATION" after a 5 s countdown, pays 20% of bank. Share/Steal would need rebuilding |
 | **Severance Package** | ⬜ | Once per save, after a prestige, when run clicks near the LP threshold | Corporate dialog offers 5–12 LP + 100–300 Data. ACCEPT closes the game and pays on next launch; DECLINE carries on |

@@ -1576,6 +1576,18 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             var o2 = osc('sine', mf(m) * 2, t, t + dur + 1, hg);
             if (slideTo != null) { o1.frequency.exponentialRampToValueAtTime(mf(slideTo), t + dur); o2.frequency.exponentialRampToValueAtTime(mf(slideTo) * 2, t + dur); }
         };
+        /* a clean bass: sine and its octave, no odd overtones — for minor keys, where a
+           triangle's 5th harmonic (a major third) fights the chord */
+        I.bassClean = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 900);
+            var g = out(B(bus), 0.04); f.connect(g);
+            perc(g, t, 0.5 * v, 0.006, t + dur + 0.16);
+            osc('sine', mf(m), t, t + dur + 0.2, f);
+            var hg = ctx.createGain(); hg.gain.value = 0.45; hg.connect(f);
+            osc('sine', mf(m + 12), t, t + dur + 0.2, hg);
+            var cg = ctx.createGain(); cg.gain.value = 0.08; cg.connect(f);            // a little click for attack
+            osc('square', mf(m + 24), t, t + 0.02, cg);
+        };
         /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
            ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
            and under a minor or a hollow chord that third was measured clashing (C♯ against
