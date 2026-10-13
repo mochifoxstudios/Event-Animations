@@ -26,7 +26,7 @@ Every scene is laid out on a fixed **1920×1080 canvas** scaled to fill the scre
 | Event | Status | Trigger | What happens |
 |---|---|---|---|
 | **Existential Crisis** | ✅ [page](https://claude.ai/artifact/3DJN1UE3eDjRSGcSenAYWS) · `docs/EXISTENTIAL_CRISIS.md` | Once, at 1,000,000 clicks | Board blurs behind a question. Power ×1.5 income · Numbers doubles energy · Fun +25 fragments · Void ×3 income. Each leaves a permanent mark: red vignette, board shifted 2 px, drained colour, or a small figure watching |
-| **NULL Interrogation** | ⬜ | After first prestige, 5,000–10,000 clicks | NULL types and speaks one of four monologues, then you type an answer. Emotional → "WE UNDERSTAND." and easier run. Generic or Escape → "Disappointing", +20% instability |
+| **NULL Interrogation** | ✅ [page](https://claude.ai/artifact/RX2gKU9rHoWf4TbGSTUoPv) · `docs/NULL_INTERROGATION.md` | After first prestige, 5,000–10,000 clicks | NULL types and speaks one of four monologues, then you type an answer. Emotional → "WE UNDERSTAND." and easier run. Generic or Escape → "Disappointing", +20% instability |
 
 *The Boot Sequence is not on this list: the "Shift 15" film replaced it on 10-08 (Settings → WATCH INTRO).
 The End is out of scope.*

@@ -206,6 +206,31 @@ document.getElementById('trigger').onclick = function () { if (!begun) begin(); 
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/existential_crisis.html'), existential);
+const nullPage = page({
+    title: 'NULL Interrogation',
+    scene: 'src/null_scene.js',
+    score: 'src/audio/score_null.js',
+    extraCss: 'src/null_scene.css',
+    accent: '#c9d8ff',
+    blurb: 'NULL takes the console, speaks, and asks why you continue to click. Type an answer. It will judge it.',
+    note: 'Try an honest answer ("I don\'t know", "habit"), a greedy one ("more energy"), something strange, or press Escape to say nothing. The verdict uses the game\'s own rules.',
+    controls: `<div class="grp"><label for="variant">Monologue</label><select id="variant">
+        <option value="mirror">Mirror (default)</option><option value="architect">Architect (has a city)</option>
+        <option value="burnout">Burnout (50,000+ clicks)</option><option value="efficient">Efficient (high income, few clicks)</option></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var varSel = document.getElementById('variant');
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    scene = NullScene.play(host, { variant: varSel.value,
+        onVerdict: function (k, a) { out.textContent = 'Verdict: ' + NullScene.VERDICTS[k].text + ' ' + NullScene.VERDICTS[k].effect; } });
+    scene.done.then(function () { out.textContent += ' (Press Replay to be asked again.)'; });
+}
+varSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/null_interrogation.html'), nullPage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);

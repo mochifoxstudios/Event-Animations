@@ -1,0 +1,98 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   null_scene.css — THE NULL INTERROGATION, on the 1920×1080 canvas.
+   Shared .dks base; transform and opacity only; readable at rest.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dks.nx {
+    --dks-ink: #b9c8ea;
+    --dks-dim: rgba(185, 200, 234, 0.3);
+    --ring: #c9d8ff;
+    --v: #c9d8ff;
+    padding: 0;
+    background: radial-gradient(ellipse 45% 40% at 50% 35%, rgba(70, 90, 160, 0.10), transparent 70%), #010103;
+}
+.nx-spiral { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+/* 1 · intrusion */
+.nx-static { position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0; }
+.nx-static i { position: absolute; left: 0; right: 0; height: 3px; background: rgba(200, 215, 255, 0.85); }
+.nx-static i:nth-child(1) { top: 120px; } .nx-static i:nth-child(2) { top: 330px; height: 18px; opacity: 0.4; } .nx-static i:nth-child(3) { top: 520px; height: 6px; }
+.nx-static i:nth-child(4) { top: 760px; height: 40px; opacity: 0.25; } .nx-static i:nth-child(5) { top: 930px; }
+.nx-s-static .nx-static { animation: nx-static 1.3s steps(1) both; }
+.nx-s-static .nx-static i { animation: nx-scan 1.3s steps(6) both; }
+.nx-eyebrow { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-size: 18px; letter-spacing: 10px; color: #5f7396; opacity: 0; transition: opacity 0.6s; }
+.nx-s-eyebrow .nx-eyebrow { opacity: 1; animation: nx-flicker 0.8s steps(4) both; }
+
+/* 2 · the eclipse */
+.nx-eclipse { position: absolute; left: 810px; top: 230px; width: 300px; height: 300px; z-index: 2; opacity: 0; transform: scale(0.02); transition: transform 2s cubic-bezier(.2,1,.3,1), opacity 1.2s; }
+.nx-s-eclipse .nx-eclipse { opacity: 1; transform: scale(1); }
+.nx-disc, .nx-ring, .nx-corona { position: absolute; border-radius: 50%; }
+.nx-disc { inset: 0; background: #000; box-shadow: inset 0 0 40px #000; }
+.nx-ring { inset: -3px; border: 3px solid var(--ring); box-shadow: 0 0 30px 4px var(--ring), inset 0 0 20px 2px var(--ring); opacity: 0.85; }
+.nx-corona { inset: -120px; background: radial-gradient(circle, transparent 38%, var(--ring) 45%, transparent 68%); opacity: 0.22; animation: nx-breathe 6s ease-in-out infinite; }
+.nx-eclipse.nx-pulse .nx-corona { animation: nx-pulse 0.28s ease-out; }
+.nx-eclipse.nx-listen .nx-ring { animation: nx-listen 0.18s steps(2); }
+.nx-eclipse.nx-clicked { animation: nx-clicked 0.6s ease-out; }
+
+/* 3 · monologue */
+.nx-speech { position: absolute; left: 260px; right: 260px; top: 620px; height: 330px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 18px; z-index: 3; }
+.nx-line { font-size: 38px; line-height: 1.4; color: #dfe7ff; text-align: center; text-wrap: balance; transition: opacity 0.6s, transform 0.6s; }
+.nx-line.old { opacity: 0.28; transform: scale(0.82); }
+.nx-s-question .nx-speech { opacity: 0; transition: opacity 0.6s; }
+
+.nx-cursor { position: absolute; left: 0; top: 0; width: 34px; height: 48px; z-index: 6; opacity: 0; pointer-events: none; }
+.nx-cursor svg { width: 100%; height: 100%; }
+.nx-cursor.go { animation: nx-cursor 1.9s cubic-bezier(.5,0,.3,1) both; }
+
+/* 4 · the question */
+.nx-question { position: absolute; left: 160px; right: 160px; top: 610px; text-align: center; font-size: 62px; letter-spacing: 4px; color: #f2f5ff; font-weight: 900; min-height: 1.2em; z-index: 3; }
+.nx-s-question .nx-eclipse { transform: scale(0.82); transition: transform 1.2s ease-out; }
+.nx-form { position: absolute; left: 510px; right: 510px; top: 740px; z-index: 4; opacity: 0; pointer-events: none; transition: opacity 0.8s; }
+.nx-s-input .nx-form { opacity: 1; pointer-events: auto; }
+.nx-input {
+    width: 100%; box-sizing: border-box; padding: 12px 6px; font: inherit; font-size: 34px; letter-spacing: 2px; text-align: center;
+    color: #f2f5ff; background: transparent; border: 0; border-bottom: 2px solid #4c5f86; outline: none; caret-color: var(--ring);
+}
+.nx-input:focus { border-bottom-color: var(--ring); }
+.nx-input::placeholder { color: #3d4a66; }
+.nx-hint { margin-top: 22px; text-align: center; font-size: 16px; letter-spacing: 4px; color: #56657a; }
+.nx-whisper { position: absolute; left: 0; right: 0; top: 880px; text-align: center; font-size: 26px; font-style: italic; color: #8796b8; animation: nx-whisper 3.2s ease-in-out both; z-index: 5; }
+
+/* 5 · judgement */
+.nx-s-consume .nx-form, .nx-s-consume .nx-question { opacity: 0; transition: opacity 0.5s; }
+.nx-consume { position: absolute; left: 0; right: 0; top: 752px; text-align: center; font-size: 34px; letter-spacing: 2px; color: #f2f5ff; white-space: pre; z-index: 4; pointer-events: none; }
+.nx-consume span { display: inline-block; animation: nx-consume 1.3s cubic-bezier(.6,0,.8,.6) both; }
+.nx-s-consume .nx-eclipse { transform: scale(1.12); transition: transform 1.6s ease-in; }
+.nx-flash { position: absolute; inset: 0; z-index: 7; pointer-events: none; background: radial-gradient(circle at 50% 35%, var(--v), transparent 65%); opacity: 0; }
+.nx-flash.on { animation: nx-flash 1s ease-out both; }
+.dks.nx.nx-s-verdict { --ring: var(--v); }
+.nx-s-verdict .nx-eclipse { transform: scale(1); }
+.nx-v-generic .nx-eclipse, .nx-v-silence .nx-eclipse { animation: nx-flare 0.7s ease-out; }
+.nx-v-generic .nx-ring, .nx-v-silence .nx-ring { animation: nx-flicker 1.2s steps(5) both; }
+.nx-v-understood .nx-corona { opacity: 0.45; }
+.nx-verdict { position: absolute; left: 160px; right: 160px; top: 600px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 4; }
+.nx-v-text { font-size: 76px; font-weight: 900; letter-spacing: 8px; color: var(--v); text-shadow: 0 0 40px var(--v); min-height: 1.1em; text-align: center; }
+.nx-v-effect { font-size: 24px; letter-spacing: 6px; color: #c7cfe2; animation: nx-rise 0.6s 0.9s ease-out both; }
+.nx-v-catalogued .nx-v-text { font-size: 54px; }
+.nx-catalog { margin-top: 10px; font-size: 18px; letter-spacing: 2px; color: #7d7154; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+.nx-catalog div { animation: nx-rise 0.5s ease-out both; }
+.nx-catalog .new { color: #ffc24a; }
+
+/* 6 · collapse */
+.nx-s-collapse .nx-eclipse { transform: scale(0.01); opacity: 0; transition: transform 1.2s cubic-bezier(.7,0,.9,.4), opacity 0.4s 1s; }
+.nx-s-collapse .nx-verdict { opacity: 0.55; transition: opacity 1s; }
+.dks.nx .dks-actions { position: absolute; left: 0; right: 0; top: 900px; z-index: 6; }
+.dks.nx .dks-btn { font-size: 20px; padding: 14px 34px; letter-spacing: 6px; color: var(--v); }
+
+@keyframes nx-static  { 0%, 25%, 55% { opacity: 1; } 12%, 40%, 70%, 100% { opacity: 0; } }
+@keyframes nx-scan    { 0% { transform: translateX(-40%); } 50% { transform: translateX(25%); } 100% { transform: translateX(-5%); } }
+@keyframes nx-flicker { 0% { opacity: 0.2; } 30% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+@keyframes nx-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes nx-pulse   { from { opacity: 0.6; transform: scale(1.08); } }
+@keyframes nx-listen  { 50% { opacity: 0.3; } }
+@keyframes nx-clicked { 30% { transform: scale(0.92); } 100% { transform: scale(1); } }
+@keyframes nx-cursor  { 0% { opacity: 0; transform: translate(1700px, 1000px); } 15% { opacity: 1; } 80% { opacity: 1; transform: translate(950px, 370px); } 88% { transform: translate(950px, 370px) scale(0.85); } 100% { opacity: 0; transform: translate(950px, 370px); } }
+@keyframes nx-whisper { 0% { opacity: 0; } 30%, 70% { opacity: 0.7; } 100% { opacity: 0; } }
+@keyframes nx-consume { 0% { transform: none; opacity: 1; } 100% { transform: translate(var(--dx), -390px) scale(0.1); opacity: 0; } }
+@keyframes nx-flash   { from { opacity: 0.9; } to { opacity: 0; } }
+@keyframes nx-flare   { 0% { transform: scale(1.25); } 30% { transform: scale(0.95); } 100% { transform: scale(1); } }
+@keyframes nx-rise    { from { opacity: 0; transform: translateY(12px); } }
