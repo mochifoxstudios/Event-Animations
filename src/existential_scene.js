@@ -282,7 +282,8 @@
                 await dir.wait(n < 1000000 ? 360 : 520);
                 setCounter(n);
                 D.replay(counter, 'exs-tick');
-                au.sfx('click');
+                if (n === 1000000) au.cue(null);              // the loop stops the moment you arrive
+                au.sfx(n === 1000000 ? 'arrive' : 'click');
             }
             await dir.wait(500);
             au.cue(null);

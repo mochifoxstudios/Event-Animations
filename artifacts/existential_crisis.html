@@ -1706,6 +1706,30 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             sg.gain.setValueAtTime(0.0001, t); sg.gain.linearRampToValueAtTime(0.05 * v, t + dur); sg.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.15);
             var o = osc('sine', mf(m), t, t + dur + 0.2, sg); o.frequency.exponentialRampToValueAtTime(mf(m + 12), t + dur);
         };
+        /* a REVERSE SWELL: the note grows from nothing to full and is cut dead at t + dur.
+           The classic build-into-silence; pair it with a cut to black. */
+        I.swell = function (t, m, dur, v, bus) {
+            var f = filt('lowpass', 500, 0.7);
+            f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(3200, t + dur);
+            var g = out(B(bus), 0.08); f.connect(g);          // nearly dry: the cut must be a real silence
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.16 * v, t + dur);
+            g.gain.setValueAtTime(0.16 * v, t + dur);
+            g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.02);
+            [[-7, 'sine'], [7, 'sine'], [0, 'triangle']].forEach(function (d) {
+                osc(d[1], mf(m) * Math.pow(2, d[0] / 1200), t, t + dur + 0.05, f);
+            });
+        };
+        /* a reverse cymbal: bright noise rushing in, cut dead */
+        I.revcym = function (t, dur, v, bus) {
+            var f = filt('highpass', 4000);
+            f.frequency.setValueAtTime(7000, t); f.frequency.exponentialRampToValueAtTime(2500, t + dur);
+            var g = out(B(bus), 0.06); f.connect(g);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.2 * v, t + dur);
+            g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.02);
+            noise(t, t + dur + 0.05, f);
+        };
         /* breath through a fixed vowel — whispers */
         I.breath = function (t, dur, v, vowel, bus) {
             var F = vowel === 'oo' ? [[350, 8], [800, 10]] : [[750, 7], [1150, 9]];
@@ -2213,14 +2237,23 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             A.fx.chime(t, ARP[clickN++ % 4], 0.08, 0.45);
             A.fx.wood(t, 0.12, 2.6);
         },
-        glitch: function (A, t) {                                       // the loop tape-stops and stutters
+        /* the millionth click: not a beep, a milestone — a low floor and a warm D major chord */
+        arrive: function (A, t) {
             var F = A.fx;
-            [62, 66, 69, 74].forEach(function (m) { F.keys(t, m, 0.85, 0.5, null, m - 12); });
-            F.sub(t, 38, 0.85, 0.6, null, 26);
-            for (var k = 0; k < 7; k++) F.chime(t + k * (0.11 - k * 0.008), 86, 0.03, 0.5 - k * 0.06);
-            F.riser(t, 0.8, 62, 0.25);
+            F.thump(t, 26, 0.8);
+            [62, 66, 69].forEach(function (m) { F.keys(t, m, 0.5, 0.5); });
+            F.chime(t, 74, 0.6, 0.45);
         },
-        cut: function (A, t) { A.fx.thump(t, 26, 1); },                 // then nothing at all
+        /* the break: that same chord swells in reverse over a rushing cymbal and is cut dead at
+           the blackout — the build-into-silence. (Was a tape-stop with a stuttering high chime;
+           owner, 2026-10-13: "I don't like the first sound".) Lasts exactly as long as the glitch. */
+        glitch: function (A, t) {
+            var F = A.fx, d = 0.9;
+            [50, 62, 66, 69, 74].forEach(function (m) { F.swell(t, m, d, m < 60 ? 0.8 : 0.5); });
+            F.revcym(t, d, 0.6);
+            F.swell(t, 26, d, 1.4);                                     // the floor swells too, and is cut with it
+        },
+        cut: function (A, t) { A.fx.thump(t, 26, 0.7); },                 // then nothing at all
         heartbeat: function (A, t) { A.fx.thump(t, 26, 0.9); A.fx.thump(t + 0.24, 26, 0.55); },
         shatter: function (A, t) {                                      // the digits fall: D minor, descending
             [86, 81, 77, 74, 69, 65, 62].forEach(function (m, k) { A.fx.chime(t + k * 0.16, m, 0.4, 0.38 - k * 0.03); });
@@ -2575,7 +2608,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 await dir.wait(n < 1000000 ? 360 : 520);
                 setCounter(n);
                 D.replay(counter, 'exs-tick');
-                au.sfx('click');
+                if (n === 1000000) au.cue(null);              // the loop stops the moment you arrive
+                au.sfx(n === 1000000 ? 'arrive' : 'click');
             }
             await dir.wait(500);
             au.cue(null);

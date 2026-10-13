@@ -105,14 +105,23 @@
             A.fx.chime(t, ARP[clickN++ % 4], 0.08, 0.45);
             A.fx.wood(t, 0.12, 2.6);
         },
-        glitch: function (A, t) {                                       // the loop tape-stops and stutters
+        /* the millionth click: not a beep, a milestone — a low floor and a warm D major chord */
+        arrive: function (A, t) {
             var F = A.fx;
-            [62, 66, 69, 74].forEach(function (m) { F.keys(t, m, 0.85, 0.5, null, m - 12); });
-            F.sub(t, 38, 0.85, 0.6, null, 26);
-            for (var k = 0; k < 7; k++) F.chime(t + k * (0.11 - k * 0.008), 86, 0.03, 0.5 - k * 0.06);
-            F.riser(t, 0.8, 62, 0.25);
+            F.thump(t, 26, 0.8);
+            [62, 66, 69].forEach(function (m) { F.keys(t, m, 0.5, 0.5); });
+            F.chime(t, 74, 0.6, 0.45);
         },
-        cut: function (A, t) { A.fx.thump(t, 26, 1); },                 // then nothing at all
+        /* the break: that same chord swells in reverse over a rushing cymbal and is cut dead at
+           the blackout — the build-into-silence. (Was a tape-stop with a stuttering high chime;
+           owner, 2026-10-13: "I don't like the first sound".) Lasts exactly as long as the glitch. */
+        glitch: function (A, t) {
+            var F = A.fx, d = 0.9;
+            [50, 62, 66, 69, 74].forEach(function (m) { F.swell(t, m, d, m < 60 ? 0.8 : 0.5); });
+            F.revcym(t, d, 0.6);
+            F.swell(t, 26, d, 1.4);                                     // the floor swells too, and is cut with it
+        },
+        cut: function (A, t) { A.fx.thump(t, 26, 0.7); },                 // then nothing at all
         heartbeat: function (A, t) { A.fx.thump(t, 26, 0.9); A.fx.thump(t + 0.24, 26, 0.55); },
         shatter: function (A, t) {                                      // the digits fall: D minor, descending
             [86, 81, 77, 74, 69, 65, 62].forEach(function (m, k) { A.fx.chime(t + k * 0.16, m, 0.4, 0.38 - k * 0.03); });
