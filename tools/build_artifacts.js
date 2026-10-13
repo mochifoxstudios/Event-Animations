@@ -231,6 +231,33 @@ varSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/null_interrogation.html'), nullPage);
+const dilemmaPage = page({
+    title: "Prisoner's Dilemma",
+    scene: 'src/dilemma_scene.js',
+    score: 'src/audio/score_dilemma.js',
+    extraCss: 'src/dilemma_scene.css',
+    accent: '#ff9a4a',
+    blurb: 'Another operator appears on your frequency. A pool of energy sits between you. Share it, or steal it. They are deciding too.',
+    note: 'Read their dossier and watch their cursor: it lingers on what they mean to do, most of the time. 15 seconds; out of time and you share. This sample operator answered POWER at the Existential Crisis, and Ω_remnant knows it.',
+    controls: `<div class="grp"><label for="opp">Opponent</label><select id="opp"><option value="">Random</option>
+        <option value="op409">Operator_409 (trusting)</option><option value="nexus">NEXUS_PROC_Δ (copies you)</option>
+        <option value="unknown">usr_unknown (coin flip)</option><option value="void7">void_entity_7 (betrays)</option>
+        <option value="omega">Ω_remnant (remembers your answer)</option></select>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var oppSel = document.getElementById('opp');
+var last = null;
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    scene = DilemmaScene.play(host, { opponent: oppSel.value || undefined,
+        state: { energy: 3.2e14, _existentialPath: 'POWER', _pdLast: last },
+        onResult: function (r) { last = r.you; out.textContent = (r.you === 'S' ? 'You shared' : 'You stole') + ', they ' + (r.them === 'S' ? 'shared' : 'stole') + ': ' + (r.delta ? (r.delta > 0 ? '+' : '−') + DuckScene.fmt(Math.abs(r.delta)) : '0') + ' E' + (r.instability ? ', +' + r.instability + '% instability' : '') + '. NEXUS_PROC_Δ will remember.'; } });
+}
+oppSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/prisoners_dilemma.html'), dilemmaPage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);

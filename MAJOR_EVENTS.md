@@ -37,7 +37,7 @@ The End is out of scope.*
 
 | Event | Status | Trigger | What happens |
 |---|---|---|---|
-| **Prisoner's Dilemma** | ⬜ | After first prestige | An operator "appears on your frequency". Currently no choice: auto "MUTUAL COOPERATION" after a 5 s countdown, pays 20% of bank. Share/Steal would need rebuilding |
+| **Prisoner's Dilemma** | ✅ [page](https://claude.ai/artifact/KAGACyeoh1z45zi7Wk7x3Z) · `docs/PRISONERS_DILEMMA.md` | After first prestige | An operator "appears on your frequency". Currently no choice: auto "MUTUAL COOPERATION" after a 5 s countdown, pays 20% of bank. Share/Steal would need rebuilding |
 | **Severance Package** | ⬜ | Once per save, after a prestige, when run clicks near the LP threshold | Corporate dialog offers 5–12 LP + 100–300 Data. ACCEPT closes the game and pays on next launch; DECLINE carries on |
 | **Fake Crash** | ⬜ | 13,333 / 66,666 / 123,456 clicks | "Your simulation ran into a problem" screen freezes the game, % climbs to 100, then "JUST KIDDING", +50% energy |
 | **Thermal Crash** | ⬜ | System Diagnostics CPU meter hits 100% | Same crash screen, ends on "Thermal event contained" + CLAIM CRASH DIVIDEND: ×25 income for 30 min |
