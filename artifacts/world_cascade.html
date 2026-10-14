@@ -139,7 +139,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-del em { font-style: normal; font-size: 46px; font-weight: 900; letter-spacing: 8px; color: #ff6a80; opacity: 0; }
 .wx-halved .wx-del em { opacity: 1; animation: wx-slam 0.4s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--wx); box-shadow: 0 0 20px var(--wx); opacity: 0.35; animation: wx-scan 3.2s linear infinite; }
-.wx-rec { position: absolute; right: 40px; top: 300px; width: 610px; padding: 22px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; background: rgba(0, 10, 20, 0.88); border: 2px solid rgba(51, 200, 255, 0.5); border-radius: 12px; }
+.wx-rec { position: absolute; right: 40px; top: 560px; width: 560px; padding: 22px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; background: rgba(0, 10, 20, 0.88); border: 2px solid rgba(51, 200, 255, 0.5); border-radius: 12px; }
 .wx-rec span { font-size: 30px; font-weight: 700; letter-spacing: 3px; color: rgba(255, 255, 255, 0.8); }
 .wx-rec small { font-size: 34px; line-height: 1.3; color: rgba(255, 255, 255, 0.86); }
 .wx-rec i { display: block; height: 12px; border-radius: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
@@ -191,6 +191,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .sceneLayer { position: absolute; inset: 0; }
 .sceneLayer[hidden] { display: none; }
 
+.board { padding-top: 170px; gap: 28px; }                 /* the world-event banner (up to ~200px) never covers the hud */
 .board .hud { gap: 70px; }
 .board .gens div.hit { border-color: #ff3366; color: #ff8aa0; }
 .board .tag { display: block; margin-top: 6px; font-size: 26px; letter-spacing: 3px; color: #ff6a80; min-height: 22px; }
@@ -2647,7 +2648,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                     var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">' + D.icon('cup') + '</i>');
                     w.type = 'button';
                     w.setAttribute('aria-label', 'Talk to the striker holding "' + text + '"');
-                    w.style.left = (200 + i * (1520 / n)).toFixed(0) + 'px';
+                    /* two pickets, one each side, so ACQUIRE in the middle stays clear */
+                    var half = Math.ceil(n / 2), side = i < half ? 0 : 1, k = side ? i - half : i, per = side ? n - half : half;
+                    var span = 560, step = per > 1 ? span / (per - 1) : 0;
+                    w.style.left = ((side ? 1760 - span : 160) + k * step).toFixed(0) + 'px';
                     w.style.animationDelay = (i * 0.18) + 's';
                     w.addEventListener('click', function (e) {
                         e.stopPropagation();
@@ -2875,7 +2879,7 @@ function trigger() {
             if (KEY === 'freeze') passive = false;
             if (KEY === 'cascade') combo = 4;
             if (KEY === 'strike') pp = 'OFFLINE';
-            document.getElementById('tip').textContent = ev.label + ': ' + ev.detail;
+            document.getElementById('tip').textContent = 'World event: ' + ev.label;
             hud();
         },
         onEnergy: function (d) { energy = Math.max(0, energy + d); hud(); },

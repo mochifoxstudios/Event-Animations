@@ -258,7 +258,10 @@
                     var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">' + D.icon('cup') + '</i>');
                     w.type = 'button';
                     w.setAttribute('aria-label', 'Talk to the striker holding "' + text + '"');
-                    w.style.left = (200 + i * (1520 / n)).toFixed(0) + 'px';
+                    /* two pickets, one each side, so ACQUIRE in the middle stays clear */
+                    var half = Math.ceil(n / 2), side = i < half ? 0 : 1, k = side ? i - half : i, per = side ? n - half : half;
+                    var span = 560, step = per > 1 ? span / (per - 1) : 0;
+                    w.style.left = ((side ? 1760 - span : 160) + k * step).toFixed(0) + 'px';
                     w.style.animationDelay = (i * 0.18) + 's';
                     w.addEventListener('click', function (e) {
                         e.stopPropagation();

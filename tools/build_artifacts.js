@@ -507,6 +507,7 @@ document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/captcha.html'), captchaPage);
 const WORLD_BOARD_CSS = `
+.board { padding-top: 170px; gap: 28px; }                 /* the world-event banner (up to ~200px) never covers the hud */
 .board .hud { gap: 70px; }
 .board .gens div.hit { border-color: #ff3366; color: #ff8aa0; }
 .board .tag { display: block; margin-top: 6px; font-size: 26px; letter-spacing: 3px; color: #ff6a80; min-height: 22px; }
@@ -565,7 +566,7 @@ function trigger() {
             if (KEY === 'freeze') passive = false;
             if (KEY === 'cascade') combo = 4;
             if (KEY === 'strike') pp = 'OFFLINE';
-            document.getElementById('tip').textContent = ev.label + ': ' + ev.detail;
+            document.getElementById('tip').textContent = 'World event: ' + ev.label;
             hud();
         },
         onEnergy: function (d) { energy = Math.max(0, energy + d); hud(); },

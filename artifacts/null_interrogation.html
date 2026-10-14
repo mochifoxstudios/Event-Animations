@@ -87,6 +87,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 /* 5 · judgement */
 .nx-s-consume .nx-form, .nx-s-consume .nx-question { opacity: 0; transition: opacity 0.5s; }
 .nx-consume { position: absolute; left: 160px; right: 160px; top: 742px; text-align: center; font-size: 42px; line-height: 1.35; letter-spacing: 2px; color: #f2f5ff; z-index: 4; pointer-events: none; }
+.nx-s-consume .nx-input { color: transparent; }                               /* the answer leaves the field as it is taken */
+.nx-s-verdict .nx-consume { opacity: 0; }                                     /* safe mode: no flight, so the row just goes */
 .nx-consume span { display: inline-block; animation: nx-consume 1.3s cubic-bezier(.6,0,.8,.6) both; }
 .nx-s-consume .nx-eclipse { transform: scale(1.12); transition: transform 1.6s ease-in; }
 .nx-flash { position: absolute; inset: 0; z-index: 7; pointer-events: none; background: radial-gradient(circle at 50% 35%, var(--v), transparent 65%); opacity: 0; }
