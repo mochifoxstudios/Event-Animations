@@ -46,12 +46,12 @@ The End is out of scope.*
 
 ## 4. World events (banner across the top, own sound)
 
-| Event | Effect |
-|---|---|
-| Quantum Surge | +300% output for 20 s |
-| Data Storm | 7 data orbs to catch |
-| Walker Strike | City People Points stop for 16 s |
-| Momentum Cascade | Combo locked at ×4 for 10 s |
-| Corrupt Packet | Energy burst, but ~5% of one generator is lost |
-| Time Freeze | Only clicks count for 12 s |
-| Memory Purge | Energy halved, output ×2 for 30 s |
+| Event | Status | Effect |
+|---|---|---|
+| Quantum Surge | ✅ [page](https://claude.ai/artifact/Hnk99TKHcC948ftZ8iGYNi) · `docs/WORLD_EVENTS.md` | +300% output for 20 s |
+| Data Storm | ✅ [page](https://claude.ai/artifact/MCdQ6DJ63fZpgaQtJkUqhH) · `docs/WORLD_EVENTS.md` | 7 data orbs to catch |
+| Walker Strike | ✅ [page](https://claude.ai/artifact/EALcWuoCNBZ3kShykRdHYY) · `docs/WORLD_EVENTS.md` | City People Points stop for 16 s |
+| Momentum Cascade | ✅ [page](https://claude.ai/artifact/9wjzJMSCwsBsibLKfbZeP8) · `docs/WORLD_EVENTS.md` | Combo locked at ×4 for 10 s |
+| Corrupt Packet | ✅ [page](https://claude.ai/artifact/CgxZmtA2i5dTNhLJiTv4cQ) · `docs/WORLD_EVENTS.md` | Energy burst, but ~5% of one generator is lost |
+| Time Freeze | ✅ [page](https://claude.ai/artifact/BgaPx8pcMsFVK1KNJdswYi) · `docs/WORLD_EVENTS.md` | Only clicks count for 12 s |
+| Memory Purge | ✅ [page](https://claude.ai/artifact/EN4UvfRTAin8w694rXaW5N) · `docs/WORLD_EVENTS.md` | Energy halved, output ×2 for 30 s |

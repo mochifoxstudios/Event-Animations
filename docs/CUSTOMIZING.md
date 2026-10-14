@@ -10,6 +10,13 @@ in the game means editing a table or passing an option to `play()`. The animatio
 | Ducky Council | Any grade's debate lines, ruling text, label, reward text, votes, and the Chairman's opening line | `CouncilScene.play(host, { verdicts: { gold: { deliberation: [...], textLines: [...] } }, votes: { gold: [...] }, opening: '...' })`, or edit `VERDICTS` in `council_scene.js` |
 | Duck Tribunal | The hearing dialogue, the charge, the exhibit line and the ruling line | `{ lines: [...] }` and a `judgement` with any `charge` / `exhibit` / `ruling` text. New registers and charges are new entries in `DIALOGUES` / `CHARGES` |
 | Existential Crisis | The question, and every answer's label, description, gift text and mark text | `ExistentialScene.play(host, { question: '...', paths: [...] })` |
+| NULL Interrogation | The monologues and the verdict texts | `NullScene.VERDICTS`, `{ variant }`; see `docs/NULL_INTERROGATION.md` |
+| Prisoner's Dilemma | Opponents (name, trust, record, how they decide, every line), payoffs, time | `{ opponents, opponent, payoffs, time }` |
+| Severance Package | Every line, the fine print, button labels, names, the offer, negotiation odds | `{ lines, fine, labels, people, offer, negotiate }` |
+| Fake / Thermal Crash | Every string (including the lines at given click counts), the stop-code lines, bonus, window | `CrashScene.play(host, { variant, lines, info, pokes, bonus, window })` |
+| Eye of the Storm | Every string, duration, multiplier, breath length, how much a breath weakens the storm | `{ lines, duration, mult, breath, calm }` |
+| CAPTCHA | The grid (label, cells, which are correct), every string, reason codes, log lines, reward | `{ grid, lines, reward, firstFail }` |
+| World events | Label, detail, colour, duration, signs, orb count, the corrupt victim | `WorldScene.play(host, { event, lines, dur, signs, orbs, victim })`, defaults in `WorldScene.EVENTS` |
 
 The dialogue line format is the one the game already uses:
 - `'NAME: "words"'` is speech in that member's bubble, with their voice.
@@ -27,6 +34,7 @@ The dialogue line format is the one the game already uses:
   ] }).done.then(r => { /* r.action is 'accept', 'appeal' or 'banish' */ });
   ```
 - **Existential Crisis:** its answers are the decisions, and `paths` can hold any number of them. Each one picks one of the built-in marks: `vignette`, `shift`, `figure`, `drain` or `none`.
+- **Every other scene** that ends on a button takes the same `choices: [...]` list. Its in-scene decisions (SHARE/STEAL, SIGN/ASK/DECLINE, breathe or USE THE CALM, QUARANTINE, the CAPTCHA tiles) report back through the scene's callbacks and its result object, as described in each event's doc.
 
 ## Sound
 

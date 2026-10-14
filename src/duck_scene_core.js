@@ -261,7 +261,8 @@
     };
 
     /* ── THE SCENE SHELL ─────────────────────────────────────────────────── */
-    D.shell = function (host, cls, dir, au) {
+    /* o.keys false: no Space/Enter skip (a scene that plays over the live game must not take its keys) */
+    D.shell = function (host, cls, dir, au, o) {
         var root = D.h('div', 'dks ' + cls + ' dks-pre');
         if (D.reduced()) root.classList.add('dks-reduced');
         root.setAttribute('role', 'dialog');
@@ -284,7 +285,7 @@
             if (e.target && /^(BUTTON|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
             if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); dir.skip(); }
         }
-        document.addEventListener('keydown', onKey, true);
+        if (!o || o.keys !== false) document.addEventListener('keydown', onKey, true);
 
         host.innerHTML = '';
         var fit = D.fit(host, root);

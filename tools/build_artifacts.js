@@ -503,6 +503,89 @@ gridSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/captcha.html'), captchaPage);
+const WORLD_BOARD_CSS = `
+.board .hud { gap: 70px; }
+.board .gens div.hit { border-color: #ff3366; color: #ff8aa0; }
+.board .tag { display: block; margin-top: 6px; font-size: 18px; letter-spacing: 3px; color: #ff6a80; min-height: 22px; }
+`;
+function worldPage(key, title, accent, blurb, note) {
+    return page({
+        title: title,
+        scene: 'src/world_scene.js',
+        score: 'src/audio/score_world.js',
+        extraCss: 'src/world_scene.css',
+        extraInline: BOARD_CSS + WORLD_BOARD_CSS,
+        accent: accent,
+        gateLabel: '▶ OPEN THE BOARD',
+        blurb: blurb,
+        note: note + ' The board stays live underneath: keep clicking ACQUIRE.',
+        controls: `<div class="grp"><button id="replay" type="button">↯ Trigger again</button></div>`,
+        script: `
+var KEY = '${key}', energy = 3.2e14, eps = 5e9, mult = 1, passive = true, combo = 1, pp = 'ONLINE', tickT = null, items = { cursor: 412, mill: 96, siphon: 18 };
+var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en"></b></span><span>EPS<b id="eps"></b></span><span>COMBO<b id="cb"></b></span><span>CITY PP<b id="pp"></b></span></div>'
+  + '<button class="acq" id="acq" type="button">ACQUIRE</button>'
+  + '<div class="gens"><div id="g-cursor"><span>Cursor Farm</span><span id="n-cursor"></span></div><div id="g-mill"><span>Quantum Mill</span><span id="n-mill"></span></div><div id="g-siphon"><span>Void Siphon</span><span id="n-siphon"></span></div></div>'
+  + '<div class="tip" id="tip"></div></div><div class="sceneLayer" id="layer"></div>';
+function hud() {
+    document.getElementById('en').textContent = DuckScene.fmt(energy);
+    document.getElementById('eps').textContent = passive ? DuckScene.fmt(eps * mult) + (mult !== 1 ? ' ×' + mult : '') : 'PAUSED';
+    document.getElementById('cb').textContent = '×' + combo;
+    document.getElementById('pp').textContent = pp;
+    ['cursor', 'mill', 'siphon'].forEach(function (k) { document.getElementById('n-' + k).textContent = '×' + items[k]; });
+}
+function start() {
+    if (scene) scene.close();
+    clearInterval(tickT);
+    energy = 3.2e14; mult = 1; passive = true; combo = 1; pp = 'ONLINE'; items = { cursor: 412, mill: 96, siphon: 18 }; out.textContent = '';
+    host.innerHTML = '';
+    var tmp = document.createElement('div'); tmp.innerHTML = BOARD;
+    DuckScene.fit(host, tmp.firstChild);
+    host.appendChild(tmp.firstChild);
+    document.getElementById('tip').textContent = 'A world event is coming…';
+    hud();
+    tickT = setInterval(function () { if (passive) energy += eps * mult / 10; hud(); }, 100);
+    document.getElementById('acq').onclick = function (e) {
+        energy += eps * 0.2 * combo; hud();
+        if (scene && scene.click) scene.click(e.clientX, e.clientY);
+    };
+    setTimeout(trigger, 1200);
+}
+function trigger() {
+    if (scene) scene.close();
+    var layer = document.getElementById('layer');
+    scene = WorldScene.play(layer, { event: KEY, state: { energy: energy, eps: eps },
+        victim: { id: 'mill', name: 'Quantum Mill', count: items.mill },
+        onStart: function (ev) {
+            if (KEY === 'surge') mult = ev.mult;
+            if (KEY === 'purge') mult = 2;
+            if (KEY === 'corrupt') mult = 5;
+            if (KEY === 'freeze') passive = false;
+            if (KEY === 'cascade') combo = 4;
+            if (KEY === 'strike') pp = 'OFFLINE';
+            document.getElementById('tip').textContent = ev.label + ': ' + ev.detail;
+            hud();
+        },
+        onEnergy: function (d) { energy = Math.max(0, energy + d); hud(); },
+        onCorrupt: function (id, lost) { items[id] = Math.max(0, items[id] - lost); var g = document.getElementById('g-' + id); if (g) g.classList.add('hit'); hud(); },
+        onEnd: function (r) {
+            mult = 1; passive = true; combo = 1; pp = 'ONLINE'; hud();
+            out.textContent = r.summary;
+            document.getElementById('tip').textContent = r.summary + ' (Trigger again to replay.)';
+        } });
+}
+document.getElementById('replay').onclick = function () { if (!begun) begin(); else trigger(); };`
+    });
+}
+const WORLD = [
+    ['surge', 'Quantum Surge', '#44ffcc', 'A surge of anomalous output: +300% for 20 seconds.', 'Energy streams up the edges and the banner counts the extra.'],
+    ['storm', 'Data Storm', '#aaaaff', 'A packet breach: seven data orbs drift over the board for 14 seconds.', 'Catch the orbs before they float away: each catch plays the next note up.'],
+    ['strike', 'Walker Strike', '#ff5566', 'The walkers stop working: City PP is offline for 16 seconds.', 'Click a striker to talk them down with a coffee. Settle all six and the strike ends early.'],
+    ['cascade', 'Momentum Cascade', '#ffaa44', 'Fast clicking tips into a cascade: combo locked at ×4 for 10 seconds.', 'Click ACQUIRE: your clicks play the tune.'],
+    ['corrupt', 'Corrupt Packet', '#ff3366', 'A corrupt packet: a burst of 30 seconds of output, but one generator starts corrupting.', 'Hit QUARANTINE within 3 seconds to lose only half as many.'],
+    ['freeze', 'Time Freeze', '#88ddff', 'Time stops for 12 seconds: passive income pauses and only clicks count.', 'Click ACQUIRE: every click is a crystal.'],
+    ['purge', 'Memory Purge', '#33c8ff', 'A memory purge: energy is halved, then output doubles for 30 seconds.', 'Watch the number get deleted. Then click ACQUIRE: every click restores a 1% fragment of what was purged, up to half.']
+];
+WORLD.forEach(function (w) { fs.writeFileSync(path.join(ROOT, 'artifacts/world_' + w[0] + '.html'), worldPage(w[0], w[1], w[2], w[3], w[4])); });
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);
