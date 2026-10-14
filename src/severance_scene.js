@@ -95,20 +95,20 @@
 
         root.insertAdjacentHTML('beforeend', ''
           + '<div class="sv-world"><div class="sv-dim"></div>'
-          + '<div class="sv-invite"><div class="sv-inv-top"><i></i>CALENDAR</div><b>Quick chat</b><span>Simulation Overseers · Human Resources</span><span>Now · 5 min · Required</span>'
+          + '<div class="sv-invite"><div class="sv-inv-top"><i></i>CALENDAR</div><b>Quick chat</b><span>Simulation Overseers &middot; Human Resources</span><span>Now &middot; 5 min &middot; Required</span>'
           +   '<em class="sv-inv-ok">ACCEPTED AUTOMATICALLY</em></div>'
           + '<div class="sv-call">'
           +   '<div class="sv-bar"><span class="sv-rec">' + D.icon('dot') + ' REC</span><span class="sv-title">Quick chat</span><span class="sv-clock">00:00</span></div>'
           +   '<div class="sv-main"><div class="sv-fig-wrap">' + FIGURE + '</div><div class="sv-ring"></div>'
           +     '<div class="sv-holdcard"><b>ON HOLD</b><span>' + D.esc(L.hold) + '</span><i class="sv-spin"></i></div>'
           +     '<div class="sv-left">' + D.esc(PP.rep) + ' has left the meeting</div>'
-          +     '<div class="sv-name">' + D.esc(PP.rep) + ' · ' + D.esc(PP.role) + '</div></div>'
+          +     '<div class="sv-name">' + D.esc(PP.rep) + ' &middot; ' + D.esc(PP.role) + '</div></div>'
           +   '<div class="sv-tiles"><div class="sv-tile sv-legal"><div class="sv-av">' + D.esc(PP.legal.charAt(0)) + '</div><span>' + D.esc(PP.legal) + '</span><i class="sv-mic">' + MIC_OFF + '</i></div>'
           +     '<div class="sv-tile sv-me"><div class="sv-av">15</div><span>' + D.esc(PP.you) + '</span><i class="sv-mic">' + CAM_OFF + '</i></div></div>'
           +   '<div class="sv-cap"><b></b><span></span></div>'
           + '</div>'
           + '<div class="sv-letter"><div class="sv-paper">'
-          +   '<div class="sv-lh"><div class="sv-seal">' + D.icon('gem') + '</div><div><b>OFFICE OF THE SIMULATION OVERSEERS</b><span>Human Resources · Voluntary Separation</span></div></div>'
+          +   '<div class="sv-lh"><div class="sv-seal">' + D.icon('gem') + '</div><div><b>OFFICE OF THE SIMULATION OVERSEERS</b><span>Human Resources &middot; Voluntary Separation</span></div></div>'
           +   '<div class="sv-re">RE: SEVERANCE PACKAGE</div>'
           +   '<p>Dear ' + D.esc(PP.you) + ',</p><p>In exchange for stepping away, you will receive:</p>'
           +   '<div class="sv-row sv-lp"><span>LEVEL POINTS</span><s class="sv-old"></s><b>0</b></div>'
@@ -222,7 +222,7 @@
                 await say(L.ask);
                 root.classList.add('sv-hold');
                 au.cue('hold');
-                capTxt.textContent = '';
+                capTxt.textContent = ''; capWho.textContent = '';
                 await sleep(4200);
                 var up = Math.random() < neg.chance;
                 if (opts.forceNegotiation) up = opts.forceNegotiation === 'raised';
@@ -282,7 +282,7 @@
                 await say(L.declined);
                 au.sfx('leave');
                 root.classList.add('sv-s-left');
-                capTxt.textContent = '';
+                capTxt.textContent = ''; capWho.textContent = '';
                 await sleep(1200);
                 root.classList.add('sv-legal-on');
                 await say(L.legal, PP.legal);

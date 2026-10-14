@@ -42,7 +42,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 `;
 
 function page({ title, scene, score, accent, blurb, controls, script, note, extraCss, extraInline, gateLabel }) {
-    return `<title>${title}</title>
+    return `<meta charset="utf-8">
+<title>${title}</title>
 <style>${PAGE_CSS}
 ${extraCss ? read(extraCss) : ''}
 ${extraInline || ''}
