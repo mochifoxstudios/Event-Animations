@@ -217,6 +217,8 @@
         stage.appendChild(backdrop);
         stage.appendChild(bench.row);
         stage.appendChild(caption);
+        bench.seats.dialog = D.dialog();
+        stage.appendChild(bench.seats.dialog.el);
         root.appendChild(stage);
         root.appendChild(flash);
         var seats = bench.seats;

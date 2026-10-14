@@ -198,8 +198,17 @@
     D.hush = function (seats) {
         seats.forEach(function (s) {
             s.bubble.classList.remove('dks-on', 'dks-action', 'dks-murmur');
-            s.el.classList.remove('dks-talking');
+            s.el.classList.remove('dks-talking', 'dks-speaking');
         });
+        if (seats.dialog) seats.dialog.bubble.classList.remove('dks-on', 'dks-action', 'dks-murmur');
+    };
+
+    /* THE DIALOGUE BOX. Speech set at game-subtitle size does not fit in a bubble over a 220px seat, so
+       a scene can give its bench one wide box under the bench instead (seats.dialog = D.dialog()). The
+       speaker is marked on the bench (glow, bill moving) and by the box's pointer under their seat. */
+    D.dialog = function () {
+        var el = D.h('div', 'dks-dialog', '<div class="dks-bubble"><div class="dks-who"></div><div class="dks-say"></div></div>');
+        return { el: el, bubble: el.firstChild, who: el.querySelector('.dks-who'), text: el.querySelector('.dks-say') };
     };
 
     /* A member speaks. kind: 'speech' (typed, bill moving) · 'action' (a stage
@@ -207,18 +216,20 @@
     D.say = function (dir, seats, idx, who, text, kind, opts) {
         opts = opts || {};
         var s = seats[idx];
+        var b = seats.dialog || s;                       // the bench's dialogue box, or the seat's own bubble
         D.hush(seats);
         if (!opts.noLook) D.look(seats, idx, opts.still);
-        if (kind === 'action') s.bubble.classList.add('dks-action');
-        if (kind === 'murmur') s.bubble.classList.add('dks-murmur');
-        s.who.textContent = who || '';
-        s.text.textContent = '';
-        D.replay(s.bubble, 'dks-on');
+        if (kind === 'action') b.bubble.classList.add('dks-action');
+        if (kind === 'murmur') b.bubble.classList.add('dks-murmur');
+        if (seats.dialog) { seats.dialog.el.style.setProperty('--speaker', idx - 2); s.el.classList.add('dks-speaking'); }
+        b.who.textContent = who || '';
+        b.text.textContent = '';
+        D.replay(b.bubble, 'dks-on');
         if (kind === 'speech') s.el.classList.add('dks-talking');
         if (kind === 'action') D.replay(s.el, 'dks-gesture');
         if (opts.log) opts.log((who ? who + ': ' : '') + text);
         var onChar = (kind === 'speech' && opts.voice) ? function () { opts.voice(idx); } : null;
-        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
+        return dir.type(b.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
             s.el.classList.remove('dks-talking');
             var hold = opts.hold != null ? opts.hold : Math.min(2400, 650 + text.length * 13);
             return dir.wait(hold);

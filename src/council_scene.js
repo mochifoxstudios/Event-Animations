@@ -277,6 +277,8 @@
         stage.appendChild(feather);
         stage.appendChild(bench.row);
         stage.appendChild(caption);
+        bench.seats.dialog = D.dialog();
+        stage.appendChild(bench.seats.dialog.el);
         root.appendChild(stage);
         var seats = bench.seats;
 
@@ -417,6 +419,7 @@
 
             /* 5 · RULING */
             caption.textContent = '';
+            root.classList.add('dks-ruled');               // the debate is over: its dialogue box makes room for the verdict
             au.cue(null);
             strike();
             if (typeof opts.onRuling === 'function') { try { opts.onRuling(grade); } catch (e) {} }
