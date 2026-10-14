@@ -49,3 +49,20 @@ system to the next. Every symbol is a hand-drawn SVG in `DuckScene.ICONS` (`duck
 drawn in `currentColor`, sized by `font-size` like text. Use `DuckScene.icon('name')` to place one.
 Where a scene takes a glyph as data (a Council grade, an Existential answer, a world-event `icon`),
 pass an icon name; plain text still works for data that comes from the game.
+
+## Text size
+
+Every scene is laid out on a 1920×1080 canvas that is scaled to fit the screen, often shown at 60–75% of its
+size, so sizes are in canvas pixels:
+
+| Kind of text | Size |
+|---|---|
+| Anything readable | at least 24px |
+| Labels, eyebrows, chips | 26–30px (letter-spacing kept small) |
+| Dialogue, story lines, descriptions, hints | 34–44px |
+| Buttons | 30–36px |
+| Numbers and values | 48px or more |
+| Titles | 64px or more |
+
+New or longer text should wrap. The layouts leave room for it; don't shrink it to fit.
+`tools/text_audit.js` lists any visible text below a minimum: inject it into a page and call `textAudit(24)`.
