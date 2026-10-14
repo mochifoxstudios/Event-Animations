@@ -123,15 +123,20 @@
             return '<button type="button" class="cap-tile" data-i="' + i + '" aria-pressed="false" aria-label="' + D.esc(cellName(i)) + '"><span class="cap-art">' + cellArt(c) + '</span><i class="cap-tick">' + D.icon('check') + '</i></button>';
         }).join('');
 
+        /* a long label ("the REALITY ENGINE · your most advanced generator") keeps its big first part; the rest goes under it */
+        var labelParts = String(G.label).split(' · ');
+        var labelMain = labelParts.shift(), labelSub = labelParts.join(' · ');
+        if (labelSub) root.classList.add('cap-sub');
+
         root.insertAdjacentHTML('beforeend', ''
           + '<div class="cap-bg"></div>'
           + '<div class="cap-log" aria-hidden="true"><b>AUDIT LOG</b><div class="cap-lines"></div></div>'
           + '<div class="cap-meter"><span>' + D.esc(L.human) + '</span><b class="cap-pct">0%</b><i><s></s><u></u></i><em>' + D.esc(L.humanNote) + '</em><strong class="cap-verdict"></strong></div>'
           + '<div class="cap-card">'
           +   '<div class="cap-box"><button type="button" class="cap-check" aria-label="' + D.esc(L.check) + '"><i class="cap-spin"></i><i class="cap-ok">' + D.icon('check') + '</i></button>'
-          +     '<span class="cap-check-l">' + D.esc(L.check) + '</span><span class="cap-brand"><i>' + D.icon('gem') + '</i>' + D.esc(L.brand) + '<small>Privacy · Terms · Compliance</small></span></div>'
+          +     '<span class="cap-check-l">' + D.esc(L.check) + '</span><span class="cap-brand"><i>' + D.icon('gem') + '</i>' + D.esc(L.brand) + '<small>Privacy · Terms</small></span></div>'
           +   '<div class="cap-chal">'
-          +     '<div class="cap-head"><small>' + D.esc(L.eyebrow) + ' · ' + D.esc(L.title) + '</small><span>' + D.esc(L.select) + '</span><b>' + D.esc(G.label) + '</b></div>'
+          +     '<div class="cap-head" title="' + D.esc(L.eyebrow) + '"><small>' + D.esc(L.title) + '</small><span>' + D.esc(L.select) + '</span><b>' + D.esc(labelMain) + '</b>' + (labelSub ? '<em>' + D.esc(labelSub) + '</em>' : '') + '</div>'
           +     '<div class="cap-grid">' + tiles + '</div>'
           +     '<div class="cap-foot"><span class="cap-hint">' + D.esc(L.hint) + '</span><button type="button" class="cap-verify">' + D.esc(L.verify) + '</button></div>'
           +     '<div class="cap-result"><div class="cap-mark"></div><b></b><span></span><code></code><em></em></div>'
@@ -147,6 +152,8 @@
             var d = D.h('div', cls || ''); d.textContent = '› ' + text;
             linesEl.appendChild(d);
             while (linesEl.children.length > 16) linesEl.removeChild(linesEl.firstChild);
+            /* the lines are big and wrap: drop the oldest until the newest fits the column */
+            while (linesEl.children.length > 1 && d.offsetTop + d.offsetHeight > linesEl.offsetTop + linesEl.clientHeight) linesEl.removeChild(linesEl.firstChild);
         }
 
         /* HUMAN PROBABILITY: moves with what you do */

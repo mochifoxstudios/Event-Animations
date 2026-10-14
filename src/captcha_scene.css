@@ -15,96 +15,102 @@
 }
 .cap-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(120, 150, 200, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 150, 200, 0.05) 1px, transparent 1px); background-size: 48px 48px; }
 
-/* the audit log, left */
-.cap-log { position: absolute; left: 80px; top: 130px; width: 500px; height: 820px; font-family: 'Courier New', monospace; opacity: 0; transition: opacity 0.6s; }
-.cap-log > b { display: block; font-size: 16px; letter-spacing: 6px; color: #6b7a90; margin-bottom: 16px; }
-.cap-lines { display: flex; flex-direction: column; gap: 8px; font-size: 17px; line-height: 1.4; color: #8796ab; }
-.cap-lines div { animation: cap-in 0.25s both; }
+/* the audit log, left: lines are dropped from the top when the column is full */
+.cap-log { position: absolute; left: 48px; top: 40px; width: 500px; height: 900px; display: flex; flex-direction: column; font-family: 'Courier New', monospace; opacity: 0; transition: opacity 0.6s; }
+.cap-log > b { flex: none; display: block; font-size: 28px; letter-spacing: 4px; color: #6b7a90; margin-bottom: 18px; }
+.cap-lines { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; font-size: 34px; line-height: 1.3; letter-spacing: -1px; color: #8796ab; overflow-wrap: anywhere; }
+.cap-lines div { flex: none; animation: cap-in 0.25s both; }
 .cap-lines div:last-child { color: #c9d4e4; }
 .cap-lines .ok { color: #6fdc9a !important; } .cap-lines .bad { color: #ff8a80 !important; }
 
 /* HUMAN PROBABILITY, right */
-.cap-meter { position: absolute; left: 1340px; top: 150px; width: 500px; display: flex; flex-direction: column; gap: 12px; opacity: 0; transition: opacity 0.6s; }
-.cap-meter > span { font-size: 18px; letter-spacing: 6px; color: #8796ab; }
-.cap-pct { font-size: 130px; line-height: 1; font-weight: 900; color: #ff6a60; font-variant-numeric: tabular-nums; transition: color 0.3s; }
+.cap-meter { position: absolute; left: 1384px; top: 140px; width: 490px; display: flex; flex-direction: column; gap: 18px; opacity: 0; transition: opacity 0.6s; }
+.cap-meter > span { font-size: 28px; letter-spacing: 3px; color: #8796ab; }
+.cap-pct { font-size: 150px; line-height: 1; font-weight: 900; color: #ff6a60; font-variant-numeric: tabular-nums; transition: color 0.3s; }
 .cap-pct.cap-bump { animation: cap-bump 0.35s cubic-bezier(.3,1.6,.5,1); }
-.cap-meter i { position: relative; display: block; height: 14px; border-radius: 7px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.cap-meter i { position: relative; display: block; height: 18px; border-radius: 9px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .cap-meter s { position: absolute; inset: 0; background: linear-gradient(90deg, #2fae62, #e8c547 50%, #d8443a); transform-origin: left; transition: transform 0.35s cubic-bezier(.3,1.3,.5,1); }
 .cap-meter u { position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: #fff; opacity: 0.6; }
-.cap-meter em { font-style: normal; font-size: 18px; color: #6b7a90; }
-.cap-verdict { font-size: 26px; letter-spacing: 6px; color: #ff6a60; }
+.cap-meter em { font-style: normal; font-size: 34px; line-height: 1.35; color: #8796ab; }
+.cap-verdict { font-size: 30px; letter-spacing: 3px; color: #ff6a60; }
 .cap-machine .cap-pct, .cap-machine .cap-verdict { color: #6fdc9a; }
 .cap-s-grid .cap-log, .cap-s-grid .cap-meter { opacity: 1; }
 
-/* the card */
-.cap-card { position: absolute; left: 660px; top: 100px; width: 600px; transform: translateY(330px); transition: transform 0.6s cubic-bezier(.2,1,.3,1); }
+/* the card: the checkbox alone sits mid-screen, then the card rises to make room for the challenge */
+.cap-card { position: absolute; left: 580px; top: 20px; width: 760px; transform: translateY(465px); transition: transform 0.6s cubic-bezier(.2,1,.3,1); }
 .cap-s-grid .cap-card { transform: none; }
-.cap-box { display: flex; align-items: center; gap: 20px; height: 110px; padding: 0 24px; box-sizing: border-box; background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; color: #222;
+.cap-box { display: flex; align-items: center; gap: 22px; height: 110px; padding: 0 24px; box-sizing: border-box; background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 4px; color: #222;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); opacity: 0; animation: none; }
 .cap-s-box .cap-box { opacity: 1; animation: cap-in 0.4s both; }
-.cap-check { position: relative; flex: none; width: 46px; height: 46px; border: 3px solid #c1c1c1; border-radius: 4px; background: #fff; cursor: pointer; padding: 0; }
+.cap-check { position: relative; flex: none; width: 56px; height: 56px; border: 3px solid #c1c1c1; border-radius: 4px; background: #fff; cursor: pointer; padding: 0; }
 .cap-check:hover, .cap-check:focus-visible { border-color: #8a8a8a; outline: none; }
-.cap-spin { position: absolute; inset: 4px; border: 4px solid #d6e2f6; border-top-color: var(--blue); border-radius: 50%; opacity: 0; animation: cap-spin 0.8s linear infinite; }
-.cap-ok { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 38px; font-weight: 900; color: var(--ok); opacity: 0; }
+.cap-spin { position: absolute; inset: 4px; border: 5px solid #d6e2f6; border-top-color: var(--blue); border-radius: 50%; opacity: 0; animation: cap-spin 0.8s linear infinite; }
+.cap-ok { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 46px; font-weight: 900; color: var(--ok); opacity: 0; }
 .cap-s-spin .cap-check { border-color: transparent; }
 .cap-s-spin .cap-spin { opacity: 1; }
 .cap-s-grid .cap-spin { opacity: 0; }
 .cap-o-pass .cap-ok { opacity: 1; animation: cap-pop 0.4s cubic-bezier(.3,1.6,.5,1) both; }
-.cap-check-l { flex: 1; font-size: 24px; }
-.cap-brand { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; letter-spacing: 1px; color: #555; }
-.cap-brand i { font-style: normal; font-size: 30px; color: var(--blue); }
-.cap-brand small { font-size: 10px; color: #888; }
+.cap-check-l { flex: 1; font-size: 36px; white-space: nowrap; }
+.cap-brand { display: flex; flex-direction: column; align-items: center; gap: 0; font-size: 24px; line-height: 1.15; font-weight: 700; color: #555; }
+.cap-brand i { font-style: normal; font-size: 34px; color: var(--blue); }
+.cap-brand small { font-size: 24px; font-weight: 400; color: #777; }
 
-/* the challenge */
-.cap-chal { position: relative; margin-top: 16px; background: #fff; border: 1px solid #d3d3d3; border-radius: 4px; padding: 8px; color: #222; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+/* the challenge: a fixed-height column, the tiles take whatever the header and footer leave */
+.cap-chal { position: relative; box-sizing: border-box; height: 818px; margin-top: 10px; display: flex; flex-direction: column; background: #fff; border: 1px solid #d3d3d3; border-radius: 4px; padding: 8px; color: #222; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
     opacity: 0; transform: translateY(-14px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; overflow: hidden; }
 .cap-s-grid .cap-chal { opacity: 1; transform: none; pointer-events: auto; }
-.cap-head { background: var(--blue); color: #fff; padding: 18px 22px 20px; display: flex; flex-direction: column; gap: 2px; }
-.cap-head small { font-size: 12px; letter-spacing: 3px; opacity: 0.8; }
-.cap-head span { font-size: 20px; }
-.cap-head b { font-size: 38px; font-weight: 900; text-transform: uppercase; }
-.cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; transform-origin: 50% 0; transition: transform 0.5s cubic-bezier(.2,1,.3,1); }
-.cap-tile { position: relative; height: 160px; padding: 0; border: none; background: #eef2f6; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.cap-art { display: flex; width: 120px; height: 120px; transition: transform 0.15s; }
+.cap-head { flex: none; background: var(--blue); color: #fff; padding: 16px 24px 18px; display: flex; flex-direction: column; gap: 2px; }
+.cap-head small { font-size: 26px; letter-spacing: 2px; font-weight: 700; opacity: 0.85; }
+.cap-head span { font-size: 34px; line-height: 1.2; }
+.cap-head b { font-size: 64px; line-height: 1.05; font-weight: 900; text-transform: uppercase; overflow-wrap: anywhere; }
+.cap-sub .cap-head b { font-size: 56px; }
+.cap-head em { font-style: normal; font-size: 34px; line-height: 1.2; }
+.cap-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px; margin-top: 8px; transform-origin: 50% 0; transition: transform 0.5s cubic-bezier(.2,1,.3,1); }
+.cap-tile { position: relative; min-height: 0; padding: 0; border: none; background: #eef2f6; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.cap-art { display: flex; width: 120px; height: 120px; max-height: 86%; transition: transform 0.15s; }
 .cap-art svg, .cap-art img { width: 100%; height: 100%; }
 .cap-tile:hover .cap-art { transform: scale(1.04); }
 .cap-tile:focus-visible { outline: 4px solid var(--blue); outline-offset: -4px; }
 .cap-tile.on .cap-art { transform: scale(0.78); }
 .cap-tile.on { background: #dfe8f6; }
-.cap-tick { position: absolute; left: 8px; top: 8px; width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff; font-style: normal; font-size: 22px; font-weight: 900;
+.cap-tick { position: absolute; left: 8px; top: 8px; width: 40px; height: 40px; border-radius: 50%; background: var(--blue); color: #fff; font-style: normal; font-size: 26px; font-weight: 900;
     display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.4); transition: opacity 0.15s, transform 0.15s; }
 .cap-tile.on .cap-tick { opacity: 1; transform: none; }
 .cap-tile.bad { background: #fbe0de; box-shadow: inset 0 0 0 4px var(--bad); }
 .cap-tile.bad .cap-tick { background: var(--bad); }
-.cap-foot { display: flex; align-items: center; gap: 16px; padding: 14px 6px 6px; border-top: 1px solid #e3e3e3; margin-top: 8px; }
-.cap-hint { flex: 1; font-size: 15px; line-height: 1.35; color: #777; }
-.cap-verify { font: inherit; font-size: 18px; font-weight: 700; letter-spacing: 2px; padding: 14px 28px; color: #fff; background: var(--blue); border: none; border-radius: 3px; cursor: pointer; }
+.cap-foot { flex: none; display: flex; align-items: center; gap: 18px; padding: 12px 6px 4px; border-top: 1px solid #e3e3e3; margin-top: 8px; }
+.cap-hint { flex: 1; font-size: 34px; line-height: 1.3; color: #666; }
+.cap-verify { flex: none; font: inherit; font-size: 32px; font-weight: 700; letter-spacing: 2px; padding: 20px 32px; color: #fff; background: var(--blue); border: none; border-radius: 4px; cursor: pointer; }
 .cap-verify:hover, .cap-verify:focus-visible { background: #3a6cc0; outline: 3px solid #9cbcf0; }
 
-/* the verdict: the grid shrinks up, the result appears under it */
-.cap-result { position: absolute; left: 8px; right: 8px; top: 430px; bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; background: #fff; opacity: 0; pointer-events: none; }
-.cap-s-verify .cap-grid { transform: scale(0.5); }
+/* the verdict: the grid shrinks up, the result fills the bottom of the card */
+.cap-result { position: absolute; left: 8px; right: 8px; bottom: 8px; height: 424px; box-sizing: border-box; padding: 6px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; background: #fff; opacity: 0; pointer-events: none; }
+.cap-s-verify .cap-grid { transform: scale(0.4); }
+.cap-sub.cap-s-verify .cap-grid { transform: scale(0.34); }
 .cap-s-verify .cap-foot { opacity: 0; }
 .cap-s-verify .cap-result { opacity: 1; transition: opacity 0.3s; }
-.cap-mark { font-size: 70px; line-height: 1; font-weight: 900; }
+.cap-mark { flex: none; font-size: 64px; line-height: 1; font-weight: 900; }
 .cap-s-verify:not(.cap-s-result) .cap-mark { width: 54px; height: 54px; border: 6px solid #d6e2f6; border-top-color: var(--blue); border-radius: 50%; animation: cap-spin 0.8s linear infinite; }
-.cap-result b { font-size: 26px; font-weight: 900; letter-spacing: 2px; }
-.cap-result span { font-size: 17px; line-height: 1.45; color: #555; max-width: 520px; }
-.cap-result code { font-family: 'Courier New', monospace; font-size: 14px; color: #777; }
-.cap-result em { font-style: normal; font-size: 22px; font-weight: 700; }
+.cap-result b { font-size: 40px; line-height: 1.15; font-weight: 900; letter-spacing: 1px; }
+.cap-result span { font-size: 34px; line-height: 1.3; color: #444; }
+.cap-result code { font-family: 'Courier New', monospace; font-size: 28px; line-height: 1.25; font-weight: 700; color: #666; overflow-wrap: anywhere; }
+.cap-result em { font-style: normal; font-size: 48px; line-height: 1.15; font-weight: 900; }
+.cap-o-tax .cap-result em { font-size: 36px; }
+.cap-result > :empty:not(.cap-mark) { display: none; }
 .cap-o-pass .cap-mark, .cap-o-pass .cap-result b, .cap-o-pass .cap-result em { color: var(--ok); }
-.cap-o-warn .cap-mark, .cap-o-warn .cap-result b { color: #c98a10; }
+.cap-o-warn .cap-mark, .cap-o-warn .cap-result b { color: #b57a08; }
 .cap-o-tax .cap-mark, .cap-o-tax .cap-result b, .cap-o-tax .cap-result em { color: var(--bad); }
 .cap-s-result .cap-result > * { animation: cap-in 0.35s both; }
-.cap-stamp { position: absolute; right: 30px; top: 150px; padding: 8px 22px; border: 6px solid var(--bad); border-radius: 8px; font-size: 54px; font-weight: 900; letter-spacing: 6px; color: var(--bad);
-    transform: rotate(-14deg); opacity: 0; mix-blend-mode: multiply; pointer-events: none; }
+/* the stamp lands on the shrunken grid, between the header and the result text */
+.cap-stamp { position: absolute; right: 40px; bottom: 452px; padding: 6px 24px; border: 7px solid var(--bad); border-radius: 8px; font-size: 64px; font-weight: 900; letter-spacing: 6px; color: var(--bad);
+    transform: rotate(-8deg); opacity: 0; mix-blend-mode: multiply; pointer-events: none; }
 .cap-stamp.on { opacity: 0.85; animation: cap-stamp 0.35s cubic-bezier(.3,1.6,.5,1) both; }
 
-.dks.cap .dks-actions { position: absolute; left: 0; right: 0; top: 975px; z-index: 5; }
-.dks.cap .dks-btn { font-family: inherit; font-size: 20px; padding: 14px 44px; letter-spacing: 6px; color: #9cbcf0; border-color: rgba(156, 188, 240, 0.5); }
+.dks.cap .dks-actions { position: absolute; left: 0; right: 0; top: 966px; margin: 0; z-index: 5; }
+.dks.cap .dks-btn { font-family: inherit; font-size: 32px; padding: 18px 56px; letter-spacing: 4px; color: #9cbcf0; border-color: rgba(156, 188, 240, 0.5); }
 
 @keyframes cap-in    { from { opacity: 0; transform: translateY(8px); } }
 @keyframes cap-spin  { to { transform: rotate(360deg); } }
 @keyframes cap-pop   { from { opacity: 0; transform: scale(1.8); } }
 @keyframes cap-bump  { 40% { transform: scale(1.12); } }
-@keyframes cap-stamp { from { opacity: 0; transform: rotate(-14deg) scale(2.2); } }
+@keyframes cap-stamp { from { opacity: 0; transform: rotate(-8deg) scale(2.2); } }
