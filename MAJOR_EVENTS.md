@@ -42,7 +42,7 @@ The End is out of scope.*
 | **Fake Crash** | ✅ [page](https://claude.ai/artifact/NG14QUp5vw3YEUe1Kc98HU) · `docs/CRASH_SCREENS.md` | 13,333 / 66,666 / 123,456 clicks | "Your simulation ran into a problem" screen freezes the game, % climbs to 100, then "JUST KIDDING", +50% energy |
 | **Thermal Crash** | ✅ [page](https://claude.ai/artifact/S8ocsUgTsejJKwHA6FmdKX) · `docs/CRASH_SCREENS.md` | System Diagnostics CPU meter hits 100% | Same crash screen, ends on "Thermal event contained" + CLAIM CRASH DIVIDEND: ×25 income for 30 min |
 | **Eye of the Storm** | ✅ [page](https://claude.ai/artifact/28sZgQGvw62gEjhpE9YJCk) · `docs/EYE_OF_THE_STORM.md` | 60%+ instability, 25+ min into a session, by chance | Calm "SYSTEM ALIGNMENT, MOMENT OF CLARITY" screen, own music, 60 s countdown. Instability 0, income ×10; afterwards instability returns at 40% |
-| **CAPTCHA** (inverted) | ⬜ | Every 45 min after a prestige | Prove you're a machine. 3×3 grid of your generators' art (best in the middle), traffic lights or hydrants. Correct tiles fail ("biological compliance detected"); wrong, none, or < 0.2 s passes: +5% energy, +50 Data. Failing = temporary −30% income (first is a warning) |
+| **CAPTCHA** (inverted) | ✅ [page](https://claude.ai/artifact/QiVZXG74E1ftHL4rBGgQ33) · `docs/CAPTCHA.md` | Every 45 min after a prestige | Prove you're a machine. 3×3 grid of your generators' art (best in the middle), traffic lights or hydrants. Correct tiles fail ("biological compliance detected"); wrong, none, or < 0.2 s passes: +5% energy, +50 Data. Failing = temporary −30% income (first is a warning) |
 
 ## 4. World events (banner across the top, own sound)
 

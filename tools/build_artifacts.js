@@ -459,6 +459,50 @@ durSel.onchange = function () { if (begun) start(); };
 document.getElementById('replay').onclick = begin;`
 });
 fs.writeFileSync(path.join(ROOT, 'artifacts/eye_of_the_storm.html'), eyePage);
+const captchaPage = page({
+    title: 'CAPTCHA (inverted)',
+    scene: 'src/captcha_scene.js',
+    score: 'src/audio/score_captcha.js',
+    extraCss: 'src/captcha_scene.css',
+    accent: '#9cbcf0',
+    gateLabel: '▶ BEGIN THE AUDIT',
+    blurb: 'Every 45 minutes after a prestige, the Overseers audit you. Prove you are a machine.',
+    note: 'The rules are inverted: picking the tiles that really match FAILS. Pick only wrong tiles, none at all, or answer in under 0.2 s to pass (+5% energy, +50 Data). Watch HUMAN PROBABILITY on the right: it reacts to everything you do. The first failure is a warning; after that it costs −30% income for 90 s.',
+    controls: `<div class="grp"><label for="grid">Grid</label><select id="grid"><option value="">Random</option><option value="lights">Traffic lights</option>
+        <option value="hydrants">Fire hydrants</option><option value="crosswalks">People crossing</option><option value="gens">Your generators</option></select>
+      <label><input type="checkbox" id="warned"> already warned once</label>
+      <button id="replay" type="button">▶ Replay</button></div>`,
+    script: `
+var gridSel = document.getElementById('grid'), warned = document.getElementById('warned');
+function gen(body, bg) { return '<svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="8" fill="' + bg + '"/>' + body + '</svg>'; }
+var GENS = [
+  { name: 'Cursor Farm', svg: gen('<path d="M16 8v28l7-7 5 11 4-2-5-11h10z" fill="#fff" stroke="#23262b" stroke-width="2"/>', '#9cc4e8') },
+  { name: 'Quantum Mill', svg: gen('<circle cx="24" cy="24" r="4" fill="#23262b"/><path d="M24 20V6l6 10zM28 24h14l-10 6zM24 28v14l-6-10zM20 24H6l10-6z" fill="#7a5cc4"/>', '#e6dcf7') },
+  { name: 'Void Siphon', svg: gen('<circle cx="24" cy="24" r="14" fill="#1a1028"/><circle cx="24" cy="24" r="8" fill="none" stroke="#b07aff" stroke-width="3"/>', '#cbb8ea') },
+  { name: 'Signal Post', svg: gen('<path d="M24 14v28M18 42h12" stroke="#23262b" stroke-width="3"/><path d="M14 12a14 14 0 0 1 20 0M18 16a8 8 0 0 1 12 0" fill="none" stroke="#3a7a9a" stroke-width="3"/>', '#cfe6ef') },
+  { name: 'Reality Engine', svg: gen('<path d="M24 6l16 9v18l-16 9-16-9V15z" fill="#ffcc55" stroke="#8a6a10" stroke-width="2"/><circle cx="24" cy="24" r="6" fill="#fff"/>', '#3a2a10') },
+  { name: 'Data Cache', svg: gen('<rect x="10" y="10" width="28" height="8" rx="2" fill="#886644"/><rect x="10" y="20" width="28" height="8" rx="2" fill="#886644"/><rect x="10" y="30" width="28" height="8" rx="2" fill="#886644"/><circle cx="33" cy="14" r="1.6" fill="#7dff9a"/><circle cx="33" cy="24" r="1.6" fill="#7dff9a"/>', '#efe4d6') },
+  { name: 'Grid Tap', svg: gen('<path d="M26 6L12 28h10l-4 14 16-22H24z" fill="#c8a040"/>', '#f6ecd0') },
+  { name: 'Idle Node', svg: gen('<circle cx="24" cy="24" r="12" fill="#3d9a45"/><path d="M18 24h12" stroke="#fff" stroke-width="3"/>', '#d6efd8') },
+  { name: 'Process Hub', svg: gen('<circle cx="24" cy="24" r="9" fill="none" stroke="#667788" stroke-width="5" stroke-dasharray="5 3"/><circle cx="24" cy="24" r="3" fill="#667788"/>', '#e2e6ea') }
+];
+function start() {
+    if (scene) scene.close();
+    out.textContent = '';
+    var g = gridSel.value;
+    var grid = g === 'gens' ? { label: 'the REALITY ENGINE · your most advanced generator', correct: [4],
+        cells: [GENS[0], GENS[1], GENS[2], GENS[3], GENS[4], GENS[5], GENS[6], GENS[7], GENS[8]] } : (g || undefined);
+    scene = CaptchaScene.play(host, { grid: grid, state: SAMPLE, firstFail: warned.checked,
+        onResult: function (r) {
+            out.textContent = r.pass ? 'Passed: +' + DuckScene.fmt(r.energy) + ' E, +' + r.data + ' Data. ' + r.reason
+                : r.outcome === 'warn' ? 'Warning (first failure, no penalty). ' + r.reason : 'Failed: −30% EPS for 90 s. ' + r.reason;
+            if (!r.pass) warned.checked = true;
+        } });
+}
+gridSel.onchange = function () { if (begun) start(); };
+document.getElementById('replay').onclick = begin;`
+});
+fs.writeFileSync(path.join(ROOT, 'artifacts/captcha.html'), captchaPage);
 fs.writeFileSync(path.join(ROOT, 'artifacts/ducky_council.html'), council);
 fs.writeFileSync(path.join(ROOT, 'artifacts/duck_tribunal.html'), tribunal);
 console.log('built', council.length, tribunal.length);
