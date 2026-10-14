@@ -267,7 +267,8 @@
                         ctx.au.sfx('settle', settled);
                         settled++;
                         ctx.result.settled = settled;
-                        ctx.$('.wx-pp').textContent = settled < n ? 'OFFLINE · ' + settled + '/' + n + ' back' : 'AGREEMENT';
+                        ctx.$('.wx-pp').textContent = settled < n ? settled + ' / ' + n + ' BACK' : 'AGREEMENT';
+                        ctx.$('.wx-chip em').textContent = settled < n ? 'CITY PP OFFLINE' : 'CITY PP';
                         ctx.pop(ctx.$('.wx-pp'));
                         if (settled === n) {
                             ctx.result.early = Math.round((performance.now() - t0) / 1000);
@@ -291,7 +292,7 @@
                 var h = '';
                 for (var i = 0; i < 14; i++) h += '<i class="wx-chev" style="left:' + (i * 140 + 20) + 'px;animation-delay:' + (i % 7) * 0.07 + 's">' + D.icon('waves') + '</i>';
                 ctx.sting.innerHTML = h;
-                ctx.setChip('<em>COMBO</em><b class="wx-combo">×4 OVERDRIVE</b><i class="wx-lock">' + D.icon('lock') + '</i>');
+                ctx.setChip('<em><i class="wx-lock">' + D.icon('lock') + '</i> COMBO LOCKED</em><b class="wx-combo">×4 OVERDRIVE</b>');
                 ctx.result.cascadeClicks = 0;
             },
             click: function (ctx, pt, n) {
@@ -378,7 +379,7 @@
                 ctx.sting.innerHTML = '<div class="wx-del"><div class="wx-line"><span class="wx-num">' + D.esc(D.fmt(e0)) + '</span><i class="wx-caret"></i></div><em>' + D.icon('erase') + ' −50%</em></div>';
                 ctx.setChip('<em>OUTPUT</em><b>×2</b>');
                 ctx.amb.innerHTML = '<i class="wx-scan"></i>';
-                ctx.play.insertAdjacentHTML('beforeend', '<div class="wx-rec"><span>RECOVERED · click to restore fragments</span><i><s></s></i><b class="wx-recv">0 / ' + D.esc(D.fmt(lost)) + '</b></div>');
+                ctx.play.insertAdjacentHTML('beforeend', '<div class="wx-rec"><span>RECOVERED</span><b class="wx-recv">0 / ' + D.esc(D.fmt(lost)) + '</b><i><s></s></i><small>Click ACQUIRE to restore fragments</small></div>');
                 ctx.result.fragments = 0; ctx.result.clicked = 0;
                 var num = ctx.$('.wx-num'), txt = num.textContent;
                 var eat = setInterval(function () {
@@ -410,8 +411,8 @@
                 if (!ctx.reduced) {
                     var f = D.h('i', 'wx-frag');
                     f.style.left = pt.x + 'px'; f.style.top = pt.y + 'px';
-                    f.style.setProperty('--dx', (1650 - pt.x).toFixed(0) + 'px');
-                    f.style.setProperty('--dy', (190 - pt.y).toFixed(0) + 'px');
+                    f.style.setProperty('--dx', (1575 - pt.x).toFixed(0) + 'px');   // into the RECOVERED bar
+                    f.style.setProperty('--dy', (440 - pt.y).toFixed(0) + 'px');
                     ctx.fx.appendChild(f);
                     ctx.later(function () { f.remove(); }, 700);
                 }

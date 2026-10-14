@@ -12,31 +12,31 @@
 .wx-ending .wx-play { opacity: 0.6; }
 
 /* the banner */
-.wx-banner { position: absolute; left: 0; right: 0; top: 0; height: 116px; display: flex; align-items: center; gap: 26px; padding: 0 40px; box-sizing: border-box; z-index: 7;
+.wx-banner { position: absolute; left: 0; right: 0; top: 0; min-height: 170px; display: flex; align-items: center; gap: 32px; padding: 12px 44px 16px; box-sizing: border-box; z-index: 7;
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.82)), var(--wx); border-bottom: 2px solid var(--wx); box-shadow: 0 6px 40px -10px var(--wx);
     transform: translateY(-130%); transition: transform 0.5s cubic-bezier(.2,1.2,.4,1); }
 .wx-on .wx-banner { transform: none; }
 .wx-off .wx-banner { transform: translateY(-130%); transition: transform 0.5s cubic-bezier(.6,0,.8,.4); }
-.wx-icon { flex: none; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 40px; color: #000; background: var(--wx); box-shadow: 0 0 30px var(--wx); }
+.wx-icon { flex: none; width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 62px; color: #000; background: var(--wx); box-shadow: 0 0 30px var(--wx); }
 .wx-on .wx-icon { animation: wx-pop 0.5s 0.3s cubic-bezier(.3,1.6,.5,1) both; }
-.wx-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-.wx-txt b { font-size: 36px; font-weight: 900; letter-spacing: 8px; color: var(--wx); text-shadow: 0 0 24px var(--wx); }
-.wx-txt span { font-size: 19px; letter-spacing: 2px; color: rgba(255, 255, 255, 0.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wx-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.wx-txt b { font-size: 66px; line-height: 1; font-weight: 900; letter-spacing: 5px; color: var(--wx); text-shadow: 0 0 24px var(--wx); }
+.wx-txt span { font-size: 36px; line-height: 1.22; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.86); }
 .wx-ending .wx-txt span { color: #fff; animation: wx-in 0.4s both; }
-.wx-chip { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; position: relative; }
-.wx-chip em { font-style: normal; font-size: 14px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); }
-.wx-chip b { font-size: 30px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
-.wx-chip .wx-lock { position: absolute; right: -34px; top: 22px; font-style: normal; font-size: 22px; color: #ffcc66; }
-.wx-time { display: flex; align-items: baseline; gap: 2px; min-width: 90px; justify-content: flex-end; }
-.wx-time b { font-size: 46px; font-weight: 900; color: var(--wx); font-variant-numeric: tabular-nums; }
-.wx-time span { font-size: 18px; color: rgba(255, 255, 255, 0.6); }
-.wx-bar { position: absolute; left: 0; right: 0; bottom: -2px; height: 6px; background: rgba(255, 255, 255, 0.08); }
+.wx-chip { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; position: relative; padding-left: 32px; border-left: 2px solid rgba(255, 255, 255, 0.14); }
+.wx-chip em { font-style: normal; font-size: 28px; line-height: 1.1; letter-spacing: 3px; color: rgba(255, 255, 255, 0.72); white-space: nowrap; }
+.wx-chip b { font-size: 56px; line-height: 1.05; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wx-chip .wx-lock { font-style: normal; color: #ffcc66; }
+.wx-time { flex: none; display: flex; align-items: baseline; gap: 4px; min-width: 150px; justify-content: flex-end; }
+.wx-time b { font-size: 88px; line-height: 1; font-weight: 900; color: var(--wx); font-variant-numeric: tabular-nums; }
+.wx-time span { font-size: 36px; font-weight: 700; color: rgba(255, 255, 255, 0.72); }
+.wx-bar { position: absolute; left: 0; right: 0; bottom: -2px; height: 8px; background: rgba(255, 255, 255, 0.08); }
 .wx-bar s { display: block; height: 100%; background: var(--wx); transform-origin: left; box-shadow: 0 0 12px var(--wx); }
 .wx-pop { animation: wx-pop 0.35s cubic-bezier(.3,1.6,.5,1); }
 
 /* shared bits */
 .wx-spark { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--wx); box-shadow: 0 0 10px var(--wx); animation: wx-spark 0.7s ease-out forwards; }
-.wx-float { position: absolute; transform: translate(-50%, -50%); font-size: 30px; font-weight: 900; color: #fff; text-shadow: 0 0 14px var(--wx); animation: wx-floatup 1.2s ease-out forwards; }
+.wx-float { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 56px; font-weight: 900; color: #fff; text-shadow: 0 0 14px var(--wx); animation: wx-floatup 1.2s ease-out forwards; }
 
 /* QUANTUM SURGE */
 .wx-ring { position: absolute; left: 860px; top: 460px; width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--wx); box-shadow: 0 0 40px var(--wx), inset 0 0 40px var(--wx); animation: wx-ring 1.3s ease-out both; }
@@ -47,10 +47,10 @@
 /* DATA STORM */
 .wx-static { position: absolute; left: 0; right: 0; top: 0; height: 1080px; background: repeating-linear-gradient(rgba(170, 170, 255, 0.25) 0 2px, transparent 2px 7px, rgba(255, 255, 255, 0.12) 7px 8px, transparent 8px 15px);
     animation: wx-sweep 0.9s ease-out both; }
-.wx-orb { position: absolute; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border-radius: 50%; border: 2px solid rgba(190, 190, 255, 0.95); cursor: pointer; pointer-events: auto;
+.wx-orb { position: absolute; width: 88px; height: 88px; margin: -44px 0 0 -44px; padding: 0; border-radius: 50%; border: 2px solid rgba(190, 190, 255, 0.95); cursor: pointer; pointer-events: auto;
     background: radial-gradient(circle, #e0e0ff 0%, #9a9aff 35%, rgba(80, 80, 220, 0.35) 100%); box-shadow: 0 0 26px rgba(150, 150, 255, 0.95);
     display: flex; align-items: center; justify-content: center; color: #fff; animation: wx-orb 9s ease-out forwards; transition: opacity 0.4s; }
-.wx-orb i { font-style: normal; font-size: 30px; line-height: 1; filter: drop-shadow(0 0 4px #33f); }
+.wx-orb i { font-style: normal; font-size: 40px; line-height: 1; filter: drop-shadow(0 0 4px #33f); }
 .wx-orb:hover, .wx-orb:focus-visible { outline: none; box-shadow: 0 0 40px #fff; }
 .wx-orb.wx-gone { opacity: 0; pointer-events: none; }
 .wx-spark-storm { background: #bbbbff; }
@@ -60,17 +60,17 @@
 .wx-stamp { position: absolute; left: 0; right: 0; top: 420px; text-align: center; font-size: 170px; font-weight: 900; letter-spacing: 30px; color: transparent; -webkit-text-stroke: 6px #ff5566; transform: rotate(-6deg); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-tint { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(40, 0, 10, 0.08), rgba(60, 0, 15, 0.45)); transition: opacity 1s; }
 .wx-agree .wx-tint { opacity: 0; }
-.wx-striker { position: absolute; bottom: 24px; width: 150px; height: 300px; margin-left: -75px; padding: 0; border: none; background: none; cursor: pointer; pointer-events: auto;
+.wx-striker { position: absolute; bottom: 24px; width: 230px; height: 330px; margin-left: -115px; padding: 0; border: none; background: none; cursor: pointer; pointer-events: auto;
     animation: wx-march 1.8s cubic-bezier(.2,.8,.3,1) backwards; transition: transform 1.4s 0.7s ease-in, opacity 0.8s 1.2s; }
-.wx-striker svg { position: absolute; left: 30px; bottom: 0; width: 90px; height: 180px; animation: wx-bob 0.55s ease-in-out infinite alternate; }
+.wx-striker svg { position: absolute; left: 70px; bottom: 0; width: 90px; height: 180px; animation: wx-bob 0.55s ease-in-out infinite alternate; }
 .wx-wk { fill: #e2d4cc; } .wx-wkl { fill: none; stroke: #e2d4cc; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-.wx-sign { position: absolute; left: -10px; right: -10px; top: 0; padding: 10px 6px; background: #f4ecd8; color: #c4202e; font-size: 19px; font-weight: 900; letter-spacing: 1px; text-align: center; line-height: 1.15;
+.wx-sign { position: absolute; left: 0; right: 0; top: 0; padding: 10px 8px; box-sizing: border-box; background: #f4ecd8; color: #c4202e; font-size: 32px; font-weight: 900; letter-spacing: 0.5px; text-align: center; line-height: 1.1;
     border: 4px solid #6a4a2a; border-radius: 4px; transform: rotate(-4deg); animation: wx-wave 0.9s ease-in-out infinite alternate; transition: transform 0.4s, opacity 0.4s; }
 .wx-sign::after { content: ''; position: absolute; left: 50%; top: 100%; width: 6px; height: 70px; margin-left: -3px; background: #6a4a2a; }
 .wx-striker:nth-child(even) .wx-sign { transform: rotate(5deg); animation-delay: 0.3s; }
 .wx-striker:hover .wx-sign, .wx-striker:focus-visible .wx-sign { background: #fff; outline: none; }
 .wx-striker:focus-visible { outline: 3px solid #ff5566; outline-offset: 4px; }
-.wx-cup { position: absolute; left: 92px; top: 150px; font-style: normal; font-size: 40px; color: #f4ecd8; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
+.wx-cup { position: absolute; left: 91px; top: 170px; font-style: normal; font-size: 48px; color: #f4ecd8; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
 .wx-striker.wx-ok { pointer-events: none; transform: translateX(700px); opacity: 0; }
 .wx-striker.wx-ok .wx-cup { opacity: 1; transform: none; }
 .wx-striker.wx-ok .wx-sign { animation: none; opacity: 0; transform: rotate(70deg) translateY(60px); }
@@ -85,14 +85,14 @@
 .wx-blk:nth-child(3n) { background: #33ffee; } .wx-blk:nth-child(3n+1) { background: #fff; }
 .wx-skull { position: absolute; left: 0; right: 0; top: 340px; text-align: center; font-size: 300px; line-height: 1; color: var(--wx); filter: drop-shadow(0 0 30px var(--wx)); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-burst { position: absolute; left: 0; right: 0; top: 720px; text-align: center; font-size: 96px; font-weight: 900; color: #fff; text-shadow: 0 0 40px var(--wx); animation: wx-burst 2.2s ease-out forwards; }
-.wx-card { position: absolute; left: 60px; top: 330px; width: 600px; padding: 22px 26px; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 14px 20px; align-items: center;
+.wx-card { position: absolute; left: 60px; top: 300px; width: 620px; padding: 26px 30px; box-sizing: border-box; display: grid; grid-template-columns: 1fr; gap: 18px; align-items: center;
     background: rgba(20, 0, 8, 0.94); border: 2px solid var(--wx); border-radius: 12px; box-shadow: 0 0 40px -6px var(--wx); animation: wx-in 0.35s both; transition: opacity 0.8s, border-color 0.3s; }
-.wx-card em { display: block; font-style: normal; font-size: 16px; letter-spacing: 4px; color: #ff8aa0; }
-.wx-card b { font-size: 34px; font-weight: 900; }
-.wx-q { font: inherit; font-size: 22px; font-weight: 900; letter-spacing: 4px; padding: 16px 26px; color: #fff; background: #c4203e; border: none; border-radius: 10px; cursor: pointer; pointer-events: auto; box-shadow: 0 0 24px #ff3366; }
+.wx-card em { display: block; margin-bottom: 6px; font-style: normal; font-size: 30px; letter-spacing: 3px; color: #ff8aa0; }
+.wx-card b { font-size: 56px; line-height: 1.1; font-weight: 900; }
+.wx-q { font: inherit; font-size: 36px; font-weight: 900; letter-spacing: 4px; padding: 22px 30px; color: #fff; background: #c4203e; border: none; border-radius: 10px; cursor: pointer; pointer-events: auto; box-shadow: 0 0 24px #ff3366; }
 .wx-q:hover, .wx-q:focus-visible { background: #e02a4c; outline: 3px solid #fff; }
 .wx-q:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
-.wx-qbar { grid-column: 1 / -1; display: block; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.wx-qbar { grid-column: 1 / -1; display: block; height: 10px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
 .wx-qbar s { display: block; height: 100%; background: #ff3366; transform: scaleX(0); transform-origin: left; transition-property: transform; transition-timing-function: linear; }
 .wx-card.wx-saved { border-color: #4fd08a; box-shadow: 0 0 40px -6px #4fd08a; } .wx-card.wx-saved em { color: #7dffb0; }
 .wx-card.wx-lost b { color: #ff6a80; animation: wx-shake 0.1s steps(2) 6; }
@@ -115,11 +115,12 @@
 .wx-del em { font-style: normal; font-size: 46px; font-weight: 900; letter-spacing: 8px; color: #ff6a80; opacity: 0; }
 .wx-halved .wx-del em { opacity: 1; animation: wx-slam 0.4s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--wx); box-shadow: 0 0 20px var(--wx); opacity: 0.35; animation: wx-scan 3.2s linear infinite; }
-.wx-rec { position: absolute; right: 40px; top: 340px; width: 480px; padding: 14px 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; background: rgba(0, 10, 20, 0.85); border: 1px solid rgba(51, 200, 255, 0.4); border-radius: 10px; }
-.wx-rec span { font-size: 14px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); }
-.wx-rec i { display: block; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.wx-rec { position: absolute; right: 40px; top: 300px; width: 610px; padding: 22px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; background: rgba(0, 10, 20, 0.88); border: 2px solid rgba(51, 200, 255, 0.5); border-radius: 12px; }
+.wx-rec span { font-size: 30px; font-weight: 700; letter-spacing: 3px; color: rgba(255, 255, 255, 0.8); }
+.wx-rec small { font-size: 34px; line-height: 1.3; color: rgba(255, 255, 255, 0.86); }
+.wx-rec i { display: block; height: 12px; border-radius: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
 .wx-rec s { display: block; height: 100%; background: var(--wx); transform: scaleX(0); transform-origin: left; }
-.wx-rec b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.wx-rec b { font-size: 56px; line-height: 1.05; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wx-frag { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; background: var(--wx); box-shadow: 0 0 12px var(--wx); animation: wx-frag 0.65s cubic-bezier(.5,0,.7,.5) forwards; }
 @keyframes wx-frag { to { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0.4; } }
 

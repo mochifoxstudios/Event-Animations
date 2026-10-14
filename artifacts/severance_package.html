@@ -5,21 +5,21 @@
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: 'Courier New', monospace; }
 .viewer { min-height: 100%; display: flex; flex-direction: column; }
-.ctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 16px; background: var(--bar); border-bottom: 1px solid var(--line); font-size: 12px; }
-.ctl h1 { margin: 0; font-size: 12px; letter-spacing: 4px; font-weight: 900; color: var(--fg); }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 12px 18px; background: var(--bar); border-bottom: 1px solid var(--line); font-size: 16px; }
+.ctl h1 { margin: 0; font-size: 17px; letter-spacing: 3px; font-weight: 900; color: var(--fg); }
 .ctl .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .ctl label { color: var(--muted); letter-spacing: 1px; }
-.ctl select, .ctl button { font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; max-width: 100%; }
+.ctl select, .ctl button { font: inherit; font-size: 16px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 7px 12px; max-width: 100%; }
 .ctl button { cursor: pointer; font-weight: 700; letter-spacing: 1px; }
 .ctl button:hover, .ctl button:focus-visible { border-color: var(--fg); outline: none; }
-.ctl .note { flex-basis: 100%; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.ctl .note { flex-basis: 100%; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .ctl .out { color: var(--ok); }
 .stagehost { position: relative; flex: 1; display: flex; min-height: 620px; }
 .stagehost > .dks { flex: 1; }
 .gate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 16px; text-align: center; }
-.gate h2 { margin: 0; font-size: clamp(20px, 4vw, 30px); letter-spacing: 8px; color: var(--accent); }
-.gate p { margin: 0; max-width: 34rem; color: var(--muted); font-size: 13px; line-height: 1.6; }
-.gate button { font: inherit; font-size: 14px; font-weight: 900; letter-spacing: 4px; padding: 14px 28px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
+.gate h2 { margin: 0; font-size: clamp(26px, 5vw, 44px); letter-spacing: 6px; color: var(--accent); }
+.gate p { margin: 0; max-width: 40rem; color: var(--fg); font-size: 18px; line-height: 1.6; }
+.gate button { font: inherit; font-size: 20px; font-weight: 900; letter-spacing: 4px; padding: 16px 32px; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
 .gate button:hover, .gate button:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -39,28 +39,31 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .sv-world { position: absolute; inset: 0; }
 .sv-dim { position: absolute; inset: 0; background-image: linear-gradient(rgba(68, 136, 204, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(68, 136, 204, 0.05) 1px, transparent 1px); background-size: 60px 60px; }
 
+/* Type scale (canvas px): labels 26–30, body/captions 34–44, buttons 32, numbers 48+, titles 64+.
+   Layout: the call on the left (40→880), the letter on the right (920→1880), buttons under the call. */
+
 /* 1 · the invite */
-.sv-invite { position: absolute; left: 680px; top: 380px; width: 560px; padding: 28px 34px; text-align: left; box-sizing: border-box; border-radius: 10px; background: #f4f6fa; color: #1c2230;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column; gap: 6px; opacity: 0; transform: translateY(-40px); transition: opacity 0.5s, transform 0.5s cubic-bezier(.2,1.2,.4,1); }
-.sv-inv-top { font-size: 13px; letter-spacing: 3px; color: #6a7488; display: flex; align-items: center; gap: 8px; }
-.sv-inv-top i { width: 10px; height: 10px; border-radius: 2px; background: var(--hr); }
-.sv-invite b { font-size: 40px; }
-.sv-invite span { font-size: 20px; color: #4a5468; }
-.sv-inv-ok { margin-top: 6px; font-style: normal; font-size: 13px; letter-spacing: 2px; font-weight: 700; color: #2c8a52; opacity: 0; }
+.sv-invite { position: absolute; left: 560px; top: 330px; width: 800px; padding: 40px 48px; text-align: left; box-sizing: border-box; border-radius: 12px; background: #f4f6fa; color: #1c2230;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column; gap: 10px; opacity: 0; transform: translateY(-40px); transition: opacity 0.5s, transform 0.5s cubic-bezier(.2,1.2,.4,1); }
+.sv-inv-top { font-size: 26px; letter-spacing: 3px; color: #5a6478; display: flex; align-items: center; gap: 12px; }
+.sv-inv-top i { width: 18px; height: 18px; border-radius: 3px; background: var(--hr); }
+.sv-invite b { font-size: 72px; line-height: 1.1; }
+.sv-invite span { font-size: 34px; line-height: 1.35; color: #4a5468; }
+.sv-inv-ok { margin-top: 10px; font-style: normal; font-size: 28px; letter-spacing: 3px; font-weight: 700; color: #2c8a52; opacity: 0; }
 .sv-s-invite .sv-invite { opacity: 1; transform: none; }
 .sv-s-auto .sv-inv-ok { opacity: 1; animation: sv-pop 0.4s both; }
 .sv-s-call .sv-invite { opacity: 0; transform: scale(0.9); }
 
 /* 2 · the call */
-.sv-call { position: absolute; left: 90px; top: 90px; width: 1000px; height: 800px; border-radius: 14px; background: #0b1119; border: 1px solid rgba(156, 200, 240, 0.16);
+.sv-call { position: absolute; left: 40px; top: 40px; width: 840px; height: 860px; border-radius: 14px; background: #0b1119; border: 1px solid rgba(156, 200, 240, 0.16);
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6); overflow: hidden; opacity: 0; transform: scale(0.96); transition: opacity 0.6s, transform 0.6s cubic-bezier(.2,1,.4,1); }
 .sv-s-call .sv-call { opacity: 1; transform: none; }
-.sv-bar { height: 52px; display: flex; align-items: center; gap: 20px; padding: 0 22px; font-size: 16px; color: #8ea4bc; border-bottom: 1px solid rgba(156, 200, 240, 0.1); }
+.sv-bar { height: 72px; display: flex; align-items: center; gap: 24px; padding: 0 26px; font-size: 26px; color: #8ea4bc; border-bottom: 1px solid rgba(156, 200, 240, 0.1); }
 .sv-rec { color: #e2505a; letter-spacing: 2px; font-weight: 700; animation: sv-blink 1.6s steps(1) infinite; }
 .sv-title { flex: 1; color: #cfe0f2; }
 .sv-clock { font-variant-numeric: tabular-nums; }
-.sv-main { position: relative; height: 560px; background: radial-gradient(ellipse at 50% 45%, #1a2a3e, #0b1119 70%); }
-.sv-fig-wrap { position: absolute; left: 50%; top: 70px; width: 380px; height: 380px; margin-left: -190px; }
+.sv-main { position: relative; height: 566px; background: radial-gradient(ellipse at 38% 45%, #1a2a3e, #0b1119 70%); }
+.sv-fig-wrap { position: absolute; left: 130px; top: 70px; width: 380px; height: 380px; }
 .sv-fig-wrap svg { width: 100%; height: 100%; }
 .sv-fig { fill: #2a3c54; }
 .sv-collar { fill: #dfe8f2; }
@@ -70,76 +73,91 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .sv-talk .sv-fig-wrap { animation: sv-nod 0.9s ease-in-out infinite; }
 .sv-ring { position: absolute; inset: 10px; border: 3px solid #4fd08a; border-radius: 10px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
 .sv-talk .sv-ring { opacity: 0.8; }
-.sv-name { position: absolute; left: 20px; bottom: 18px; padding: 6px 12px; border-radius: 6px; background: rgba(0, 0, 0, 0.55); font-size: 17px; color: #e6eef8; }
-.sv-tiles { position: absolute; right: 20px; top: 72px; display: flex; flex-direction: column; gap: 12px; }
-.sv-tile { position: relative; width: 220px; height: 130px; border-radius: 10px; background: #141e2c; border: 1px solid rgba(156, 200, 240, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: 15px; color: #a8bacd; }
-.sv-av { width: 54px; height: 54px; border-radius: 50%; background: #2a3c54; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #dfe8f2; }
-.sv-mic { position: absolute; right: 10px; bottom: 8px; width: 22px; height: 22px; }
+.sv-name { position: absolute; left: 22px; bottom: 22px; padding: 8px 16px; border-radius: 6px; background: rgba(0, 0, 0, 0.55); font-size: 28px; color: #e6eef8; }
+.sv-tiles { position: absolute; z-index: 2; right: 22px; top: 94px; display: flex; flex-direction: column; gap: 16px; }
+.sv-tile { position: relative; width: 250px; height: 160px; box-sizing: border-box; border-radius: 10px; background: #141e2c; border: 1px solid rgba(156, 200, 240, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 28px; color: #b4c4d6; }
+.sv-av { width: 70px; height: 70px; border-radius: 50%; background: #2a3c54; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: #dfe8f2; }
+.sv-mic { position: absolute; right: 12px; bottom: 10px; width: 28px; height: 28px; }
 .sv-mic svg { width: 100%; height: 100%; fill: none; stroke: #e2505a; stroke-width: 2; }
 .sv-legal-on .sv-legal { border-color: #4fd08a; box-shadow: 0 0 0 2px #4fd08a; }
 .sv-legal-on .sv-legal .sv-mic { opacity: 0; }
 
 /* on hold */
-.sv-holdcard { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(8, 14, 22, 0.94); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
-.sv-holdcard b { font-size: 44px; letter-spacing: 12px; color: var(--hr-hi); }
-.sv-holdcard span { font-size: 18px; letter-spacing: 5px; color: #8ea4bc; }
-.sv-spin { width: 40px; height: 40px; border: 4px solid rgba(156, 200, 240, 0.2); border-top-color: var(--hr-hi); border-radius: 50%; animation: sv-spin 1s linear infinite; }
+.sv-holdcard { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgba(8, 14, 22, 0.94); opacity: 0; transition: opacity 0.4s; pointer-events: none; text-align: center; }
+.sv-holdcard b { font-size: 72px; letter-spacing: 10px; color: var(--hr-hi); }
+.sv-holdcard span { font-size: 30px; letter-spacing: 3px; color: #a4b8cc; padding: 0 30px; }
+.sv-spin { width: 56px; height: 56px; border: 5px solid rgba(156, 200, 240, 0.2); border-top-color: var(--hr-hi); border-radius: 50%; animation: sv-spin 1s linear infinite; }
 .sv-hold .sv-holdcard { opacity: 1; }
 
 /* they leave */
-.sv-left { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #8ea4bc; background: #0b1119; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+.sv-left { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 38px; color: #a4b8cc; background: #0b1119; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
 .sv-s-left .sv-left { opacity: 1; }
 .sv-s-left .sv-name { opacity: 0; }
 
-/* captions */
-.sv-cap { padding: 26px 34px; display: flex; flex-direction: column; gap: 8px; min-height: 150px; box-sizing: border-box; }
-.sv-cap b { font-size: 15px; letter-spacing: 3px; color: var(--hr-hi); text-transform: uppercase; }
-.sv-cap span { font-size: 30px; line-height: 1.35; color: #f0f5fb; }
+/* captions: game subtitles */
+.sv-cap { text-align: center; padding: 22px 34px; display: flex; flex-direction: column; gap: 8px; height: 220px; box-sizing: border-box; }
+.sv-cap b { font-size: 28px; letter-spacing: 3px; color: var(--hr-hi); text-transform: uppercase; }
+.sv-cap span { font-size: 40px; line-height: 1.35; color: #f0f5fb; }
 .sv-cap.on { animation: sv-rise 0.3s both; }
 
 /* 3 · the letter */
-.sv-letter { position: absolute; left: 1160px; top: 70px; width: 680px; height: 900px; opacity: 0; transform: translateX(120px) rotate(4deg); transition: opacity 0.6s, transform 0.7s cubic-bezier(.2,1.1,.4,1); }
+.sv-letter { position: absolute; left: 920px; top: 36px; width: 960px; height: 940px; opacity: 0; transform: translateX(120px) rotate(4deg); transition: opacity 0.6s, transform 0.7s cubic-bezier(.2,1.1,.4,1); }
 .sv-s-letter .sv-letter { opacity: 1; transform: rotate(1deg); }
-.sv-paper { position: absolute; inset: 0; padding: 50px 56px; box-sizing: border-box; background: var(--paper); color: var(--ink); border-radius: 3px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-    font-family: Georgia, 'Times New Roman', serif; font-size: 22px; line-height: 1.5; overflow: hidden; }
-.sv-lh { display: flex; gap: 18px; align-items: center; padding-bottom: 18px; border-bottom: 2px solid var(--ink); font-family: 'Segoe UI', Arial, sans-serif; }
-.sv-lh b { display: block; font-size: 19px; letter-spacing: 3px; }
-.sv-lh span { font-size: 15px; color: #5a6274; }
-.sv-seal { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--hr); color: var(--hr); display: flex; align-items: center; justify-content: center; font-size: 26px; }
-.sv-re { margin: 20px 0 8px; font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; letter-spacing: 3px; font-size: 17px; }
-.sv-paper p { margin: 10px 0; }
-.sv-row { display: grid; grid-template-columns: 1fr auto auto; gap: 18px; align-items: baseline; padding: 12px 0; border-bottom: 1px dotted rgba(28, 34, 48, 0.4); font-family: 'Segoe UI', Arial, sans-serif; }
-.sv-row span { font-size: 18px; letter-spacing: 3px; color: #4a5468; }
-.sv-row b { font-size: 46px; color: var(--hr); font-variant-numeric: tabular-nums; min-width: 120px; text-align: right; }
-.sv-old { font-size: 24px; color: #8a8f9a; }
+.sv-paper { position: absolute; inset: 0; padding: 40px 50px; box-sizing: border-box; background: var(--paper); color: var(--ink); border-radius: 3px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    font-family: Georgia, 'Times New Roman', serif; font-size: 34px; line-height: 1.4; overflow: hidden; } 
+.sv-paper, .sv-call { text-align: left; }
+.sv-lh { display: flex; gap: 20px; align-items: center; padding-bottom: 16px; border-bottom: 2px solid var(--ink); font-family: 'Segoe UI', Arial, sans-serif; }
+.sv-lh b { display: block; font-size: 28px; letter-spacing: 2px; line-height: 1.25; }
+.sv-lh span { font-size: 26px; color: #4e5668; }
+.sv-seal { flex: none; width: 66px; height: 66px; border-radius: 50%; border: 2px solid var(--hr); color: var(--hr); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.sv-re { margin: 18px 0 4px; font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; letter-spacing: 3px; font-size: 28px; }
+.sv-paper p { margin: 8px 0; }
+.sv-row { display: grid; grid-template-columns: 1fr auto auto; gap: 24px; align-items: baseline; padding: 6px 0; border-bottom: 1px dotted rgba(28, 34, 48, 0.4); font-family: 'Segoe UI', Arial, sans-serif; }
+.sv-row span { font-size: 28px; letter-spacing: 3px; color: #4a5468; }
+.sv-row b { font-size: 68px; line-height: 1.15; color: var(--hr); font-variant-numeric: tabular-nums; min-width: 150px; text-align: right; }
+.sv-old { font-size: 48px; color: #7a808c; }
 .sv-raised .sv-row b { color: #2c8a52; }
 .sv-cont { font-style: italic; color: #4a5468; }
-.sv-fine-btn { font: inherit; font-size: 15px; color: #5a6274; background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
+.sv-fine-row { position: relative; display: flex; align-items: center; height: 120px; }
+.sv-fine-btn { font: inherit; font-family: 'Segoe UI', Arial, sans-serif; font-size: 28px; color: #4e5668; background: none; border: none; padding: 6px 0; cursor: pointer; text-decoration: underline; }
 .sv-fine-btn:hover, .sv-fine-btn:focus-visible { color: var(--hr); outline: none; }
-.sv-fine { margin: 6px 0 0; padding-left: 22px; font-size: 13px; line-height: 1.5; color: #5a6274; display: none; }
-.sv-fine-open .sv-fine { display: block; animation: sv-rise 0.3s both; }
-.sv-sign { position: absolute; left: 56px; right: 56px; bottom: 50px; border-top: 1px solid var(--ink); padding-top: 6px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; color: #5a6274; }
-.sv-sign svg { position: absolute; left: 0; bottom: 30px; width: 300px; height: 92px; }
+
+/* the fine print opens as its own sheet over the letter body */
+.sv-fine { position: absolute; left: 0; right: 0; top: 150px; bottom: 0; z-index: 4; padding: 30px 50px 36px; box-sizing: border-box; background: #f3eee2; border-top: 2px dashed rgba(28, 34, 48, 0.4);
+    display: none; flex-direction: column; gap: 14px; }
+.sv-fine-open .sv-fine { display: flex; animation: sv-rise 0.3s both; }
+.sv-fine > b { font-family: 'Segoe UI', Arial, sans-serif; font-size: 28px; letter-spacing: 3px; }
+.sv-fine ol { margin: 0; padding-left: 44px; font-size: 38px; line-height: 1.35; color: #3a4252; display: flex; flex-direction: column; gap: 14px; }
+.sv-fine-close { align-self: flex-start; margin-top: auto; font: inherit; font-family: 'Segoe UI', Arial, sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--ink); background: none; border: 2px solid currentColor; border-radius: 6px; padding: 10px 22px; cursor: pointer; }
+.sv-fine-close:hover, .sv-fine-close:focus-visible { color: var(--hr); outline: none; }
+
+.sv-sign { position: absolute; left: 50px; right: 50px; bottom: 40px; border-top: 1px solid var(--ink); padding-top: 8px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 28px; color: #4e5668; }
+.sv-sign svg { position: absolute; left: 0; bottom: 54px; width: 320px; height: 98px; }
 .sv-sig { fill: none; stroke: #1b3c8a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 700; stroke-dashoffset: 700; }
 .sv-s-sign .sv-sig { stroke-dashoffset: 0; transition: stroke-dashoffset 1s cubic-bezier(.5,0,.5,1); }
-.sv-stamp { position: absolute; right: 54px; top: 300px; padding: 8px 20px; border: 5px solid; border-radius: 6px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 40px; font-weight: 900; letter-spacing: 6px;
-    transform: rotate(-12deg); opacity: 0; pointer-events: none; background: rgba(236, 230, 216, 0.35); }   /* no blend mode: blending an animating layer made the letter's text blink out */
+
+/* stamps sit only in blank space: REVISED / FINAL beside the fine-print link, ACCEPTED / DECLINED
+   right of the signature. They never cover a line of the letter. */
+.sv-stamp { position: absolute; z-index: 1; padding: 6px 20px; border: 5px solid; border-radius: 6px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 40px; line-height: 1.2; font-weight: 900; letter-spacing: 5px; white-space: nowrap;
+    transform: rotate(-8deg); opacity: 0; pointer-events: none; background: rgba(236, 230, 216, 0.35); }   /* no blend mode: blending an animating layer made the letter's text blink out */
 .sv-stamp.on { opacity: 0.85; animation: sv-stamp 0.35s cubic-bezier(.3,1.6,.5,1) both; }
-.sv-st-rev, .sv-st-final { top: 630px; right: auto; left: 60px; font-size: 28px; }
+.sv-st-rev, .sv-st-final { right: 30px; top: 26px; }
 .sv-st-rev { color: #2c8a52; }
 .sv-st-final { color: #9a6a10; }
-.sv-st-ok { color: #2c8a52; top: 720px; right: 40px; font-size: 46px; }
-.sv-st-no { color: #c0303a; top: 640px; right: 70px; font-size: 64px; }   /* the blank space under the fine print: it never covers a line */
+.sv-st-ok, .sv-st-no { right: 20px; bottom: 6px; }
+.sv-st-ok { color: #2c8a52; font-size: 56px; }
+.sv-st-no { color: #c0303a; font-size: 64px; }
 
 /* 5b · into the shredder */
-.sv-shredder { position: absolute; left: 1130px; top: 962px; width: 740px; height: 34px; border-radius: 6px; background: #1a2230; border: 1px solid #344258; opacity: 0; transition: opacity 0.3s; }
-.sv-shredder i { position: absolute; left: 20px; right: 20px; top: 14px; height: 6px; border-radius: 3px; background: #000; }
+.sv-shredder { position: absolute; left: 890px; top: 970px; width: 1020px; height: 40px; border-radius: 6px; background: #1a2230; border: 1px solid #344258; opacity: 0; transition: opacity 0.3s; }
+.sv-shredder i { position: absolute; left: 24px; right: 24px; top: 16px; height: 8px; border-radius: 4px; background: #000; }
 .sv-s-shred .sv-shredder { opacity: 1; }
 .sv-s-shred .sv-letter { clip-path: inset(-200px -200px 0 -200px); }
 .sv-s-shred .sv-paper { animation: sv-feed 1.6s cubic-bezier(.5,0,.8,.6) 0.2s both; }
-.sv-strips { position: absolute; left: 1160px; width: 680px; top: 990px; height: 0; }
-.sv-strip { position: absolute; top: 0; width: 30px; height: 120px; background: repeating-linear-gradient(var(--paper) 0 18px, #cfc8b8 18px 20px); opacity: 0; animation: sv-strip 1.4s ease-in both; }
-.sv-defy { position: absolute; left: 90px; width: 1000px; top: 520px; text-align: center; font-size: 30px; letter-spacing: 8px; font-weight: 700; color: #ff6a74; text-shadow: 0 0 24px rgba(255, 74, 90, 0.6); opacity: 0; pointer-events: none; }
+.sv-strips { position: absolute; left: 920px; width: 960px; top: 1004px; height: 0; }
+.sv-strip { position: absolute; top: 0; width: 40px; height: 120px; background: repeating-linear-gradient(var(--paper) 0 18px, #cfc8b8 18px 20px); opacity: 0; animation: sv-strip 1.4s ease-in both; }
+/* the letter is gone by now: the line takes its place */
+.sv-defy { position: absolute; left: 960px; width: 880px; top: 380px; text-align: center; font-size: 56px; line-height: 1.3; letter-spacing: 5px; font-weight: 700; color: #ff6a74; text-shadow: 0 0 24px rgba(255, 74, 90, 0.6); opacity: 0; pointer-events: none; }
 .sv-s-defy .sv-defy { opacity: 1; animation: sv-rise 0.6s both; }
 
 /* 5a · the session powers down */
@@ -148,26 +166,27 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .sv-s-off .sv-off { opacity: 1; }
 .sv-line { position: absolute; left: 0; right: 0; top: 539px; height: 2px; background: #cfe0f2; box-shadow: 0 0 30px #9cc8f0; opacity: 0; }
 .sv-s-off .sv-line { animation: sv-line 1.2s 0.6s both; }
-.sv-end { text-align: center; display: flex; flex-direction: column; gap: 14px; opacity: 0; transition: opacity 1s 1.6s; }
+.sv-end { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; max-width: 1500px; opacity: 0; transition: opacity 1s 1.6s; }
 .sv-s-off .sv-end { opacity: 1; }
-.sv-end > b { font-size: 50px; letter-spacing: 16px; color: #cfe0f2; }
-.sv-end > span { font-size: 22px; letter-spacing: 3px; color: #6a7e94; }
-.sv-next { margin-top: 50px; padding: 18px 30px; border: 1px solid rgba(68, 136, 204, 0.5); border-radius: 8px; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.6s; }
-.sv-next em { font-style: normal; font-size: 14px; letter-spacing: 6px; color: #6a7e94; }
-.sv-next b { font-size: 24px; letter-spacing: 3px; color: #66aadd; }
+.sv-end > b { font-size: 80px; letter-spacing: 14px; color: #cfe0f2; }
+.sv-end > span { font-size: 36px; letter-spacing: 2px; color: #8a9eb4; }
+.sv-next { margin-top: 50px; padding: 24px 40px; border: 1px solid rgba(68, 136, 204, 0.5); border-radius: 10px; display: flex; flex-direction: column; gap: 10px; opacity: 0; transition: opacity 0.6s; }
+.sv-next em { font-style: normal; font-size: 26px; letter-spacing: 4px; color: #8a9eb4; }
+.sv-next b { font-size: 40px; letter-spacing: 2px; color: #66aadd; }
 .sv-s-next .sv-next { opacity: 1; animation: sv-rise 0.5s both; }
 
-.dks.sv .dks-actions { position: absolute; left: 90px; width: 1000px; top: 930px; z-index: 5; gap: 18px; }
-.dks.sv .dks-btn { font-family: 'Segoe UI', Arial, sans-serif; font-size: 20px; padding: 14px 40px; letter-spacing: 5px; color: var(--hr-hi); border-color: rgba(156, 200, 240, 0.5); }
+.dks.sv .dks-actions { position: absolute; left: 40px; width: 840px; top: 926px; margin: 0; z-index: 5; gap: 20px; }
+.dks.sv .dks-btn { font-family: 'Segoe UI', Arial, sans-serif; font-size: 32px; padding: 16px 34px; letter-spacing: 3px; color: var(--hr-hi); border-color: rgba(156, 200, 240, 0.5); }
 .dks.sv .dks-btn.dks-alt { color: #e8c547; border-color: rgba(232, 197, 71, 0.5); }
-.dks.sv.sv-s-off .dks-actions { top: 900px; left: 460px; }
+.dks.sv.sv-s-off .dks-actions { top: 900px; left: 540px; }
+.dks.sv .dks-skip { font-size: 26px; letter-spacing: 3px; padding: 8px 18px; top: auto; bottom: 14px; right: 30px; }
 
 @keyframes sv-pop   { from { opacity: 0; transform: scale(1.4); } }
 @keyframes sv-blink { 50% { opacity: 0.3; } }
 @keyframes sv-nod   { 50% { transform: translateY(4px) rotate(0.6deg); } }
 @keyframes sv-spin  { to { transform: rotate(360deg); } }
 @keyframes sv-rise  { from { opacity: 0; transform: translateY(12px); } }
-@keyframes sv-stamp { from { opacity: 0; transform: rotate(-12deg) scale(1.6); } }
+@keyframes sv-stamp { from { opacity: 0; transform: rotate(-8deg) scale(1.6); } }
 @keyframes sv-feed  { to { transform: translateY(940px); } }
 @keyframes sv-strip { 0% { opacity: 0; transform: translateY(0) rotate(0); } 15% { opacity: 1; } 100% { opacity: 0; transform: translateY(var(--fall)) rotate(var(--rot)); } }
 @keyframes sv-crt   { 0% { transform: scale(1, 1); opacity: 1; } 60% { transform: scale(1, 0.004); opacity: 1; } 100% { transform: scale(0, 0.004); opacity: 0; } }
@@ -211,7 +230,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     --dks-dim: rgba(232, 197, 71, 0.45);
     --dks-bg: #07060a;
     --dks-paper: #12100a;
-    --seat-h: 340px;                                   /* on the 1080 canvas: the bench is the scene */
+    --seat-h: 260px;                                   /* on the 1080 canvas: the bench is the scene */
     --seat-w: calc(var(--seat-h) * 112 / 150);
     --duck: calc(var(--seat-h) * 0.47);
     --duck-bottom: calc(var(--seat-h) * 42 / 150);
@@ -223,8 +242,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     width: 100%;
     min-height: 100%;
     box-sizing: border-box;
-    padding: 34px 60px 30px;
-    justify-content: center;
+    padding: 18px 50px 14px;
+    justify-content: flex-start;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -241,9 +260,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks .pf { fill: currentColor; fill-opacity: 0.08; }
 
 /* ── header ─────────────────────────────────────────────────────────────── */
-.dks-eyebrow { font-size: calc(0.56 * var(--r)); letter-spacing: 6px; opacity: 0.55; }
-.dks-title   { font-size: clamp(calc(0.95 * var(--r)), calc(2.4 * var(--vh)), calc(1.25 * var(--r))); letter-spacing: 6px; font-weight: 900; margin: 4px 0 2px; }
-.dks-sub     { font-size: calc(0.58 * var(--r)); letter-spacing: 3px; opacity: 0.6; }
+/* TYPE SCALE (canvas px): nothing readable under 24; labels 26–30; dialogue 36; buttons 32; titles 54+ */
+.dks-eyebrow { font-size: 26px; letter-spacing: 4px; opacity: 0.7; }
+.dks-title   { font-size: 50px; letter-spacing: 6px; font-weight: 900; margin: 2px 0 0; line-height: 1.1; }
+.dks-sub     { font-size: 26px; letter-spacing: 3px; opacity: 0.75; }
 .dks-on-in .dks-title { animation: dks-stamp-title 0.55s cubic-bezier(.2,1.6,.4,1) both; }
 
 /* ── stage ──────────────────────────────────────────────────────────────── */
@@ -251,8 +271,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     position: relative;
     width: 100%;
     max-width: 1700px;
-    margin-top: clamp(4px, calc(1 * var(--vh)), 10px);
-    padding-top: clamp(calc(4.6 * var(--r)), calc(13 * var(--vh)), calc(7.6 * var(--r)));          /* headroom for speech bubbles */
+    margin-top: 4px;
+    padding-top: 24px;                                 /* speech goes in the dialogue box; the short murmurs sit inside the stalls */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -324,7 +344,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     position: absolute;
     bottom: calc(100% - var(--seat-h) * 0.04);
     left: 50%;
-    width: min(calc(21 * var(--r)), calc(78 * var(--vw)));
+    width: 560px;
     transform: translateX(-50%);
     pointer-events: none;
     z-index: 5;
@@ -335,7 +355,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-bubble {
     position: relative;
     display: none;
-    padding: 7px 12px 8px;
+    padding: 10px 18px 12px;
     background: rgba(10, 9, 14, 0.94);
     border: 1px solid currentColor;
     border-radius: 10px;
@@ -356,19 +376,33 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transform: rotate(45deg);
 }
 .dks-bubble.dks-on { display: block; animation: dks-pop 0.22s cubic-bezier(.2,1.5,.5,1) both; }
-.dks-who { font-size: calc(0.5 * var(--r)); letter-spacing: 3px; opacity: 0.6; margin-bottom: 3px; }
-.dks-say { font-size: clamp(calc(0.66 * var(--r)), calc(1.6 * var(--vh)), calc(0.78 * var(--r))); line-height: 1.5; color: #e9e6dc; min-height: 1.2em; }
+.dks-who { font-size: 26px; letter-spacing: 3px; opacity: 0.8; margin-bottom: 4px; }
+.dks-say { font-size: 34px; line-height: 1.35; color: #f1eee4; min-height: 1.2em; }
 .dks-bubble.dks-action .dks-say { font-style: italic; color: #aab0c4; }
-.dks-bubble.dks-murmur { padding: 3px 10px; }
+.dks-bubble.dks-murmur { padding: 4px 16px; width: max-content; margin: 0 auto; }
 .dks-bubble.dks-murmur .dks-who { display: none; }
 
 .dks-caption {
-    min-height: 1.6em;
-    margin-top: 8px;
-    font-size: calc(0.62 * var(--r));
+    min-height: 1.3em;
+    margin-top: 6px;
+    font-size: 28px;
     letter-spacing: 3px;
-    opacity: 0.75;
+    opacity: 0.85;
 }
+
+/* the dialogue box: one wide subtitle panel under the bench, pointing at whoever speaks */
+.dks-dialog { position: relative; width: 1560px; min-height: 166px; margin-top: 12px; }
+.dks-dialog .dks-bubble { position: relative; display: block; padding: 14px 30px 18px; border-radius: 12px; opacity: 0; transition: opacity 0.2s; }
+.dks-dialog .dks-bubble.dks-on { opacity: 1; animation: none; }
+.dks-dialog .dks-bubble::after { top: -6px; bottom: auto; left: calc(50% + var(--speaker, 0) * var(--seat-w)); transform: rotate(225deg); }
+.dks-anchor { bottom: calc(100% - 64px); }                    /* murmurs inside the stall, over the member */
+.dks-council .dks-ledger { flex: 0 1 640px; }
+.dks-council .dks-verdict { flex: 1 1 1120px; max-width: 1140px; }
+.dks-dialog .dks-who { font-size: 28px; letter-spacing: 4px; color: var(--dks-ink); opacity: 1; margin-bottom: 6px; }
+.dks-dialog .dks-say { font-size: 38px; line-height: 1.32; }
+.dks-dialog .dks-bubble.dks-action .dks-say { color: #c3c8d8; }
+.dks-ruled .dks-dialog { display: none; }
+.dks-speaking .dks-duck { filter: drop-shadow(0 0 14px currentColor); }
 
 /* ── props: placards and the gavel ──────────────────────────────────────── */
 .dks-prop {
@@ -381,8 +415,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     pointer-events: none;
 }
 .dks-placard {
-    padding: 3px 7px;
-    font-size: clamp(calc(0.46 * var(--r)), calc(1.15 * var(--vh)), calc(0.56 * var(--r)));
+    padding: 4px 10px;
+    font-size: 24px;
     letter-spacing: 2px;
     font-weight: 900;
     color: #0b0a0c;
@@ -434,18 +468,18 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 /* ── panels ─────────────────────────────────────────────────────────────── */
 .dks-lower {
     display: flex;
-    gap: 14px;
+    gap: 24px;
     justify-content: center;
     align-items: stretch;
     width: 100%;
-    max-width: calc(52 * var(--r));
-    margin-top: clamp(6px, calc(1.4 * var(--vh)), 14px);
+    max-width: 1800px;
+    margin-top: 14px;
     flex-wrap: wrap;
 }
 .dks-panel {
-    flex: 1 1 calc(18 * var(--r));
-    max-width: calc(25 * var(--r));
-    padding: 10px 14px;
+    flex: 1 1 700px;
+    max-width: 1040px;
+    padding: 14px 24px;
     border: 1px solid var(--dks-dim);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.02);
@@ -455,15 +489,15 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transition: opacity 0.4s, transform 0.4s;
 }
 .dks-panel.dks-on { opacity: 1; transform: none; }
-.dks-panel-h { font-size: calc(0.5 * var(--r)); letter-spacing: 4px; opacity: 0.6; margin-bottom: 8px; }
+.dks-panel-h { font-size: 26px; letter-spacing: 3px; opacity: 0.8; margin-bottom: 8px; }
 
-.dks-actions { display: flex; gap: 10px; justify-content: center; margin-top: clamp(8px, calc(1.6 * var(--vh)), 16px); min-height: calc(2.4 * var(--r)); }
+.dks-actions { display: flex; gap: 20px; justify-content: center; margin-top: 14px; min-height: 72px; }
 .dks-btn {
     font: inherit;
-    font-size: calc(0.66 * var(--r));
+    font-size: 32px;
     letter-spacing: 3px;
     font-weight: 900;
-    padding: 9px 20px;
+    padding: 14px 34px;
     color: var(--dks-ink);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid currentColor;
@@ -474,57 +508,60 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-btn:hover, .dks-btn:focus-visible { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); outline: none; }
 .dks-btn[hidden] { display: none; }
 .dks-btn.dks-alt { color: #bb88dd; }
-.dks-btn-note { font-size: calc(0.48 * var(--r)); letter-spacing: 1px; opacity: 0.5; margin-top: 4px; }
+.dks-btn-note { font-size: 24px; letter-spacing: 1px; opacity: 0.7; margin-top: 4px; }
 .dks-skip {
     position: absolute;
     top: 10px; right: 14px;
     z-index: 50;                                       /* above any full-screen layer a scene adds later */
     font: inherit;
-    font-size: calc(0.5 * var(--r));
+    font-size: 26px;
     letter-spacing: 3px;
     color: inherit;
-    background: none;
+    background: rgba(0, 0, 0, 0.35);
     border: 1px solid var(--dks-dim);
-    border-radius: 4px;
-    padding: 4px 9px;
-    opacity: 0.6;
+    border-radius: 6px;
+    padding: 8px 16px;
+    opacity: 0.8;
     cursor: pointer;
 }
 .dks-skip:hover { opacity: 1; }
 .dks-skip[hidden] { display: none; }
-.dks-hint { position: absolute; bottom: 6px; left: 0; right: 0; font-size: calc(0.46 * var(--r)); letter-spacing: 2px; opacity: 0.35; pointer-events: none; }
+.dks-hint { position: absolute; bottom: 8px; left: 0; right: 0; font-size: 24px; letter-spacing: 2px; opacity: 0.5; pointer-events: none; }
 .dks-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ═══ THE DUCKY COUNCIL ════════════════════════════════════════════════════ */
 .dks-council { --dks-ink: #e8c547; --dks-dim: rgba(232, 197, 71, 0.35); }
 
 /* the ledger */
-.dks-ledger-row { display: grid; grid-template-columns: calc(6.6 * var(--r)) 1fr auto; align-items: center; gap: 8px; font-size: calc(0.6 * var(--r)); letter-spacing: 1px; min-height: calc(1.45 * var(--r)); opacity: 0; transition: opacity 0.3s; }
+.dks-ledger-row { display: grid; grid-template-columns: 220px 1fr auto; align-items: center; gap: 12px; font-size: 30px; letter-spacing: 1px; min-height: 44px; opacity: 0; transition: opacity 0.3s; }
 .dks-ledger-row.dks-on { opacity: 1; }
 .dks-ledger-row .lv { color: #d8d3c0; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dks-pips { display: flex; gap: 3px; }
-.dks-pip { width: 9px; height: 9px; border: 1px solid currentColor; border-radius: 2px; opacity: 0.35; }
+.dks-pips { display: flex; gap: 5px; }
+.dks-pip { width: 16px; height: 16px; border: 1px solid currentColor; border-radius: 2px; opacity: 0.35; }
 .dks-pip.neg { color: var(--reject); border-radius: 50%; }
 .dks-pip.lit { opacity: 1; background: currentColor; animation: dks-pip 0.28s cubic-bezier(.2,1.8,.5,1) both; }
 
 /* the grade track */
 .dks-track { position: relative; margin-top: 10px; opacity: 0; transition: opacity 0.4s; }
 .dks-track.dks-on { opacity: 1; }
-.dks-bands { display: flex; height: 16px; border-radius: 3px; overflow: hidden; }
-.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: calc(0.42 * var(--r)); line-height: 16px; letter-spacing: 1px; color: #0b0a0c; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
+.dks-bands { display: flex; height: 36px; border-radius: 3px; overflow: hidden; }
+.dks-band { position: relative; border-right: 1px solid rgba(0,0,0,0.6); font-size: 24px; line-height: 36px; letter-spacing: 0; color: #0b0a0c; overflow: hidden; font-weight: 900; text-align: center; opacity: 0.38; transition: opacity 0.4s; }
 .dks-band.dks-hit { opacity: 1; }
-.dks-rail { position: absolute; left: 0; top: -5px; width: 100%; height: 26px; transform: translateX(0%); transition: transform 1.1s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
+.dks-rail { position: absolute; left: 0; top: -6px; width: 100%; height: 48px; transform: translateX(0%); transition: transform 1.1s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
 .dks-rail::before { content: ''; position: absolute; left: -1px; top: 0; width: 2px; height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
-.dks-score { margin-top: 6px; font-size: calc(0.56 * var(--r)); letter-spacing: 3px; opacity: 0.75; }
+.dks-score { margin-top: 8px; font-size: 28px; letter-spacing: 3px; opacity: 0.9; }
 
 /* the medal and ruling */
-.dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
+.dks-verdict { display: grid; grid-template-columns: 112px 1fr; column-gap: 22px; align-items: center; text-align: left; }
+.dks-verdict .dks-medal { grid-row: 1 / 3; }
+.dks-verdict .dks-lines { grid-column: 1 / -1; }
+.dks-medal { width: 112px; height: 112px; color: var(--grade, var(--dks-ink)); }
 .dks-medal > svg { width: 100%; height: 100%; }
 .dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
-.dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
-.dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
-.dks-lines { margin-top: 8px; font-size: calc(0.6 * var(--r)); line-height: 1.6; color: #c8c4b4; }
+.dks-grade-label { align-self: end; font-size: 42px; line-height: 1.1; letter-spacing: 2px; font-weight: 900; color: var(--grade); }
+.dks-reward { align-self: start; margin-top: 4px; font-size: 30px; letter-spacing: 1px; color: var(--grade); opacity: 0.85; }
+.dks-lines { margin-top: 12px; font-size: 30px; line-height: 1.38; color: #dcd8c8; }
+.dks-lines div + div { margin-top: 4px; }
 .dks-lines div { opacity: 0; transition: opacity 0.5s; }
 .dks-lines div.dks-on { opacity: 1; }
 
@@ -536,7 +573,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-grade-tarnished .dks-backdrop { opacity: 0.4; transition: opacity 1s; }
 .dks-grade-quacked { --dks-ink: #ff7a55; }
 .dks-grade-quacked .dks-backdrop { opacity: 0.3; transition: opacity 1s; }
-.dks-feather { position: absolute; top: 0; left: 62%; width: calc(1.4 * var(--r)); height: calc(2.4 * var(--r)); color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
+.dks-feather { position: absolute; top: 0; left: 62%; width: 36px; height: 62px; color: #e9e6dc; opacity: 0; pointer-events: none; z-index: 6; }
 .dks-grade-quacked .dks-feather { animation: dks-feather 6.5s 0.4s ease-in-out both; }
 
 /* ═══ THE DUCK TRIBUNAL ════════════════════════════════════════════════════ */
@@ -568,46 +605,54 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-confer .dks-seat-0 .dks-duck { transform: translateX(22%) rotate(4deg); }
 .dks-confer .dks-seat-1 .dks-duck { transform: translateX(12%) rotate(3deg); }
 .dks-confer .dks-seat-3 .dks-duck { transform: translateX(-14%) rotate(-3deg); }
-.dks-confer-dots { display: inline-flex; gap: 6px; margin-left: 10px; vertical-align: middle; }
-.dks-confer-dots i { width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; transition: background 0.3s; }
+.dks-confer-dots { display: inline-flex; gap: 10px; margin-left: 14px; vertical-align: middle; }
+.dks-confer-dots i { width: 14px; height: 14px; border: 1px solid currentColor; border-radius: 50%; transition: background 0.3s; }
 .dks-confer-dots i.dks-on { background: currentColor; }
 
 /* the dock and the docket */
-.dks-dock { flex: 0 0 auto; width: clamp(calc(7 * var(--r)), calc(15 * var(--vh)), calc(9 * var(--r))); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
+.dks-dock { flex: 0 0 auto; width: 230px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.75; }
 .dks-dock svg { width: 100%; height: auto; }
 .dks .tb-dock-floor.pf { fill-opacity: 0.12; stroke: none; }
 .dks .tb-dock-rail, .dks .tb-dock-post { stroke-width: 2; }
-.dks-dock-label { font-size: calc(0.42 * var(--r)); letter-spacing: 1px; line-height: 1.5; opacity: 0.6; margin-top: 4px; max-width: calc(9 * var(--r)); }
+.dks-dock-label { font-size: 24px; letter-spacing: 1px; line-height: 1.3; opacity: 0.8; margin-top: 6px; max-width: 230px; }
 
 .dks-docket {
     position: relative;
-    flex: 1 1 calc(20 * var(--r));
-    max-width: calc(28 * var(--r));
-    padding: 12px 16px;
+    flex: 1 1 1100px;
+    max-width: 1420px;
+    padding: 14px 26px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    align-content: start;
     background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
     border: 1px solid var(--dks-dim);
     border-radius: 4px;
     text-align: left;
-    font-size: calc(0.6 * var(--r));
-    letter-spacing: 1px;
-    line-height: 1.7;
-    color: #c9cbd6;
+    font-size: 30px;
+    letter-spacing: 0;
+    line-height: 1.35;
+    color: #d6d8e2;
     opacity: 0;
     transform: translateY(14px) rotate(-0.6deg);
     transition: opacity 0.45s, transform 0.45s cubic-bezier(.2,1.3,.5,1);
 }
 .dks-docket.dks-on { opacity: 1; transform: rotate(-0.6deg); }
-.dks-docket-h { display: flex; justify-content: space-between; font-size: calc(0.48 * var(--r)); letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
+.dks-docket-h { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 26px; letter-spacing: 3px; color: var(--dks-ink); opacity: 0.8; border-bottom: 1px dashed var(--dks-dim); padding-bottom: 5px; margin-bottom: 7px; }
 .dks-docket .k { color: var(--dks-ink); opacity: 0.7; letter-spacing: 2px; }
-.dks-docket .ev { color: #9da3b8; font-style: italic; min-height: 1.7em; }
-.dks-stampslot { display: block; min-height: calc(2.1 * var(--r)); margin: 4px 0 8px; }
+.dks-docket > div:nth-child(2) { grid-column: 1; grid-row: 2; }
+.dks-charge-slot { grid-column: 1; grid-row: 3; }
+.dks-docket .ev { grid-column: 1; grid-row: 4; color: #b4b9cc; font-style: italic; min-height: 1.35em; }
+.dks-docket .dks-sentence { grid-column: 2; grid-row: 2 / 5; }
+.dks-docket .k { font-size: 26px; }
+.dks-stampslot { display: block; min-height: 72px; margin: 4px 0 8px; }
 .dks-stamp {
     display: inline-block;
     padding: 2px 10px;
     border: 2px solid var(--stamp, var(--dks-ink));
     color: var(--stamp, var(--dks-ink));
     border-radius: 3px;
-    font-size: calc(0.9 * var(--r));
+    font-size: 42px;
     letter-spacing: 3px;
     font-weight: 900;
     transform: rotate(-4deg);
@@ -2019,8 +2064,17 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     D.hush = function (seats) {
         seats.forEach(function (s) {
             s.bubble.classList.remove('dks-on', 'dks-action', 'dks-murmur');
-            s.el.classList.remove('dks-talking');
+            s.el.classList.remove('dks-talking', 'dks-speaking');
         });
+        if (seats.dialog) seats.dialog.bubble.classList.remove('dks-on', 'dks-action', 'dks-murmur');
+    };
+
+    /* THE DIALOGUE BOX. Speech set at game-subtitle size does not fit in a bubble over a 220px seat, so
+       a scene can give its bench one wide box under the bench instead (seats.dialog = D.dialog()). The
+       speaker is marked on the bench (glow, bill moving) and by the box's pointer under their seat. */
+    D.dialog = function () {
+        var el = D.h('div', 'dks-dialog', '<div class="dks-bubble"><div class="dks-who"></div><div class="dks-say"></div></div>');
+        return { el: el, bubble: el.firstChild, who: el.querySelector('.dks-who'), text: el.querySelector('.dks-say') };
     };
 
     /* A member speaks. kind: 'speech' (typed, bill moving) · 'action' (a stage
@@ -2028,18 +2082,20 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     D.say = function (dir, seats, idx, who, text, kind, opts) {
         opts = opts || {};
         var s = seats[idx];
+        var b = seats.dialog || s;                       // the bench's dialogue box, or the seat's own bubble
         D.hush(seats);
         if (!opts.noLook) D.look(seats, idx, opts.still);
-        if (kind === 'action') s.bubble.classList.add('dks-action');
-        if (kind === 'murmur') s.bubble.classList.add('dks-murmur');
-        s.who.textContent = who || '';
-        s.text.textContent = '';
-        D.replay(s.bubble, 'dks-on');
+        if (kind === 'action') b.bubble.classList.add('dks-action');
+        if (kind === 'murmur') b.bubble.classList.add('dks-murmur');
+        if (seats.dialog) { seats.dialog.el.style.setProperty('--speaker', idx - 2); s.el.classList.add('dks-speaking'); }
+        b.who.textContent = who || '';
+        b.text.textContent = '';
+        D.replay(b.bubble, 'dks-on');
         if (kind === 'speech') s.el.classList.add('dks-talking');
         if (kind === 'action') D.replay(s.el, 'dks-gesture');
         if (opts.log) opts.log((who ? who + ': ' : '') + text);
         var onChar = (kind === 'speech' && opts.voice) ? function () { opts.voice(idx); } : null;
-        return dir.type(s.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
+        return dir.type(b.text, text, kind === 'action' ? 12 : (opts.cps || 18), onChar).then(function () {
             s.el.classList.remove('dks-talking');
             var hold = opts.hold != null ? opts.hold : Math.min(2400, 650 + text.length * 13);
             return dir.wait(hold);
@@ -2370,11 +2426,12 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
           +   '<div class="sv-row sv-lp"><span>LEVEL POINTS</span><s class="sv-old"></s><b>0</b></div>'
           +   '<div class="sv-row sv-data"><span>DATA</span><s class="sv-old"></s><b>0</b></div>'
           +   '<p class="sv-cont">Your universe will continue in your absence.</p>'
-          +   '<button type="button" class="sv-fine-btn">* read the fine print</button>'
-          +   '<ol class="sv-fine">' + fine.map(function (f) { return '<li>' + D.esc(f) + '</li>'; }).join('') + '</ol>'
-          +   '<div class="sv-sign"><svg viewBox="0 0 260 80" aria-hidden="true"><path class="sv-sig" d="' + SIG + '"/></svg><span>' + D.esc(PP.you) + '</span></div>'
-          +   '<div class="sv-stamp sv-st-rev">REVISED</div><div class="sv-stamp sv-st-final">FINAL OFFER</div>'
-          +   '<div class="sv-stamp sv-st-ok">ACCEPTED</div><div class="sv-stamp sv-st-no">DECLINED</div>'
+          +   '<div class="sv-fine-row"><button type="button" class="sv-fine-btn" aria-expanded="false">* read the fine print</button>'
+          +     '<div class="sv-stamp sv-st-rev">REVISED</div><div class="sv-stamp sv-st-final">FINAL OFFER</div></div>'
+          +   '<div class="sv-fine"><b>THE FINE PRINT</b><ol>' + fine.map(function (f) { return '<li>' + D.esc(f) + '</li>'; }).join('') + '</ol>'
+          +     '<button type="button" class="sv-fine-close">BACK TO THE LETTER</button></div>'
+          +   '<div class="sv-sign"><svg viewBox="0 0 260 80" aria-hidden="true"><path class="sv-sig" d="' + SIG + '"/></svg><span>' + D.esc(PP.you) + '</span>'
+          +     '<div class="sv-stamp sv-st-ok">ACCEPTED</div><div class="sv-stamp sv-st-no">DECLINED</div></div>'
           + '</div></div><div class="sv-strips"></div>'
           + '<div class="sv-shredder"><i></i></div>'
           + '<div class="sv-defy"></div>'
@@ -2420,12 +2477,17 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
         function showOffer() { count($('.sv-lp b'), offer.lp); later(function () { count($('.sv-data b'), offer.data); }, 250); }
 
-        $('.sv-fine-btn').addEventListener('click', function (e) {
-            e.stopPropagation();
-            root.classList.toggle('sv-fine-open');
-            au.sfx('fine');
-            if (root.classList.contains('sv-fine-open')) log('Fine print: ' + fine.join(' '));
-        });
+        /* the fine print opens as its own sheet over the letter; it closes again before any stamp lands */
+        var fineBtn = $('.sv-fine-btn'), fineClose = $('.sv-fine-close');
+        function setFine(open, focus) {
+            if (open === root.classList.contains('sv-fine-open')) return;
+            root.classList.toggle('sv-fine-open', open);
+            fineBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (focus) { try { (open ? fineClose : fineBtn).focus({ preventScroll: true }); } catch (e) {} }
+            if (open) log('Fine print: ' + fine.join(' '));
+        }
+        fineBtn.addEventListener('click', function (e) { e.stopPropagation(); au.sfx('fine'); setFine(true, true); });
+        fineClose.addEventListener('click', function (e) { e.stopPropagation(); au.sfx('fine'); setFine(false, true); });
 
         function stamp(cls) { var s = $('.' + cls); D.replay(s, 'on'); au.sfx('stamp'); }
 
@@ -2464,6 +2526,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 var row = D.choices(root, list);
                 action = await row.show();
                 var rows = root.querySelectorAll('.dks-actions'); rows.forEach(function (r) { r.remove(); });
+                setFine(false, false);
                 if (action !== 'ask') break;
 
                 /* ASK FOR MORE: on hold */
@@ -2550,7 +2613,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             var box = $('.sv-strips'), n = reduced ? 0 : 16;
             for (var i = 0; i < n; i++) {
                 var s = D.h('i', 'sv-strip');
-                s.style.left = (i * 42 + 6) + 'px';
+                s.style.left = (i * 58 + 10) + 'px';
                 s.style.setProperty('--rot', ((Math.random() - 0.5) * 24) + 'deg');
                 s.style.setProperty('--fall', (380 + Math.random() * 200) + 'px');
                 s.style.animationDelay = (300 + Math.random() * 900) + 'ms';

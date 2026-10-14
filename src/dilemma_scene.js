@@ -144,7 +144,7 @@
         function ghostLoop() {
             var real = their === 'S' ? 0 : 1;
             var go = Math.random() < onReal ? real : 1 - real;
-            ghost.style.transform = 'translate(' + (go ? rnd(250, 330) : rnd(50, 130)) + 'px,' + rnd(4, 18) + 'px)';
+            ghost.style.transform = 'translate(' + (go ? rnd(300, 370) : rnd(60, 130)) + 'px,' + rnd(8, 22) + 'px)';
             ghostTimer = later(ghostLoop, go === real ? rnd(900, 1500) : rnd(350, 650));
         }
 
@@ -259,10 +259,16 @@
         /* the pool's energy as chips: split, flowing one way, or burning */
         function chips(o) {
             var layer = $('.pd-chips'), n = reduced ? 0 : 22;
-            var dest = { SS: null, TS: [-640, 120], ST: [640, 120], TT: 'burn' }[o];
+            /* chips leave the orb and land on the cards (canvas px, whatever the scale) */
+            var R = root.getBoundingClientRect(), k = R.width / D.W || 1;
+            function at(el) { var q = el.getBoundingClientRect(); return [(q.left + q.width / 2 - R.left) / k, (q.top + q.height / 2 - R.top) / k]; }
+            var from = at($('.pd-orb')), toYou = at($('.pd-card-you')), toThem = at($('.pd-card-them'));
+            layer.style.left = from[0] + 'px'; layer.style.top = from[1] + 'px';
+            var yo = [toYou[0] - from[0], toYou[1] - from[1]], th = [toThem[0] - from[0], toThem[1] - from[1]];
+            var dest = { SS: null, TS: yo, ST: th, TT: 'burn' }[o];
             for (var i = 0; i < n; i++) {
                 var c = D.h('i', 'pd-chip' + (dest === 'burn' ? ' burn' : ''));
-                var d = dest === null ? (i % 2 ? [640, 120] : [-640, 120]) : dest === 'burn' ? [rnd(-260, 260), rnd(-300, 60)] : dest;
+                var d = dest === null ? (i % 2 ? th : yo) : dest === 'burn' ? [rnd(-260, 260), rnd(-160, 160)] : dest;
                 c.style.setProperty('--dx', (d[0] + rnd(-60, 60)) + 'px');
                 c.style.setProperty('--dy', (d[1] + rnd(-60, 60)) + 'px');
                 c.style.animationDelay = (i * 40) + 'ms';

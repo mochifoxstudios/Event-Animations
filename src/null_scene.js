@@ -173,8 +173,8 @@
         /* NULL speaks one line: the previous ones rise and dim */
         async function speak(text) {
             speech.querySelectorAll('.nx-line').forEach(function (l) { l.classList.add('old'); });
-            var olds = speech.querySelectorAll('.nx-line.old');
-            if (olds.length > 2) olds[0].remove();
+            var olds = speech.querySelectorAll('.nx-line.old');                  // two earlier lines stay, dimmed
+            for (var o = 0; o < olds.length - 2; o++) olds[o].remove();
             var line = D.h('div', 'nx-line');
             speech.appendChild(line);
             au.sfx('line');
@@ -291,19 +291,23 @@
             var row = D.h('div', 'nx-consume');
             root.appendChild(row);
             var chars = text.split('');
-            chars.forEach(function (ch, k) { row.appendChild(D.h('span', '', ch === ' ' ? '&nbsp;' : D.esc(ch))); });
-            var spans = row.querySelectorAll('span');
-            spans.forEach(function (s, k) {
+            /* spaces stay plain text so a long answer wraps instead of running off the canvas */
+            chars.forEach(function (ch) { row.appendChild(ch === ' ' ? document.createTextNode(' ') : D.h('span', '', D.esc(ch))); });
+            var step = Math.min(40, 1200 / chars.length);
+            row.querySelectorAll('span').forEach(function (s) {
+                var k = Array.prototype.indexOf.call(row.childNodes, s);
                 var x = s.offsetLeft + s.offsetWidth / 2 + row.offsetLeft;
+                var y = s.offsetTop + s.offsetHeight / 2 + row.offsetTop;
                 s.style.setProperty('--dx', (960 - x) + 'px');
-                s.style.animationDelay = (k * Math.min(40, 1200 / chars.length)) + 'ms';
+                s.style.setProperty('--dy', (380 - y) + 'px');
+                s.style.animationDelay = (k * step) + 'ms';
             });
         }
         /* CATALOGUING: the answer is filed among the others */
         function catalogue(answer) {
             var box = D.h('div', 'nx-catalog');
             var entries = ['#000' + ((Math.random() * 900 + 100) | 0) + '  OPERATOR 14  "it is warm in here"', '#000' + ((Math.random() * 900 + 100) | 0) + '  OPERATOR 09  "my hand moved"',
-                           '#00' + ((Math.random() * 9000 + 1000) | 0) + '  OPERATOR 15  "' + answer.slice(0, 48) + '"'];
+                           '#00' + ((Math.random() * 9000 + 1000) | 0) + '  OPERATOR 15  "' + (answer.length > 40 ? answer.slice(0, 39) + '…' : answer) + '"'];
             entries.forEach(function (e, k) { var d = D.h('div', k === 2 ? 'new' : '', D.esc(e)); d.style.animationDelay = (600 + k * 350) + 'ms'; box.appendChild(d); });
             return box;
         }

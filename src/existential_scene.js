@@ -270,11 +270,13 @@
         var whisperTimer = null;
         function whisperLoop() {
             var w = D.h('div', 'exs-whisper', D.esc(whispers[(Math.random() * whispers.length) | 0]));
-            var side = Math.random() < 0.5;
-            w.style.left = (side ? 80 + Math.random() * 420 : 1420 + Math.random() * 380) + 'px';
-            w.style.top = (120 + Math.random() * 820) + 'px';
-            w.style.fontSize = (16 + Math.random() * 14) + 'px';
+            /* whispers surface in the bands the question, cards and hint leave free: above, and below */
+            var top = Math.random() < 0.5;
+            w.style.fontSize = (26 + Math.random() * 10) + 'px';
+            w.style.top = (top ? 96 + Math.random() * 40 : 915 + Math.random() * 50) + 'px';
             whisperLayer.appendChild(w);
+            var ww = w.offsetWidth || 400, maxX = (top ? 1640 : 1840) - ww;   // top band keeps clear of SKIP
+            w.style.left = Math.max(80, 80 + Math.random() * (maxX - 80)) + 'px';
             au.sfx('whisper');
             later(function () { if (w.parentNode) w.parentNode.removeChild(w); }, 5200);
             whisperTimer = later(whisperLoop, 2200 + Math.random() * 2600);

@@ -83,7 +83,7 @@
           + '<div class="eos-flash"></div>'
           + '<div class="eos-alarm"><span>INSTABILITY</span><b>' + before + '%</b></div>'
           + '<div class="eos-in">'
-          +   '<div class="eos-head"><i>' + D.icon('eye') + '</i><span>' + D.esc(L.eyebrow) + '</span><b>' + D.esc(L.title) + '</b></div>'
+          +   '<div class="eos-head"><div class="eos-brow"><i>' + D.icon('eye') + '</i><span>' + D.esc(L.eyebrow) + '</span></div><b>' + D.esc(L.title) + '</b></div>'
           +   '<div class="eos-orb"><div class="eos-orb-in"></div><em class="eos-sync">' + D.esc(L.inTime) + '</em></div>'
           +   '<div class="eos-phase">' + D.esc(L.inhale) + '</div><div class="eos-hint">' + D.esc(L.hint) + '</div>'
           +   '<div class="eos-time"><b>' + dur + '</b><span>s</span></div>'

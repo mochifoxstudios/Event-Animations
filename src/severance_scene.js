@@ -114,11 +114,12 @@
           +   '<div class="sv-row sv-lp"><span>LEVEL POINTS</span><s class="sv-old"></s><b>0</b></div>'
           +   '<div class="sv-row sv-data"><span>DATA</span><s class="sv-old"></s><b>0</b></div>'
           +   '<p class="sv-cont">Your universe will continue in your absence.</p>'
-          +   '<button type="button" class="sv-fine-btn">* read the fine print</button>'
-          +   '<ol class="sv-fine">' + fine.map(function (f) { return '<li>' + D.esc(f) + '</li>'; }).join('') + '</ol>'
-          +   '<div class="sv-sign"><svg viewBox="0 0 260 80" aria-hidden="true"><path class="sv-sig" d="' + SIG + '"/></svg><span>' + D.esc(PP.you) + '</span></div>'
-          +   '<div class="sv-stamp sv-st-rev">REVISED</div><div class="sv-stamp sv-st-final">FINAL OFFER</div>'
-          +   '<div class="sv-stamp sv-st-ok">ACCEPTED</div><div class="sv-stamp sv-st-no">DECLINED</div>'
+          +   '<div class="sv-fine-row"><button type="button" class="sv-fine-btn" aria-expanded="false">* read the fine print</button>'
+          +     '<div class="sv-stamp sv-st-rev">REVISED</div><div class="sv-stamp sv-st-final">FINAL OFFER</div></div>'
+          +   '<div class="sv-fine"><b>THE FINE PRINT</b><ol>' + fine.map(function (f) { return '<li>' + D.esc(f) + '</li>'; }).join('') + '</ol>'
+          +     '<button type="button" class="sv-fine-close">BACK TO THE LETTER</button></div>'
+          +   '<div class="sv-sign"><svg viewBox="0 0 260 80" aria-hidden="true"><path class="sv-sig" d="' + SIG + '"/></svg><span>' + D.esc(PP.you) + '</span>'
+          +     '<div class="sv-stamp sv-st-ok">ACCEPTED</div><div class="sv-stamp sv-st-no">DECLINED</div></div>'
           + '</div></div><div class="sv-strips"></div>'
           + '<div class="sv-shredder"><i></i></div>'
           + '<div class="sv-defy"></div>'
@@ -164,12 +165,17 @@
         }
         function showOffer() { count($('.sv-lp b'), offer.lp); later(function () { count($('.sv-data b'), offer.data); }, 250); }
 
-        $('.sv-fine-btn').addEventListener('click', function (e) {
-            e.stopPropagation();
-            root.classList.toggle('sv-fine-open');
-            au.sfx('fine');
-            if (root.classList.contains('sv-fine-open')) log('Fine print: ' + fine.join(' '));
-        });
+        /* the fine print opens as its own sheet over the letter; it closes again before any stamp lands */
+        var fineBtn = $('.sv-fine-btn'), fineClose = $('.sv-fine-close');
+        function setFine(open, focus) {
+            if (open === root.classList.contains('sv-fine-open')) return;
+            root.classList.toggle('sv-fine-open', open);
+            fineBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (focus) { try { (open ? fineClose : fineBtn).focus({ preventScroll: true }); } catch (e) {} }
+            if (open) log('Fine print: ' + fine.join(' '));
+        }
+        fineBtn.addEventListener('click', function (e) { e.stopPropagation(); au.sfx('fine'); setFine(true, true); });
+        fineClose.addEventListener('click', function (e) { e.stopPropagation(); au.sfx('fine'); setFine(false, true); });
 
         function stamp(cls) { var s = $('.' + cls); D.replay(s, 'on'); au.sfx('stamp'); }
 
@@ -208,6 +214,7 @@
                 var row = D.choices(root, list);
                 action = await row.show();
                 var rows = root.querySelectorAll('.dks-actions'); rows.forEach(function (r) { r.remove(); });
+                setFine(false, false);
                 if (action !== 'ask') break;
 
                 /* ASK FOR MORE: on hold */
@@ -294,7 +301,7 @@
             var box = $('.sv-strips'), n = reduced ? 0 : 16;
             for (var i = 0; i < n; i++) {
                 var s = D.h('i', 'sv-strip');
-                s.style.left = (i * 42 + 6) + 'px';
+                s.style.left = (i * 58 + 10) + 'px';
                 s.style.setProperty('--rot', ((Math.random() - 0.5) * 24) + 'deg');
                 s.style.setProperty('--fall', (380 + Math.random() * 200) + 'px');
                 s.style.animationDelay = (300 + Math.random() * 900) + 'ms';

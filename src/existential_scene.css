@@ -25,7 +25,7 @@
 }
 .exs-counter span { display: inline-block; }
 .exs-counter.exs-tick { animation: exs-tick 0.25s ease-out; }
-.exs-counter-lbl { position: absolute; left: 0; right: 0; top: 610px; font-size: 20px; letter-spacing: 14px; opacity: 0.55; text-align: center; transition: opacity 0.6s; }
+.exs-counter-lbl { position: absolute; left: 0; right: 0; top: 620px; font-size: 30px; letter-spacing: 10px; opacity: 0.7; text-align: center; transition: opacity 0.6s; }
 .exs-s-glitch .exs-counter { animation: exs-glitch 0.9s steps(9) both; }
 .exs-s-glitch .exs-counter::before, .exs-s-glitch .exs-counter::after { content: attr(data-text); position: absolute; inset: 0; pointer-events: none; }
 .exs-s-glitch .exs-counter::before { color: #ff2a4a; opacity: 0.7; animation: exs-split-a 0.9s steps(6) both; }
@@ -39,36 +39,41 @@
 .exs-black { position: absolute; inset: 0; z-index: 9; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.4s ease-in; }
 .exs-s-black .exs-black { opacity: 1; transition: none; }
 
+/* shared shell chrome, sized for this scene's canvas */
+.dks.exs .dks-skip { font-size: 28px; letter-spacing: 3px; padding: 10px 20px; top: 20px; right: 24px; }
+.dks.exs .dks-hint { bottom: 24px; font-size: 26px; letter-spacing: 3px; opacity: 0.5; }
+
 /* ── 2 · the fall ───────────────────────────────────────────────────────── */
 .exs-s-fall .exs-counter span { animation: exs-digit-fall 2.4s cubic-bezier(.5,0,.8,.4) both; }
 .exs-s-fall .exs-counter-lbl { opacity: 0; }
+.exs-s-question .exs-counter { opacity: 0; transition: opacity 0.6s; }   /* safe mode: the digits cannot fall, so they fade */
 
 /* ── 3 · the question ───────────────────────────────────────────────────── */
 .exs-question { position: absolute; left: 140px; right: 140px; top: 230px; text-align: center; font-size: 76px; letter-spacing: 2px; color: #f6f4ff; line-height: 1.2; transition: transform 0.9s cubic-bezier(.3,1,.4,1), opacity 0.9s; }
 .exs-question span { display: inline-block; opacity: 0; transform: translateY(22px) scale(1.25); transition: opacity 0.5s, transform 0.6s cubic-bezier(.2,1.3,.4,1); }
 .exs-question span.on { opacity: 1; transform: none; }
-.exs-s-answers .exs-question { transform: translateY(-80px) scale(0.78); }
+.exs-s-answers .exs-question { transform: translateY(-50px) scale(0.86); }
 .exs-s-consequence .exs-question { opacity: 0.25; }
 .exs-whispers { position: absolute; inset: 0; pointer-events: none; }
 .exs-whisper { position: absolute; color: #b9b2d8; font-style: italic; letter-spacing: 3px; white-space: nowrap; animation: exs-whisper 5s ease-in-out both; }
 
 /* ── 4 · the answers ────────────────────────────────────────────────────── */
-.exs-choices { position: absolute; left: 150px; right: 150px; top: 420px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px; opacity: 0; pointer-events: none; transition: opacity 0.9s; }
+.exs-choices { position: absolute; left: 100px; right: 100px; top: 370px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; opacity: 0; pointer-events: none; transition: opacity 0.9s; }
 .exs-choices.dks-on { opacity: 1; pointer-events: auto; }
 .exs-s-consequence .exs-choices { opacity: 0; pointer-events: none; transition: opacity 0.6s 0.5s; }
 .exs-card {
-    position: relative; overflow: hidden; height: 360px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-    padding: 30px 26px; text-align: center;
+    position: relative; overflow: hidden; height: 430px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    padding: 30px 24px; text-align: center;
     font: inherit; color: #e6e3f4; background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
     border: 1px solid rgba(201, 195, 230, 0.18); border-radius: 6px;
     cursor: pointer; touch-action: none;
     transition: transform 0.5s cubic-bezier(.2,1.3,.4,1), opacity 0.6s, border-color 0.3s, box-shadow 0.3s;
 }
 .exs-choices.dks-on .exs-card { animation: exs-card-in 0.9s cubic-bezier(.2,1.2,.4,1) both; animation-delay: calc(var(--i) * 140ms); }
-.exs-card .g { font-size: 120px; line-height: 1; color: var(--c); filter: drop-shadow(0 0 22px var(--c)); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
-.exs-card .l { font-size: 30px; font-weight: 900; letter-spacing: 10px; color: var(--c); }
-.exs-card .d { font-size: 18px; letter-spacing: 1px; color: #a8a3bd; }
+.exs-card .g { font-size: 110px; line-height: 1; color: var(--c); filter: drop-shadow(0 0 22px var(--c)); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
+.exs-card .l { font-size: 40px; font-weight: 900; letter-spacing: 6px; color: var(--c); }
+.exs-card .d { font-size: 34px; line-height: 1.35; letter-spacing: 0; color: #c4bfd8; }
 .exs-card:hover, .exs-card:focus-visible { transform: translateY(-12px); border-color: var(--c); box-shadow: 0 30px 80px -30px var(--c); outline: none; }
 .exs-card:hover .g, .exs-card:focus-visible .g { transform: scale(1.15); }
 .exs-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background: linear-gradient(0deg, var(--c), transparent); opacity: 0.32; transform: scaleY(0); transform-origin: bottom; pointer-events: none; }
@@ -78,8 +83,8 @@
 .exs-picked .exs-fill { transform: scaleY(1); }
 .exs-gone { opacity: 0; transform: translateY(80px) rotate(var(--r, 4deg)); pointer-events: none; }
 .exs-card:nth-child(1).exs-gone { --r: -7deg; } .exs-card:nth-child(3).exs-gone { --r: -3deg; }
-.exs-hold-hint { position: absolute; left: 0; right: 0; top: 820px; text-align: center; font-size: 16px; letter-spacing: 8px; opacity: 0; transition: opacity 0.8s; }
-.exs-hold-hint.dks-on { opacity: 0.5; }
+.exs-hold-hint { position: absolute; left: 60px; right: 60px; top: 860px; text-align: center; font-size: 28px; letter-spacing: 4px; opacity: 0; transition: opacity 0.8s; }
+.exs-hold-hint.dks-on { opacity: 0.75; }
 .exs-close { position: absolute; inset: 0; z-index: 3; pointer-events: none; box-shadow: inset 0 0 300px 120px #000; opacity: 0; transition: opacity 1.1s; }
 .exs-holding-any .exs-close { opacity: 1; }
 
@@ -87,11 +92,11 @@
 .exs-result { position: absolute; left: 160px; right: 160px; top: 400px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
 .exs-gift { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--pick); animation: exs-slam 0.6s cubic-bezier(.2,1.6,.4,1) both; }
 .exs-gift b { position: relative; font-size: 190px; line-height: 0.9; letter-spacing: 4px; text-shadow: 0 0 60px var(--pick); }
-.exs-gift span { font-size: 24px; letter-spacing: 12px; font-weight: 900; }
+.exs-gift span { font-size: 30px; letter-spacing: 6px; font-weight: 900; }
 .exs-fx-power .exs-gift b { text-shadow: -6px 0 #ff2a4a, 6px 0 #2affe8, 0 0 60px var(--pick); }
-.exs-energy { font-size: 34px; letter-spacing: 6px; color: var(--pick); font-variant-numeric: tabular-nums; }
-.exs-marktext { max-width: 1100px; min-height: 1.6em; font-size: 30px; line-height: 1.6; color: #dcd8ec; font-style: italic; text-align: center; }
-.exs-continue { font-size: 22px; padding: 16px 44px; letter-spacing: 8px; color: var(--pick); animation: exs-rise 0.6s ease-out both; }
+.exs-energy { font-size: 52px; letter-spacing: 4px; color: var(--pick); font-variant-numeric: tabular-nums; }
+.exs-marktext { max-width: 1340px; min-height: 1.4em; font-size: 40px; line-height: 1.4; color: #dcd8ec; font-style: italic; text-align: center; }
+.dks.exs .exs-continue { font-size: 34px; padding: 18px 56px; letter-spacing: 6px; color: var(--pick); animation: exs-rise 0.6s ease-out both; }
 .exs-flash { position: absolute; inset: 0; z-index: 7; pointer-events: none; background: radial-gradient(circle at 50% 46%, #fff, var(--pick) 40%, transparent 75%); opacity: 0; }
 .exs-flash.on { animation: exs-flash 0.9s ease-out both; }
 
@@ -111,18 +116,18 @@
 .exs-figure { position: absolute; left: 50%; bottom: 0; width: 120px; height: 156px; margin-left: -60px; color: #1b1b22; z-index: 4; opacity: 0; transform: translateY(100%); transition: transform 1.6s cubic-bezier(.3,1.1,.5,1), opacity 1s; pointer-events: none; }
 .exs-figure svg { width: 100%; height: 100%; }
 .exs-fx-spot .exs-spot { opacity: 1; }
-.exs-fx-spot .exs-black { opacity: 0.55; transition: opacity 1.4s; }
+.exs-fx-spot .exs-black { opacity: 0.4; transition: opacity 1.4s; }
 .exs-fx-spot .exs-figure { opacity: 1; transform: translateY(8%); }
 .exs-fx-spot .exs-figure svg { animation: exs-tilt 1.2s 1.6s ease-in-out both; transform-origin: 50% 90%; }
 
 .exs-drain { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: #808080; mix-blend-mode: saturation; opacity: 0; transition: opacity 2.4s; }
 .exs-fx-void .exs-drain { opacity: 1; }
-.exs-acquire { position: relative; width: 300px; height: 300px; border-radius: 50%; border: 4px solid #ffcc55; display: flex; align-items: center; justify-content: center; color: #ffcc55; font-size: 30px; font-weight: 900; letter-spacing: 8px; box-shadow: 0 0 80px -20px #ffcc55; animation: exs-rise 0.8s ease-out both; }
+.exs-acquire { position: relative; width: 240px; height: 240px; border-radius: 50%; border: 4px solid #ffcc55; display: flex; align-items: center; justify-content: center; color: #ffcc55; font-size: 30px; font-weight: 900; letter-spacing: 8px; box-shadow: 0 0 80px -20px #ffcc55; animation: exs-rise 0.8s ease-out both; }
 .exs-acquire i { position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(115deg, transparent 47%, #fff 48%, #fff 49%, transparent 50%), linear-gradient(60deg, transparent 58%, #fff 59%, transparent 60%); opacity: 0; }
 .exs-acquire.cracked { opacity: 0.15; transition: opacity 1.2s 0.4s; }
 .exs-acquire.cracked i { opacity: 0.9; transition: opacity 0.05s; }
 .exs-fx-void .exs-gift b { font-size: 120px; }
-.exs-fx-void .exs-result { top: 230px; }
+.exs-fx-void .exs-result { top: 300px; }
 
 /* ── hover previews: the world leans toward the answer ─────────────────── */
 .exs-veil { position: absolute; inset: 0; z-index: 3; pointer-events: none; box-shadow: inset 0 0 260px 60px rgba(255, 30, 0, 0.6); opacity: 0; transition: opacity 0.6s; }

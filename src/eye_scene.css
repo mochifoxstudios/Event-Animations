@@ -26,7 +26,7 @@
 .eos-flash { position: absolute; inset: 0; background: #f0e8ff; opacity: 0; pointer-events: none; z-index: 6; }
 .eos-flash.on { animation: eos-flash 0.6s ease-out both; }
 .eos-alarm { position: absolute; left: 0; right: 0; top: 400px; text-align: center; display: flex; flex-direction: column; gap: 8px; z-index: 4; pointer-events: none; }
-.eos-alarm span { font-size: 22px; letter-spacing: 12px; color: #ff9aa8; }
+.eos-alarm span { font-size: 30px; letter-spacing: 8px; color: #ff9aa8; }
 .eos-alarm b { font-size: 150px; font-weight: 900; color: #ff4a6a; text-shadow: 0 0 40px rgba(255, 60, 90, 0.6); font-variant-numeric: tabular-nums; }
 .eos-s-storm .eos-alarm b { animation: eos-shake 0.15s steps(2) infinite; }
 .eos-s-eye .eos-alarm b { animation: none; color: #0a3350; text-shadow: none; }
@@ -50,39 +50,41 @@
 /* 3 · the calm: inside the eye */
 .eos-in { position: absolute; left: 510px; top: 90px; width: 900px; height: 900px; display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--calm); opacity: 0; z-index: 3; pointer-events: none; }
 .eos-s-calm .eos-in { opacity: 1; transition: opacity 0.8s; }
-.eos-head { margin-top: 96px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.eos-head i { font-style: normal; font-size: 46px; color: var(--calm-mid); }
-.eos-head span { font-size: 18px; letter-spacing: 10px; color: #1a6699; }
-.eos-head b { font-size: 46px; letter-spacing: 6px; font-weight: 900; }
-.eos-orb { position: relative; margin-top: 18px; width: 320px; height: 320px; transform: scale(0.62); }
+.eos-head { margin-top: 68px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* the eyebrow carries the eye icon inline; the title wraps to two lines so it fits the circle at 64 px */
+.eos-brow { display: flex; align-items: center; gap: 12px; }
+.eos-head i { font-style: normal; font-size: 34px; line-height: 1; color: var(--calm-mid); }
+.eos-head span { font-size: 28px; letter-spacing: 4px; color: #1a6699; }
+.eos-head b { max-width: 600px; font-size: 64px; line-height: 1.05; letter-spacing: 3px; font-weight: 900; }
+.eos-orb { position: relative; flex: none; margin-top: 8px; width: 280px; height: 280px; transform: scale(0.62); }
 .eos-s-calm .eos-orb { animation: eos-breathe 8s ease-in-out infinite; }
 .eos-orb-in { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 42% 38%, #ffffff, #cfe6fb 45%, #7fb2e0 100%);
     box-shadow: 0 0 60px 10px rgba(120, 180, 240, 0.5), inset 0 0 40px rgba(255, 255, 255, 0.8); transition: box-shadow 0.25s; }
 .eos-held .eos-orb-in { box-shadow: 0 0 110px 34px rgba(110, 190, 255, 0.85), inset 0 0 50px rgba(255, 255, 255, 1); }
-.eos-sync { position: absolute; left: -100px; right: -100px; top: 128px; font-style: normal; font-size: 40px; font-weight: 900; letter-spacing: 8px; color: #fff; text-shadow: 0 0 20px #3a8ad0, 0 0 4px #0a3350; opacity: 0; }
+.eos-sync { position: absolute; left: -120px; right: -120px; top: 108px; font-style: normal; font-size: 52px; line-height: 1.2; font-weight: 900; letter-spacing: 6px; color: #fff; text-shadow: 0 0 20px #3a8ad0, 0 0 4px #0a3350; opacity: 0; }
 .eos-sync.on { animation: eos-sync 1.4s ease-out both; }
-.eos-phase { margin-top: 6px; font-size: 34px; letter-spacing: 8px; font-weight: 300; opacity: 0; }
-.eos-hint { margin-top: 6px; font-size: 19px; letter-spacing: 2px; color: var(--calm-mid); opacity: 0; }
+.eos-phase { margin-top: 4px; font-size: 48px; line-height: 1.2; letter-spacing: 6px; font-weight: 400; opacity: 0; }
+.eos-hint { margin-top: 4px; max-width: 640px; font-size: 34px; line-height: 1.3; letter-spacing: 0.5px; color: var(--calm-mid); opacity: 0; }
 .eos-s-calm .eos-phase, .eos-s-calm .eos-hint { opacity: 1; transition: opacity 0.6s; }
-.eos-time { margin-top: auto; margin-bottom: 92px; display: flex; align-items: baseline; gap: 4px; color: #1a5577; }
-.eos-time b { font-size: 58px; font-weight: 900; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
-.eos-time span { font-size: 22px; }
+.eos-time { margin-top: auto; margin-bottom: 70px; display: flex; align-items: baseline; gap: 4px; color: #1a5577; }
+.eos-time b { font-size: 64px; font-weight: 900; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+.eos-time span { font-size: 32px; }
 
 /* the side panels, over the storm */
-.eos-left, .eos-right { position: absolute; top: 300px; width: 380px; display: flex; flex-direction: column; gap: 26px; opacity: 0; z-index: 3; }
-.eos-left { left: 70px; } .eos-right { right: 70px; }
+.eos-left, .eos-right { position: absolute; top: 230px; width: 420px; display: flex; flex-direction: column; gap: 22px; opacity: 0; z-index: 3; }
+.eos-left { left: 44px; } .eos-right { right: 44px; }
 .eos-s-eye .eos-left, .eos-s-eye .eos-right { opacity: 1; transition: opacity 0.8s 1.8s; }
-.eos-stat { display: flex; flex-direction: column; gap: 4px; }
-.eos-stat span { font-size: 15px; letter-spacing: 5px; color: rgba(234, 223, 245, 0.6); }
-.eos-stat b { font-size: 46px; font-weight: 800; color: #f4eeff; font-variant-numeric: tabular-nums; }
+.eos-stat { display: flex; flex-direction: column; gap: 2px; }
+.eos-stat span { font-size: 27px; letter-spacing: 3px; color: rgba(234, 223, 245, 0.72); }
+.eos-stat b { font-size: 60px; line-height: 1.1; font-weight: 800; color: #f4eeff; font-variant-numeric: tabular-nums; }
 .eos-stat b.eos-bump { animation: eos-bump 0.5s cubic-bezier(.3,1.6,.5,1); }
-.eos-stat s { font-size: 22px; color: rgba(234, 223, 245, 0.45); }
+.eos-stat s { font-size: 32px; color: rgba(234, 223, 245, 0.55); }
 .eos-instab { color: #9cd0ff !important; }
-.eos-left p { margin: 0; font-size: 20px; line-height: 1.6; color: rgba(234, 223, 245, 0.8); }
+.eos-left p { margin: 6px 0 0; font-size: 34px; line-height: 1.35; color: rgba(234, 223, 245, 0.88); }
 .eos-left p strong { color: #9cd0ff; }
-.eos-use { font: inherit; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding: 18px 24px; font-size: 24px; font-weight: 800; letter-spacing: 4px; color: #e6f2fc;
+.eos-use { font: inherit; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 12px; padding: 24px 30px; font-size: 34px; font-weight: 800; letter-spacing: 3px; color: #e6f2fc;
     background: rgba(156, 208, 255, 0.08); border: 2px solid rgba(156, 208, 255, 0.55); border-radius: 12px; cursor: pointer; text-align: left; }
-.eos-use small { font-size: 15px; font-weight: 400; letter-spacing: 2px; color: rgba(230, 242, 252, 0.6); }
+.eos-use small { font-size: 28px; font-weight: 400; letter-spacing: 1px; color: rgba(230, 242, 252, 0.75); }
 .eos-use:hover, .eos-use:focus-visible { background: rgba(156, 208, 255, 0.2); outline: none; }
 .eos-s-return .eos-use { visibility: hidden; }
 
@@ -95,16 +97,16 @@
 .dks.eos.eos-is-mini { pointer-events: none; }
 .eos-is-mini .eos-sky, .eos-is-mini .eos-walls, .eos-is-mini .eos-rain, .eos-is-mini .eos-eye, .eos-is-mini .eos-ring, .eos-is-mini .eos-in,
 .eos-is-mini .eos-left, .eos-is-mini .eos-right, .eos-is-mini .eos-alarm { opacity: 0 !important; transition: opacity 0.4s !important; }
-.eos-mini { position: absolute; right: 40px; bottom: 40px; width: 270px; padding: 18px; box-sizing: border-box; border-radius: 16px; background: rgba(230, 242, 252, 0.95); color: var(--calm);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(156, 208, 255, 0.4); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; transform: translateY(20px); pointer-events: none;
+.eos-mini { position: absolute; right: 40px; bottom: 40px; width: 420px; padding: 22px; box-sizing: border-box; border-radius: 16px; background: rgba(230, 242, 252, 0.95); color: var(--calm);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(156, 208, 255, 0.4); display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; transform: translateY(20px); pointer-events: none;
     transition: opacity 0.4s, transform 0.4s; z-index: 7; }
-.eos-mini svg { position: absolute; left: 50%; top: 18px; width: 130px; height: 130px; margin-left: -65px; transform: rotate(-90deg); }
+.eos-mini svg { position: absolute; left: 50%; top: 22px; width: 170px; height: 170px; margin-left: -85px; transform: rotate(-90deg); }
 .eos-mini-fg { stroke: #2a6fa8; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 276.5; }
 .eos-mini .eos-ring-bg { stroke: rgba(10, 51, 80, 0.12); stroke-width: 7; }
-.eos-mini-t { height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.eos-mini-t b { font-size: 46px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
-.eos-mini-t span { font-size: 16px; letter-spacing: 3px; color: var(--calm-mid); }
-.eos-back { font: inherit; font-size: 14px; font-weight: 800; letter-spacing: 3px; padding: 10px 14px; color: var(--calm); background: transparent; border: 1.5px solid var(--calm-mid); border-radius: 8px; cursor: pointer; }
+.eos-mini-t { height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.eos-mini-t b { font-size: 60px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.eos-mini-t span { margin-top: 4px; font-size: 28px; letter-spacing: 2px; color: var(--calm-mid); }
+.eos-back { font: inherit; width: 100%; font-size: 30px; font-weight: 800; letter-spacing: 2px; padding: 16px 12px; color: var(--calm); background: transparent; border: 1.5px solid var(--calm-mid); border-radius: 8px; cursor: pointer; }
 .eos-back:hover, .eos-back:focus-visible { background: rgba(42, 102, 136, 0.12); outline: none; }
 .eos-is-mini .eos-mini { opacity: 1; transform: none; pointer-events: auto; }
 
@@ -112,17 +114,21 @@
 .eos-s-return .eos-eye { transform: scale(0.01); opacity: 0; transition: transform 1.2s cubic-bezier(.6,0,.8,.4), opacity 0.6s 0.7s; }
 .eos-s-return .eos-in, .eos-s-return .eos-left, .eos-s-return .eos-right, .eos-s-return .eos-ring { opacity: 0; transition: opacity 0.4s; }
 .eos-s-return .eos-rain { opacity: 1; }
-.eos-s-return .eos-alarm { opacity: 1; top: 230px; }
+.eos-s-return .eos-alarm { opacity: 1; top: 190px; }
 .eos-s-return .eos-alarm b { color: #ff4a6a; text-shadow: 0 0 40px rgba(255, 60, 90, 0.6); }
 .eos-s-return .eos-alarm span { color: #ff9aa8; }
-.eos-end { position: absolute; left: 0; right: 0; top: 640px; text-align: center; display: flex; flex-direction: column; gap: 10px; opacity: 0; z-index: 5; pointer-events: none; }
-.eos-end b { font-size: 44px; letter-spacing: 12px; color: #9cd0ff; }
-.eos-end span { font-size: 24px; letter-spacing: 4px; color: var(--storm-ink); }
-.eos-end em { font-style: normal; font-size: 18px; letter-spacing: 4px; color: rgba(234, 223, 245, 0.6); }
+.eos-end { position: absolute; left: 0; right: 0; top: 560px; text-align: center; display: flex; flex-direction: column; gap: 14px; opacity: 0; z-index: 5; pointer-events: none; }
+.eos-end b { font-size: 72px; line-height: 1.1; letter-spacing: 8px; color: #9cd0ff; }
+.eos-end span { font-size: 42px; letter-spacing: 2px; color: var(--storm-ink); }
+.eos-end em { font-style: normal; font-size: 30px; letter-spacing: 3px; color: rgba(234, 223, 245, 0.75); }
 .eos-s-return .eos-end { opacity: 1; animation: eos-rise 0.8s 0.6s both; }
 
-.dks.eos .dks-actions { position: absolute; left: 0; right: 0; top: 920px; z-index: 8; }
-.dks.eos .dks-btn { font-family: inherit; font-size: 20px; padding: 14px 44px; letter-spacing: 6px; color: #9cd0ff; border-color: rgba(156, 208, 255, 0.5); }
+.dks.eos .dks-actions { position: absolute; left: 0; right: 0; top: 880px; margin: 0; z-index: 8; }
+.dks.eos .dks-btn { font-family: inherit; font-size: 34px; padding: 20px 64px; letter-spacing: 5px; border-radius: 10px; color: #9cd0ff; border-color: rgba(156, 208, 255, 0.5); }
+
+/* the shared SKIP button and hurry hint, at a readable size on this canvas */
+.dks.eos .dks-skip { top: 24px; right: 28px; font-size: 26px; letter-spacing: 3px; padding: 8px 16px; border-color: rgba(234, 223, 245, 0.4); }
+.dks.eos .dks-hint { bottom: 16px; font-size: 26px; letter-spacing: 2px; opacity: 0.5; }
 
 @keyframes eos-spin    { to { transform: rotate(360deg); } }
 @keyframes eos-rain    { from { transform: translateY(0); } to { transform: translateY(120px); } }
