@@ -138,7 +138,7 @@
           +     '<div class="cr-pct">' + D.esc(L.pct.replace('{p}', 0)) + '</div>'
           +     '<div class="cr-low"><div class="cr-qr">' + qr() + '</div><div class="cr-text">'
           +       '<div class="cr-info"></div><div class="cr-pokes"></div>'
-          +       '<div class="cr-link">For more information about this issue and possible fixes, visit<br>https://simulation.local/error/' + V.code + '</div></div></div>'
+          +       '<div class="cr-link">For more information: simulation.local/error/' + V.code + '</div></div></div>'
           +     '<div class="cr-bonus"></div>'
           +   '</div>'
           + '</div>'
