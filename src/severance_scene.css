@@ -99,13 +99,13 @@
 .sv-sig { fill: none; stroke: #1b3c8a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 700; stroke-dashoffset: 700; }
 .sv-s-sign .sv-sig { stroke-dashoffset: 0; transition: stroke-dashoffset 1s cubic-bezier(.5,0,.5,1); }
 .sv-stamp { position: absolute; right: 54px; top: 300px; padding: 8px 20px; border: 5px solid; border-radius: 6px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 40px; font-weight: 900; letter-spacing: 6px;
-    transform: rotate(-12deg); opacity: 0; mix-blend-mode: multiply; pointer-events: none; }
+    transform: rotate(-12deg); opacity: 0; pointer-events: none; background: rgba(236, 230, 216, 0.35); }   /* no blend mode: blending an animating layer made the letter's text blink out */
 .sv-stamp.on { opacity: 0.85; animation: sv-stamp 0.35s cubic-bezier(.3,1.6,.5,1) both; }
 .sv-st-rev, .sv-st-final { top: 630px; right: auto; left: 60px; font-size: 28px; }
 .sv-st-rev { color: #2c8a52; }
 .sv-st-final { color: #9a6a10; }
 .sv-st-ok { color: #2c8a52; top: 720px; right: 40px; font-size: 46px; }
-.sv-st-no { color: #c0303a; top: 470px; right: 80px; font-size: 64px; }
+.sv-st-no { color: #c0303a; top: 640px; right: 70px; font-size: 64px; }   /* the blank space under the fine print: it never covers a line */
 
 /* 5b · into the shredder */
 .sv-shredder { position: absolute; left: 1130px; top: 962px; width: 740px; height: 34px; border-radius: 6px; background: #1a2230; border: 1px solid #344258; opacity: 0; transition: opacity 0.3s; }
@@ -143,7 +143,7 @@
 @keyframes sv-nod   { 50% { transform: translateY(4px) rotate(0.6deg); } }
 @keyframes sv-spin  { to { transform: rotate(360deg); } }
 @keyframes sv-rise  { from { opacity: 0; transform: translateY(12px); } }
-@keyframes sv-stamp { from { opacity: 0; transform: rotate(-12deg) scale(2.2); } }
+@keyframes sv-stamp { from { opacity: 0; transform: rotate(-12deg) scale(1.6); } }
 @keyframes sv-feed  { to { transform: translateY(940px); } }
 @keyframes sv-strip { 0% { opacity: 0; transform: translateY(0) rotate(0); } 15% { opacity: 1; } 100% { opacity: 0; transform: translateY(var(--fall)) rotate(var(--rot)); } }
 @keyframes sv-crt   { 0% { transform: scale(1, 1); opacity: 1; } 60% { transform: scale(1, 0.004); opacity: 1; } 100% { transform: scale(0, 0.004); opacity: 0; } }
