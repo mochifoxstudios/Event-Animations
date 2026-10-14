@@ -22,7 +22,7 @@
 
     var S = {};
 
-    /* ↯ QUANTUM SURGE — A major */
+    /* QUANTUM SURGE — A major */
     S.surge = { bpm: 128, voices: [],
         cues: {
             main: function (A, t, s, bar) {
@@ -41,7 +41,7 @@
         }
     };
 
-    /* ◎ DATA STORM — C minor; catching climbs the pentatonic */
+    /* DATA STORM — C minor; catching climbs the pentatonic */
     var CATCH = [60, 63, 65, 67, 70, 72, 75, 77, 79, 82, 84];
     S.storm = { bpm: 116, voices: [],
         cues: {
@@ -64,7 +64,7 @@
         }
     };
 
-    /* ⊘ WALKER STRIKE — D minor march, then D major when it is settled */
+    /* WALKER STRIKE — D minor march, then D major when it is settled */
     var CHANT = [{ f: 180, type: 'sawtooth', formant: 900, q: 3, up: 1.1, down: 0.9, len: 0.16, gain: 0.2 },
                  { f: 240, type: 'sawtooth', formant: 1100, q: 3, up: 1.1, down: 0.9, len: 0.16, gain: 0.18 }];
     S.strike = { bpm: 104, voices: CHANT,
@@ -87,7 +87,7 @@
         }
     };
 
-    /* ≋ MOMENTUM CASCADE — B♭ major; the clicks are the tune */
+    /* MOMENTUM CASCADE — B♭ major; the clicks are the tune */
     var RUN = [70, 72, 74, 77, 79, 82, 84, 86, 89, 91];
     S.cascade = { bpm: 150, voices: [],
         cues: {
@@ -107,7 +107,7 @@
         }
     };
 
-    /* ☠ CORRUPT PACKET — E♭ minor */
+    /* CORRUPT PACKET — E♭ minor */
     S.corrupt = { bpm: 110, voices: [],
         cues: {
             main: function (A, t, s, bar) {
@@ -128,7 +128,7 @@
         }
     };
 
-    /* ❄ TIME FREEZE — F♯ major music box */
+    /* TIME FREEZE — F♯ major music box */
     var ICE = [78, 80, 82, 85, 87, 90, 92, 94, 97];
     S.freeze = { bpm: 72, voices: [],
         cues: {
@@ -147,7 +147,7 @@
         }
     };
 
-    /* ⌫ MEMORY PURGE — C♯ minor */
+    /* MEMORY PURGE — C♯ minor */
     S.purge = { bpm: 124, voices: [],
         cues: {
             main: function (A, t, s, bar) {

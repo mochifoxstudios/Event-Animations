@@ -19,7 +19,7 @@
                     The last 10 seconds, the walls close in and the wind returns.
      4 THE RETURN   the eye closes, thunder: "SYSTEM ALIGNMENT ENDED".
 
-   ⭐ All of it is data: opts.duration, opts.mult, opts.calm { base, perBreath, min },
+   All of it is data: opts.duration, opts.mult, opts.calm { base, perBreath, min },
       opts.breath (ms per half-breath), opts.lines, opts.choices. See docs/EYE_OF_THE_STORM.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -83,7 +83,7 @@
           + '<div class="eos-flash"></div>'
           + '<div class="eos-alarm"><span>INSTABILITY</span><b>' + before + '%</b></div>'
           + '<div class="eos-in">'
-          +   '<div class="eos-head"><i>◉</i><span>' + D.esc(L.eyebrow) + '</span><b>' + D.esc(L.title) + '</b></div>'
+          +   '<div class="eos-head"><i>' + D.icon('eye') + '</i><span>' + D.esc(L.eyebrow) + '</span><b>' + D.esc(L.title) + '</b></div>'
           +   '<div class="eos-orb"><div class="eos-orb-in"></div><em class="eos-sync">' + D.esc(L.inTime) + '</em></div>'
           +   '<div class="eos-phase">' + D.esc(L.inhale) + '</div><div class="eos-hint">' + D.esc(L.hint) + '</div>'
           +   '<div class="eos-time"><b>' + dur + '</b><span>s</span></div>'

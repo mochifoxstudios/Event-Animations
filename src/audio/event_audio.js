@@ -273,7 +273,7 @@
             osc('square', mf(m + 24), t, t + 0.02, cg);
         };
         /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
-           ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
+           Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
            and under a minor or a hollow chord that third was measured clashing (C♯ against
            an F major 7's C; a C♯ turning VOID's open fifth into A major). */
         I.warm = function (t, m, dur, v, bus, slideTo) {

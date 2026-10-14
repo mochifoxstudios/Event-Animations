@@ -18,7 +18,7 @@
      5b DECLINED    stamped, shredded. Dana leaves the call. Legal unmutes for
                     one word.
 
-   ⭐ All of it is data: opts.offer, opts.lines, opts.fine, opts.negotiate,
+   All of it is data: opts.offer, opts.lines, opts.fine, opts.negotiate,
       opts.labels, opts.people. See docs/SEVERANCE_PACKAGE.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -98,7 +98,7 @@
           + '<div class="sv-invite"><div class="sv-inv-top"><i></i>CALENDAR</div><b>Quick chat</b><span>Simulation Overseers · Human Resources</span><span>Now · 5 min · Required</span>'
           +   '<em class="sv-inv-ok">ACCEPTED AUTOMATICALLY</em></div>'
           + '<div class="sv-call">'
-          +   '<div class="sv-bar"><span class="sv-rec">● REC</span><span class="sv-title">Quick chat</span><span class="sv-clock">00:00</span></div>'
+          +   '<div class="sv-bar"><span class="sv-rec">' + D.icon('dot') + ' REC</span><span class="sv-title">Quick chat</span><span class="sv-clock">00:00</span></div>'
           +   '<div class="sv-main"><div class="sv-fig-wrap">' + FIGURE + '</div><div class="sv-ring"></div>'
           +     '<div class="sv-holdcard"><b>ON HOLD</b><span>' + D.esc(L.hold) + '</span><i class="sv-spin"></i></div>'
           +     '<div class="sv-left">' + D.esc(PP.rep) + ' has left the meeting</div>'
@@ -108,7 +108,7 @@
           +   '<div class="sv-cap"><b></b><span></span></div>'
           + '</div>'
           + '<div class="sv-letter"><div class="sv-paper">'
-          +   '<div class="sv-lh"><div class="sv-seal">◈</div><div><b>OFFICE OF THE SIMULATION OVERSEERS</b><span>Human Resources · Voluntary Separation</span></div></div>'
+          +   '<div class="sv-lh"><div class="sv-seal">' + D.icon('gem') + '</div><div><b>OFFICE OF THE SIMULATION OVERSEERS</b><span>Human Resources · Voluntary Separation</span></div></div>'
           +   '<div class="sv-re">RE: SEVERANCE PACKAGE</div>'
           +   '<p>Dear ' + D.esc(PP.you) + ',</p><p>In exchange for stepping away, you will receive:</p>'
           +   '<div class="sv-row sv-lp"><span>LEVEL POINTS</span><s class="sv-old"></s><b>0</b></div>'
@@ -255,7 +255,7 @@
                 au.sfx('leave');
                 root.classList.add('sv-s-off');
                 au.sfx('power_down');
-                $('.sv-next-amt').textContent = '◈ SEVERANCE PACKAGE RECEIVED  +' + D.fmt(offer.lp) + ' LP  +' + D.fmt(offer.data) + ' DATA';
+                $('.sv-next-amt').innerHTML = D.icon('gem') + ' ' + D.esc('SEVERANCE PACKAGE RECEIVED  +' + D.fmt(offer.lp) + ' LP  +' + D.fmt(offer.data) + ' DATA');
                 log(L.ended + '. ' + L.endedSub);
                 await sleep(2600);
                 root.classList.add('sv-s-next');

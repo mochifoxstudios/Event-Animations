@@ -26,7 +26,7 @@
 .wx-chip { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; position: relative; }
 .wx-chip em { font-style: normal; font-size: 14px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); }
 .wx-chip b { font-size: 30px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
-.wx-chip .wx-lock { position: absolute; right: -34px; top: 22px; font-style: normal; font-size: 22px; }
+.wx-chip .wx-lock { position: absolute; right: -34px; top: 22px; font-style: normal; font-size: 22px; color: #ffcc66; }
 .wx-time { display: flex; align-items: baseline; gap: 2px; min-width: 90px; justify-content: flex-end; }
 .wx-time b { font-size: 46px; font-weight: 900; color: var(--wx); font-variant-numeric: tabular-nums; }
 .wx-time span { font-size: 18px; color: rgba(255, 255, 255, 0.6); }
@@ -38,24 +38,24 @@
 .wx-spark { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--wx); box-shadow: 0 0 10px var(--wx); animation: wx-spark 0.7s ease-out forwards; }
 .wx-float { position: absolute; transform: translate(-50%, -50%); font-size: 30px; font-weight: 900; color: #fff; text-shadow: 0 0 14px var(--wx); animation: wx-floatup 1.2s ease-out forwards; }
 
-/* ↯ QUANTUM SURGE */
+/* QUANTUM SURGE */
 .wx-ring { position: absolute; left: 860px; top: 460px; width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--wx); box-shadow: 0 0 40px var(--wx), inset 0 0 40px var(--wx); animation: wx-ring 1.3s ease-out both; }
 .wx-ring:nth-child(2) { animation-delay: 0.15s; } .wx-ring:nth-child(3) { animation-delay: 0.3s; }
 .wx-surge .wx-amb { box-shadow: inset 0 0 160px -20px rgba(68, 255, 204, 0.55); animation: wx-glow 1.4s ease-in-out infinite; }
 .wx-streak { position: absolute; bottom: -140px; width: 3px; height: 140px; border-radius: 2px; background: linear-gradient(transparent, var(--wx)); animation: wx-rise linear infinite; opacity: 0.8; }
 
-/* ◎ DATA STORM */
+/* DATA STORM */
 .wx-static { position: absolute; left: 0; right: 0; top: 0; height: 1080px; background: repeating-linear-gradient(rgba(170, 170, 255, 0.25) 0 2px, transparent 2px 7px, rgba(255, 255, 255, 0.12) 7px 8px, transparent 8px 15px);
     animation: wx-sweep 0.9s ease-out both; }
 .wx-orb { position: absolute; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border-radius: 50%; border: 2px solid rgba(190, 190, 255, 0.95); cursor: pointer; pointer-events: auto;
     background: radial-gradient(circle, #e0e0ff 0%, #9a9aff 35%, rgba(80, 80, 220, 0.35) 100%); box-shadow: 0 0 26px rgba(150, 150, 255, 0.95);
     display: flex; align-items: center; justify-content: center; color: #fff; animation: wx-orb 9s ease-out forwards; transition: opacity 0.4s; }
-.wx-orb i { font-style: normal; font-size: 30px; text-shadow: 0 0 8px #33f; }
+.wx-orb i { font-style: normal; font-size: 30px; line-height: 1; filter: drop-shadow(0 0 4px #33f); }
 .wx-orb:hover, .wx-orb:focus-visible { outline: none; box-shadow: 0 0 40px #fff; }
 .wx-orb.wx-gone { opacity: 0; pointer-events: none; }
 .wx-spark-storm { background: #bbbbff; }
 
-/* ⊘ WALKER STRIKE */
+/* WALKER STRIKE */
 .wx-red { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(255, 30, 60, 0.45)); animation: wx-fadein 0.3s both; }
 .wx-stamp { position: absolute; left: 0; right: 0; top: 420px; text-align: center; font-size: 170px; font-weight: 900; letter-spacing: 30px; color: transparent; -webkit-text-stroke: 6px #ff5566; transform: rotate(-6deg); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-tint { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(40, 0, 10, 0.08), rgba(60, 0, 15, 0.45)); transition: opacity 1s; }
@@ -70,20 +70,20 @@
 .wx-striker:nth-child(even) .wx-sign { transform: rotate(5deg); animation-delay: 0.3s; }
 .wx-striker:hover .wx-sign, .wx-striker:focus-visible .wx-sign { background: #fff; outline: none; }
 .wx-striker:focus-visible { outline: 3px solid #ff5566; outline-offset: 4px; }
-.wx-cup { position: absolute; left: 92px; top: 150px; font-style: normal; font-size: 40px; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
+.wx-cup { position: absolute; left: 92px; top: 150px; font-style: normal; font-size: 40px; color: #f4ecd8; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
 .wx-striker.wx-ok { pointer-events: none; transform: translateX(700px); opacity: 0; }
 .wx-striker.wx-ok .wx-cup { opacity: 1; transform: none; }
 .wx-striker.wx-ok .wx-sign { animation: none; opacity: 0; transform: rotate(70deg) translateY(60px); }
 
-/* ≋ MOMENTUM CASCADE */
-.wx-chev { position: absolute; top: -160px; font-style: normal; font-size: 130px; font-weight: 900; color: var(--wx); text-shadow: 0 0 30px var(--wx); animation: wx-fall 1.3s cubic-bezier(.5,0,.8,.6) both; }
+/* MOMENTUM CASCADE */
+.wx-chev { position: absolute; top: -160px; font-style: normal; font-size: 130px; line-height: 1; color: var(--wx); filter: drop-shadow(0 0 16px var(--wx)); animation: wx-fall 1.3s cubic-bezier(.5,0,.8,.6) both; }
 .wx-cascade .wx-amb { box-shadow: inset 0 0 140px -30px rgba(255, 170, 68, 0.6); animation: wx-glow 0.4s ease-in-out infinite; }
 .wx-spark-cascade { background: #ffcc66; box-shadow: 0 0 12px #ff8a20; }
 
-/* ☠ CORRUPT PACKET */
+/* CORRUPT PACKET */
 .wx-blk { position: absolute; background: #ff3366; mix-blend-mode: screen; opacity: 0; animation: wx-glitch 0.12s steps(2) 8 both; }
 .wx-blk:nth-child(3n) { background: #33ffee; } .wx-blk:nth-child(3n+1) { background: #fff; }
-.wx-skull { position: absolute; left: 0; right: 0; top: 340px; text-align: center; font-size: 300px; line-height: 1; color: var(--wx); text-shadow: 0 0 60px var(--wx); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
+.wx-skull { position: absolute; left: 0; right: 0; top: 340px; text-align: center; font-size: 300px; line-height: 1; color: var(--wx); filter: drop-shadow(0 0 30px var(--wx)); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-burst { position: absolute; left: 0; right: 0; top: 720px; text-align: center; font-size: 96px; font-weight: 900; color: #fff; text-shadow: 0 0 40px var(--wx); animation: wx-burst 2.2s ease-out forwards; }
 .wx-card { position: absolute; left: 60px; top: 330px; width: 600px; padding: 22px 26px; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 14px 20px; align-items: center;
     background: rgba(20, 0, 8, 0.94); border: 2px solid var(--wx); border-radius: 12px; box-shadow: 0 0 40px -6px var(--wx); animation: wx-in 0.35s both; transition: opacity 0.8s, border-color 0.3s; }
@@ -98,7 +98,7 @@
 .wx-card.wx-lost b { color: #ff6a80; animation: wx-shake 0.1s steps(2) 6; }
 .wx-card.wx-fade { opacity: 0; }
 
-/* ❄ TIME FREEZE */
+/* TIME FREEZE */
 .wx-flash { position: absolute; inset: 0; background: #dff4ff; animation: wx-flashout 0.8s ease-out both; }
 .wx-frost { position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 52%, transparent 55%, rgba(190, 230, 255, 0.35) 75%, rgba(225, 245, 255, 0.75) 100%);
     animation: wx-frost 1.4s ease-out both; transition: opacity 1s; }
@@ -106,7 +106,7 @@
 .wx-flake { position: absolute; top: -60px; font-style: normal; font-size: 26px; color: rgba(230, 245, 255, 0.75); animation: wx-snow linear infinite; }
 .wx-spark-ice { background: #e8f8ff; box-shadow: 0 0 12px #88ddff; border-radius: 2px; }
 
-/* ⌫ MEMORY PURGE */
+/* MEMORY PURGE */
 .wx-del { position: absolute; left: 0; right: 0; top: 380px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .wx-num { font-family: 'Courier New', monospace; font-size: 150px; font-weight: 900; color: #fff; text-shadow: 0 0 40px var(--wx); min-height: 170px; }
 .wx-line { display: flex; align-items: center; gap: 10px; }

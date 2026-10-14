@@ -19,7 +19,7 @@
                         CRASH DIVIDEND ×25 EPS for 30 minutes, "only accessible
                         through system failure". The gap cools shut in 20 s.
 
-   ⭐ All of it is data: opts.lines (every string), opts.info (stop-code lines),
+   All of it is data: opts.lines (every string), opts.info (stop-code lines),
       opts.bonus, opts.window, opts.pokes, opts.choices. See docs/CRASH_SCREENS.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -67,7 +67,7 @@
                 revealTitle: 'Thermal event contained. Nothing crashed.<br>The simulation kept one thing from the wreckage.',
                 revealPct: 'RECOVERED',
                 behind: 'BEHIND THE CRASH SCREEN',
-                claim: '◈ CLAIM CRASH DIVIDEND · ×25 EPS (30 min)',
+                claim: 'CLAIM CRASH DIVIDEND · ×25 EPS (30 min)',
                 only: 'ONLY ACCESSIBLE THROUGH SYSTEM FAILURE',
                 cooling: 'THE GAP IS COOLING',
                 dismiss: 'DISMISS CRASH SCREEN',
@@ -145,7 +145,7 @@
           + (thermal ? '<div class="cr-core">'
           +   '<div class="cr-behind">' + D.esc(L.behind) + '</div>'
           +   '<div class="cr-orb"><i></i><i></i><b>×25</b></div>'
-          +   '<button type="button" class="cr-claim">' + D.esc(L.claim) + '</button>'
+          +   '<button type="button" class="cr-claim">' + D.icon('gem') + ' ' + D.esc(L.claim) + '</button>'
           +   '<div class="cr-only">' + D.esc(L.only) + '</div>'
           +   '<div class="cr-cool"><span>' + D.esc(L.cooling) + '</span><i><s></s></i></div>'
           +   '<button type="button" class="cr-dismiss">' + D.esc(L.dismiss) + '</button>'

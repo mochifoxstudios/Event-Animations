@@ -22,7 +22,7 @@
        you steal, they share   +40%   (you take the pool)
        you share, they steal   −10%   (they take your stake)
        both steal              nothing, and +10% instability
-   ⭐ All of it is data: opts.opponents, opts.opponent, opts.payoffs, opts.time.
+   All of it is data: opts.opponents, opts.opponent, opts.payoffs, opts.time.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -101,14 +101,14 @@
           + '<div class="pd-side pd-you"><div class="pd-tag">YOU</div><div class="pd-name">OPERATOR 15</div>'
           +   '<div class="pd-stat"><span>YOUR STAKE</span><b>' + D.esc(D.fmt(pool / 2)) + ' E</b></div>'
           +   '<div class="pd-stat"><span>LAST TIME</span><b>' + (st._pdLast ? (st._pdLast === 'S' ? 'shared' : 'stole') : 'first contact') + '</b></div>'
-          +   '<div class="pd-card pd-card-you"><div class="pd-card-in"><div class="pd-back">◈</div><div class="pd-front"></div></div></div></div>'
+          +   '<div class="pd-card pd-card-you"><div class="pd-card-in"><div class="pd-back">' + D.icon('gem') + '</div><div class="pd-front"></div></div></div></div>'
           + '<div class="pd-side pd-them"><div class="pd-tag">THEM</div><div class="pd-name">' + D.esc(op.name) + '</div>'
           +   '<div class="pd-avatar">' + AVATAR + '</div>'
           +   '<div class="pd-stat"><span>TRUST RATING</span><b>' + trustTxt + '</b><i class="pd-trust"><s style="transform:scaleX(' + ((op.trust || 50) / 100) + ')"></s></i></div>'
           +   '<div class="pd-stat"><span>RECORD</span><b>' + D.esc(recTxt) + '</b></div>'
           +   '<div class="pd-chat"></div>'
           +   '<div class="pd-mini"><span class="ms">SHARE</span><span class="mt">STEAL</span><div class="pd-ghost">' + CURSOR + '</div></div>'
-          +   '<div class="pd-card pd-card-them"><div class="pd-card-in"><div class="pd-back">◈</div><div class="pd-front"></div></div></div></div>'
+          +   '<div class="pd-card pd-card-them"><div class="pd-card-in"><div class="pd-back">' + D.icon('gem') + '</div><div class="pd-front"></div></div></div></div>'
           + '<div class="pd-pool"><div class="pd-orb"></div><div class="pd-pool-amt"><span>THE POOL</span><b>' + D.esc(D.fmt(pool)) + ' E</b></div></div>'
           + '<div class="pd-grid">'
           +   '<div class="pd-gh"></div><div class="pd-gh">THEY SHARE</div><div class="pd-gh">THEY STEAL</div>'

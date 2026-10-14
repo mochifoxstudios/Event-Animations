@@ -8,23 +8,23 @@
      · RUNS with its own effect on the board and its own music;
      · ENDS with the banner reporting what came of it, then leaves.
 
-     ↯ QUANTUM SURGE     +300% output for 20 s. Energy streams up the edges; the
+     QUANTUM SURGE       +300% output for 20 s. Energy streams up the edges; the
                          banner counts the extra.
-     ◎ DATA STORM        7 orbs drift over the board for 14 s. Catch them; every
+     DATA STORM          7 orbs drift over the board for 14 s. Catch them; every
                          catch is the next note up.
-     ⊘ WALKER STRIKE     City PP stops for 16 s. Strikers march in with signs.
+     WALKER STRIKE       City PP stops for 16 s. Strikers march in with signs.
                          NEW: click one to talk them down (coffee); settle all
                          six and the strike ends early.
-     ≋ MOMENTUM CASCADE  combo locked at ×4 for 10 s. Your clicks play the tune.
-     ☠ CORRUPT PACKET    a burst of 30 s of output, but ~5% of one generator is
+     MOMENTUM CASCADE  combo locked at ×4 for 10 s. Your clicks play the tune.
+     CORRUPT PACKET      a burst of 30 s of output, but ~5% of one generator is
                          corrupted. NEW: QUARANTINE within 3 s and you lose half.
-     ❄ TIME FREEZE       12 s: passive income stops, only clicks count. Frost
+     TIME FREEZE         12 s: passive income stops, only clicks count. Frost
                          grows in; every click is a crystal.
-     ⌫ MEMORY PURGE      energy halved (the number is visibly deleted), then
+     MEMORY PURGE        energy halved (the number is visibly deleted), then
                          output ×2 for 30 s. NEW: every click restores a 1% fragment
                          of what was purged, up to half; a bar shows what you won back.
 
-   ⭐ All of it is data: opts.event, opts.dur, opts.lines, opts.signs, opts.victim,
+   All of it is data: opts.event, opts.dur, opts.lines, opts.signs, opts.victim,
       opts.orbs, and the callbacks below. See docs/WORLD_EVENTS.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -35,14 +35,14 @@
     var WALKER = '<svg viewBox="0 0 60 120" aria-hidden="true"><circle cx="30" cy="16" r="9" class="wx-wk"/><path d="M30 26v38M30 64l-12 40M30 64l12 40M30 36l-16 16M30 36l14-12" class="wx-wkl"/></svg>';
 
     var EVENTS = {
-        surge: { icon: '↯', label: 'QUANTUM SURGE', color: '#44ffcc', dur: 20, detail: 'ANOMALOUS OUTPUT · +300% throughput', mult: 3 },
-        storm: { icon: '◎', label: 'DATA STORM', color: '#aaaaff', dur: 14, detail: 'PACKET BREACH · absorb stray data', orbs: 7 },
-        strike: { icon: '⊘', label: 'WALKER STRIKE', color: '#ff5566', dur: 16, detail: 'SUBJECT UNREST · City PP offline',
+        surge: { icon: 'bolt', label: 'QUANTUM SURGE', color: '#44ffcc', dur: 20, detail: 'ANOMALOUS OUTPUT · +300% throughput', mult: 3 },
+        storm: { icon: 'target', label: 'DATA STORM', color: '#aaaaff', dur: 14, detail: 'PACKET BREACH · absorb stray data', orbs: 7 },
+        strike: { icon: 'ban', label: 'WALKER STRIKE', color: '#ff5566', dur: 16, detail: 'SUBJECT UNREST · City PP offline',
                   signs: ['ON STRIKE', 'FAIR CYCLES', 'WE ARE NOT NPCs', 'REST IS A RIGHT', 'NO MORE LOOPS', 'PP ≠ PEOPLE'] },
-        cascade: { icon: '≋', label: 'MOMENTUM CASCADE', color: '#ffaa44', dur: 10, detail: 'Rapid clicking detected · combo locked at OVERDRIVE ×4' },
-        corrupt: { icon: '☠', label: 'CORRUPT PACKET', color: '#ff3366', dur: 12, detail: 'RISK EVENT · +500% output, one asset corrupting', window: 3 },
-        freeze: { icon: '❄', label: 'TIME FREEZE', color: '#88ddff', dur: 12, detail: 'TEMPORAL ANOMALY · only clicks register' },
-        purge: { icon: '⌫', label: 'MEMORY PURGE', color: '#33c8ff', dur: 30, detail: 'RISK EVENT · energy halved, output ×2 · click to recover fragments', sting: 2800, fragment: 0.01, cap: 0.5 }
+        cascade: { icon: 'waves', label: 'MOMENTUM CASCADE', color: '#ffaa44', dur: 10, detail: 'Rapid clicking detected · combo locked at OVERDRIVE ×4' },
+        corrupt: { icon: 'skull', label: 'CORRUPT PACKET', color: '#ff3366', dur: 12, detail: 'RISK EVENT · +500% output, one asset corrupting', window: 3 },
+        freeze: { icon: 'snowflake', label: 'TIME FREEZE', color: '#88ddff', dur: 12, detail: 'TEMPORAL ANOMALY · only clicks register' },
+        purge: { icon: 'erase', label: 'MEMORY PURGE', color: '#33c8ff', dur: 30, detail: 'RISK EVENT · energy halved, output ×2 · click to recover fragments', sting: 2800, fragment: 0.01, cap: 0.5 }
     };
 
     /* play(host, opts) → { done: Promise<result>, click(clientX, clientY), close() }
@@ -81,7 +81,7 @@
 
         root.insertAdjacentHTML('beforeend', ''
           + '<div class="wx-sting"></div><div class="wx-amb"></div><div class="wx-fx"></div><div class="wx-play"></div>'
-          + '<div class="wx-banner"><i class="wx-icon">' + E.icon + '</i><div class="wx-txt"><b>' + D.esc(E.label) + '</b><span>' + D.esc(E.detail) + '</span></div>'
+          + '<div class="wx-banner"><i class="wx-icon">' + D.glyph(E.icon) + '</i><div class="wx-txt"><b>' + D.esc(E.label) + '</b><span>' + D.esc(E.detail) + '</span></div>'
           +   '<div class="wx-chip"></div><div class="wx-time"><b>' + dur + '</b><span>s</span></div><div class="wx-bar"><s></s></div></div>');
         var $ = function (s) { return root.querySelector(s); };
         var sting = $('.wx-sting'), amb = $('.wx-amb'), fx = $('.wx-fx'), playL = $('.wx-play'), chip = $('.wx-chip');
@@ -211,7 +211,7 @@
                 for (var i = 0; i < n; i++) ctx.later(function () {
                     var x, y, k = 0;
                     do { x = rnd(160, 1760); y = rnd(420, 980); k++; } while (k < 30 && Math.hypot(x - 960, y - 560) < 300);   // low enough to drift up without reaching the banner
-                    var o = D.h('button', 'wx-orb', '<i>↯</i>');
+                    var o = D.h('button', 'wx-orb', '<i>' + D.icon('bolt') + '</i>');
                     o.type = 'button';
                     o.setAttribute('aria-label', 'Catch data packet');
                     o.style.left = x + 'px'; o.style.top = y + 'px';
@@ -255,7 +255,7 @@
                 ctx.amb.innerHTML = '<i class="wx-tint"></i>';
                 ctx.setChip('<em>CITY PP</em><b class="wx-pp">OFFLINE</b>');
                 signs.forEach(function (text, i) {
-                    var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">☕</i>');
+                    var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">' + D.icon('cup') + '</i>');
                     w.type = 'button';
                     w.setAttribute('aria-label', 'Talk to the striker holding "' + text + '"');
                     w.style.left = (200 + i * (1520 / n)).toFixed(0) + 'px';
@@ -289,9 +289,9 @@
         cascade: {
             setup: function (ctx) {
                 var h = '';
-                for (var i = 0; i < 14; i++) h += '<i class="wx-chev" style="left:' + (i * 140 + 20) + 'px;animation-delay:' + (i % 7) * 0.07 + 's">≋</i>';
+                for (var i = 0; i < 14; i++) h += '<i class="wx-chev" style="left:' + (i * 140 + 20) + 'px;animation-delay:' + (i % 7) * 0.07 + 's">' + D.icon('waves') + '</i>';
                 ctx.sting.innerHTML = h;
-                ctx.setChip('<em>COMBO</em><b class="wx-combo">×4 OVERDRIVE</b><i class="wx-lock">🔒</i>');
+                ctx.setChip('<em>COMBO</em><b class="wx-combo">×4 OVERDRIVE</b><i class="wx-lock">' + D.icon('lock') + '</i>');
                 ctx.result.cascadeClicks = 0;
             },
             click: function (ctx, pt, n) {
@@ -312,7 +312,7 @@
                 ctx.result.burst = burstE; ctx.result.victim = v.name; ctx.result.lost = lost; ctx.result.saved = 0;
                 var blocks = '';
                 for (var i = 0; i < 18; i++) blocks += '<i class="wx-blk" style="left:' + rnd(0, 1800).toFixed(0) + 'px;top:' + rnd(0, 1000).toFixed(0) + 'px;width:' + rnd(60, 360).toFixed(0) + 'px;height:' + rnd(8, 60).toFixed(0) + 'px;animation-delay:' + rnd(0, 0.5).toFixed(2) + 's"></i>';
-                ctx.sting.innerHTML = blocks + '<b class="wx-skull">☠</b>';
+                ctx.sting.innerHTML = blocks + '<b class="wx-skull">' + D.icon('skull') + '</b>';
                 ctx.setChip('<em>BURST</em><b>+' + D.esc(D.fmt(burstE)) + ' E</b>');
                 ctx.later(function () {
                     ctx.au.sfx('burst');
@@ -323,7 +323,7 @@
                 /* the quarantine: a few seconds to save half */
                 ctx.later(function () {
                     var win = ctx.E.window;
-                    var card = D.h('div', 'wx-card', '<div><em>⚠ CORRUPTING</em><b>' + D.esc(v.name) + ' ×' + lost + '</b></div>'
+                    var card = D.h('div', 'wx-card', '<div><em>' + D.icon('warning') + ' CORRUPTING</em><b>' + D.esc(v.name) + ' ×' + lost + '</b></div>'
                         + '<button type="button" class="wx-q">QUARANTINE</button><i class="wx-qbar"><s style="transition-duration:' + win + 's"></s></i>');
                     ctx.play.appendChild(card);
                     var btn = card.querySelector('.wx-q'), done = false;
@@ -334,7 +334,7 @@
                         ctx.result.saved = keep;
                         ctx.result.lost = lost - keep;
                         card.classList.add(saved ? 'wx-saved' : 'wx-lost');
-                        card.querySelector('em').textContent = saved ? '✓ QUARANTINED · ' + keep + ' saved' : '☠ CORRUPTED';
+                        card.querySelector('em').innerHTML = saved ? D.icon('check') + ' QUARANTINED · ' + keep + ' saved' : D.icon('skull') + ' CORRUPTED';
                         card.querySelector('b').textContent = v.name + ' ×' + (lost - keep);
                         btn.disabled = true;
                         ctx.au.sfx(saved ? 'quarantine' : 'corrupt');
@@ -356,7 +356,7 @@
             setup: function (ctx) {
                 ctx.sting.innerHTML = '<i class="wx-flash"></i>';
                 var h = '<i class="wx-frost"></i>';
-                if (!ctx.reduced) for (var i = 0; i < 30; i++) h += '<i class="wx-flake" style="left:' + rnd(0, 1900).toFixed(0) + 'px;animation-delay:' + (-rnd(0, 8)).toFixed(1) + 's;animation-duration:' + rnd(6, 11).toFixed(1) + 's">❄</i>';
+                if (!ctx.reduced) for (var i = 0; i < 30; i++) h += '<i class="wx-flake" style="left:' + rnd(0, 1900).toFixed(0) + 'px;animation-delay:' + (-rnd(0, 8)).toFixed(1) + 's;animation-duration:' + rnd(6, 11).toFixed(1) + 's">' + D.icon('snowflake') + '</i>';
                 ctx.amb.innerHTML = h;
                 ctx.setChip('<em>PASSIVE INCOME</em><b class="wx-fz">PAUSED</b>');
                 ctx.result.frozenClicks = 0;
@@ -375,7 +375,7 @@
             setup: function (ctx) {
                 var e0 = ctx.energy, half = Math.floor(e0 / 2), lost = e0 - half;
                 ctx.result.lost = lost; ctx.result.recovered = 0;
-                ctx.sting.innerHTML = '<div class="wx-del"><div class="wx-line"><span class="wx-num">' + D.esc(D.fmt(e0)) + '</span><i class="wx-caret"></i></div><em>⌫ −50%</em></div>';
+                ctx.sting.innerHTML = '<div class="wx-del"><div class="wx-line"><span class="wx-num">' + D.esc(D.fmt(e0)) + '</span><i class="wx-caret"></i></div><em>' + D.icon('erase') + ' −50%</em></div>';
                 ctx.setChip('<em>OUTPUT</em><b>×2</b>');
                 ctx.amb.innerHTML = '<i class="wx-scan"></i>';
                 ctx.play.insertAdjacentHTML('beforeend', '<div class="wx-rec"><span>RECOVERED · click to restore fragments</span><i><s></s></i><b class="wx-recv">0 / ' + D.esc(D.fmt(lost)) + '</b></div>');

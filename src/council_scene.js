@@ -56,7 +56,7 @@
     /* The owner's text, verbatim from DuckyCouncil.VERDICTS. */
     var VERDICTS = {
         platinum: {
-            label: '⬡ PLATINUM CONSENSUS', glyph: '⬡', color: '#cceeff',
+            label: 'PLATINUM CONSENSUS', glyph: 'hex', color: '#cceeff',
             rewardDesc: '+800% EPS for 5 minutes · +3 Fragments',
             deliberation: [
                 '> [DELIBERATION CHAMBER — SEALED]',
@@ -76,7 +76,7 @@
             ]
         },
         gold: {
-            label: '⬢ UNANIMOUS APPROVAL', glyph: '⬢', color: '#ffdd33',
+            label: 'UNANIMOUS APPROVAL', glyph: 'hexFill', color: '#ffdd33',
             rewardDesc: '+500% EPS for 3 minutes',
             deliberation: [
                 '> [DELIBERATION CHAMBER]',
@@ -94,7 +94,7 @@
             ]
         },
         silver: {
-            label: '◇ ACCEPTABLE PERFORMANCE', glyph: '◇', color: '#aaaacc',
+            label: 'ACCEPTABLE PERFORMANCE', glyph: 'diamond', color: '#aaaacc',
             rewardDesc: '+200% EPS for 2 minutes',
             deliberation: [
                 '> [DELIBERATION CHAMBER]',
@@ -113,7 +113,7 @@
             ]
         },
         bronze: {
-            label: '◐ MILDLY DISAPPOINTING', glyph: '◐', color: '#cc9440',
+            label: 'MILDLY DISAPPOINTING', glyph: 'halfLeft', color: '#cc9440',
             rewardDesc: 'No bonus — Disappointment formally noted',
             deliberation: [
                 '> [DELIBERATION CHAMBER]',
@@ -131,7 +131,7 @@
             ]
         },
         tarnished: {
-            label: '◓ TARNISHED REVIEW', glyph: '◓', color: '#a87250',
+            label: 'TARNISHED REVIEW', glyph: 'halfTop', color: '#a87250',
             rewardDesc: '-5% EPS for 60 seconds · gentle warning issued',
             deliberation: [
                 '> [DELIBERATION CHAMBER]',
@@ -149,7 +149,7 @@
             ]
         },
         quacked: {
-            label: '⨯ THE COUNCIL IS DISAPPOINTED', glyph: '⨯', color: '#ff5533',
+            label: 'THE COUNCIL IS DISAPPOINTED', glyph: 'cross', color: '#ff5533',
             rewardDesc: '-15% EPS for 90 seconds · ASSET CONFISCATION POSSIBLE',
             deliberation: [
                 '> [DELIBERATION CHAMBER — ESCALATED]',
@@ -216,7 +216,8 @@
             + '<polyline points="26,4 40,34 54,4" class="pf" style="fill-opacity:.18"/>'
             + '<circle cx="40" cy="48" r="26" class="pf" style="fill-opacity:.14"/>'
             + '<circle cx="40" cy="48" r="20"/>'
-            + '<text x="40" y="56" text-anchor="middle" font-size="22" fill="currentColor" stroke="none" font-family="Courier New, monospace" font-weight="900">' + glyph + '</text>'
+            + (D.ICONS[glyph] ? '<svg x="29" y="37" width="22" height="22" viewBox="0 0 24 24">' + D.ICONS[glyph] + '</svg>'
+               : '<text x="40" y="56" text-anchor="middle" font-size="22" fill="currentColor" stroke="none" font-family="Courier New, monospace" font-weight="900">' + D.esc(glyph) + '</text>')
             + '</svg>';
     }
     var SIGIL =
@@ -312,7 +313,7 @@
         var verdict = D.h('div', 'dks-panel dks-verdict');
         verdict.style.setProperty('--grade', v.color);
         verdict.innerHTML = '<div class="dks-medal">' + medalSVG(v.glyph) + '</div>'
-            + '<div class="dks-grade-label">' + D.esc(v.label) + '</div>'
+            + '<div class="dks-grade-label">' + (D.ICONS[v.glyph] ? D.icon(v.glyph) + ' ' : '') + D.esc(v.label) + '</div>'
             + '<div class="dks-reward">' + D.esc(v.rewardDesc) + '</div>'
             + '<div class="dks-lines">' + v.textLines.map(function (l) { return '<div>' + D.esc(l) + '</div>'; }).join('') + '</div>';
         lower.appendChild(ledger);

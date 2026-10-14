@@ -2,7 +2,7 @@
    tribunal_scene.js — THE DUCK TRIBUNAL, staged.
 
    The Tribunal judges BEHAVIOUR. It used to charge you by play style and then
-   roll an unrelated verdict, so the charge was decoration. ⭐ THE SENTENCE NOW
+   roll an unrelated verdict, so the charge was decoration. THE SENTENCE NOW
    FOLLOWS THE CHARGE, and each one is ironic in the court's own logic:
 
      FRANTIC CLICKER   → SENTENCED TO REST      passive ×5 for 60 s   (DUCK verdict)

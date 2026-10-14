@@ -23,7 +23,7 @@
                      Escape    → SILENCE. DISAPPOINTING.   (+20% instability)
      6 COLLAPSE    the eclipse shrinks to a point and is gone.
 
-   ⭐ ALL WORDS ARE DATA: opts.dialogues (per variant), opts.variant,
+   ALL WORDS ARE DATA: opts.dialogues (per variant), opts.variant,
    opts.question, opts.verdicts, opts.classify.
    Laid out on the shared 1920×1080 canvas.
    ═══════════════════════════════════════════════════════════════════════════ */

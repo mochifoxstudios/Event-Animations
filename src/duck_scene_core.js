@@ -44,6 +44,46 @@
         return Math.round(n).toLocaleString('en-US');
     };
 
+    /* ── ICONS ───────────────────────────────────────────────────────────────
+       Every symbol in every event is one of these hand-drawn SVGs (24×24, drawn in
+       currentColor, sized by font-size like text). No emoji and no symbol fonts: they
+       render differently, or as colour emoji, from one system to the next. */
+    D.ICONS = {
+        bolt: '<path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" fill="currentColor"/>',
+        replay: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M3.5 3.5v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        play: '<path d="M7 4v16l13-8z" fill="currentColor"/>',
+        skip: '<path d="M3 5v14l8.5-7zM12 5v14l8.5-7z" fill="currentColor"/>',
+        note: '<path d="M9 18V5.5l11-2.5v13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="6.5" cy="18" r="2.8" fill="currentColor"/><circle cx="17.5" cy="16" r="2.8" fill="currentColor"/>',
+        waves: '<path d="M3 7q3-3 6 0t6 0 6 0M3 12q3-3 6 0t6 0 6 0M3 17q3-3 6 0t6 0 6 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        ban: '<circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><path d="M5.8 18.2 18.2 5.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/>',
+        erase: '<path d="M9 5h11.5v14H9l-6.5-7z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="m12 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        diamond: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        gem: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 7.5 16.5 12 12 16.5 7.5 12z" fill="currentColor"/>',
+        sparkle: '<path d="M12 1.5c.9 6.4 3.6 9.6 10.5 10.5-6.9.9-9.6 4.1-10.5 10.5-.9-6.4-3.6-9.6-10.5-10.5 6.9-.9 9.6-4.1 10.5-10.5z" fill="currentColor"/>',
+        eye: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.6" fill="currentColor"/>',
+        target: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+        dot: '<circle cx="12" cy="12" r="6" fill="currentColor"/>',
+        halfLeft: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
+        halfTop: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 1 18 0z" fill="currentColor"/>',
+        halfBottom: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 0 18 0z" fill="currentColor"/>',
+        cross: '<path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        check: '<path d="m4 12.5 5 5L20 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        warning: '<path d="M12 3 22 20H2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="M12 9.5v4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/>',
+        hex: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        hexFill: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="currentColor"/>',
+        snowflake: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5M3.7 10.4l3.4-.9-.9-3.4M20.3 13.6l-3.4.9.9 3.4M6.2 17.9l.9-3.4-3.4-.9M17.8 6.1l-.9 3.4 3.4.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>',
+        skull: '<path fill-rule="evenodd" fill="currentColor" d="M12 2a8.5 8.5 0 0 0-8.5 8.5c0 3 1.4 5.2 3.5 6.5V21h2.2v-2h1.6v2h2.4v-2h1.6v2H17v-4c2.1-1.3 3.5-3.5 3.5-6.5A8.5 8.5 0 0 0 12 2zM8.6 8.6a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zm6.8 0a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zM12 13.4l1.3 2.4h-2.6z"/>',
+        cup: '<path d="M4 9h12v5.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="currentColor"/><path d="M16 11h1.5a2.6 2.6 0 0 1 0 5.2H16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M8 2.5c-1 1.4 1 2.4 0 4.2M12 2.5c-1 1.4 1 2.4 0 4.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/><path d="M3 21.5h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
+        lock: '<rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        infinity: '<path d="M12 12c-2.2-3-4.2-4.6-6.2-4.6a4.6 4.6 0 0 0 0 9.2c2 0 4-1.6 6.2-4.6s4.2-4.6 6.2-4.6a4.6 4.6 0 0 1 0 9.2c-2 0-4-1.6-6.2-4.6z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3"/>'
+    };
+    D.icon = function (name, cls) {
+        var b = D.ICONS[name];
+        return b ? '<svg class="dks-ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + b + '</svg>' : '';
+    };
+    /* an icon name, or (for data from the game) plain text */
+    D.glyph = function (g) { return D.ICONS[g] ? D.icon(g) : D.esc(g || ''); };
+
     /* restart a class-driven animation: removing and re-adding a class that is already there does nothing */
     D.replay = function (el, cls) {
         el.classList.remove(cls);
@@ -127,7 +167,7 @@
             var furn = '';
             if (kind === 'tribunal' && window.TribunalArt) furn = TribunalArt.stall(i);
             if (kind === 'council' && window.CouncilArt) furn = CouncilArt.seat(i);
-            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">◒</span>';
+            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">' + D.icon('halfBottom') + '</span>';
             var seat = D.h('div', 'dks-seat dks-seat-' + i,
                 '<div class="dks-furn">' + furn + '</div>'
               + '<div class="dks-duck"><div class="dks-face"><div class="dks-bob">' + cast + '</div></div></div>'
@@ -269,7 +309,7 @@
         root.setAttribute('aria-modal', 'true');
         var log = D.h('div', 'dks-sr');
         log.setAttribute('aria-live', 'polite');
-        var skipBtn = D.h('button', 'dks-skip', 'SKIP ▸▸');
+        var skipBtn = D.h('button', 'dks-skip', 'SKIP ' + D.icon('skip'));
         skipBtn.type = 'button';
         skipBtn.title = 'Skip to the verdict';
         var hint = D.h('div', 'dks-hint', 'click to hurry them along');

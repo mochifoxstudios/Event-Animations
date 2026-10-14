@@ -41,3 +41,11 @@ The dialogue line format is the one the game already uses:
 Each event's score (`src/audio/score_*.js`) is a table of music cues, effects and voices. A new line of
 dialogue gets its speaker's voice automatically. A new decision or moment needs one line, `au.sfx('name')`,
 plus one entry in that event's `sfx` table.
+
+## Icons
+
+No event uses emoji or symbol-font characters: they render differently, or as colour emoji, from one
+system to the next. Every symbol is a hand-drawn SVG in `DuckScene.ICONS` (`duck_scene_core.js`): 24×24,
+drawn in `currentColor`, sized by `font-size` like text. Use `DuckScene.icon('name')` to place one.
+Where a scene takes a glyph as data (a Council grade, an Existential answer, a world-event `icon`),
+pass an icon name; plain text still works for data that comes from the game.

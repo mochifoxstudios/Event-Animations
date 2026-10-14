@@ -32,7 +32,7 @@
         [67, _, _, _, 71, _, 74, _, 79, _, _, _, 78, _, _, _],
         [76, _, _, _, 73, _, 69, _, 73, _, 76, _, _, _, _, _]
     ];
-    /* D natural minor: Dm · B♭ · Gm · Am, voice-led around D4. ⚠ Am, not A major: the
+    /* D natural minor: Dm · B♭ · Gm · Am, voice-led around D4. Am, not A major: the
        major V's C♯ was measured clashing with whichever answer the player hovered. */
     var MINOR = [[38, 57, 62, 65], [34, 58, 62, 65], [31, 58, 62, 67], [33, 57, 60, 64]];
     var CHORDS = [[26, 38, 45, 50], [53, 57, 60, 64], [62, 66, 69, 76], [38, 45, 52]];

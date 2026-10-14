@@ -18,7 +18,7 @@
      4 THE VERDICT    "Verifying…", then MACHINE BEHAVIOUR CONFIRMED (a stamp:
                       NOT HUMAN) or BIOLOGICAL COMPLIANCE DETECTED (your tiles go red).
 
-   ⭐ All of it is data: opts.grid { label, cells, correct }, opts.lines, opts.reward,
+   All of it is data: opts.grid { label, cells, correct }, opts.lines, opts.reward,
       opts.firstFail, opts.choices. See docs/CAPTCHA.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -120,7 +120,7 @@
         function cellName(i) { var c = G.cells[i]; return typeof c === 'string' ? c : (c && c.name) || 'tile ' + (i + 1); }
 
         var tiles = G.cells.map(function (c, i) {
-            return '<button type="button" class="cap-tile" data-i="' + i + '" aria-pressed="false" aria-label="' + D.esc(cellName(i)) + '"><span class="cap-art">' + cellArt(c) + '</span><i class="cap-tick">✓</i></button>';
+            return '<button type="button" class="cap-tile" data-i="' + i + '" aria-pressed="false" aria-label="' + D.esc(cellName(i)) + '"><span class="cap-art">' + cellArt(c) + '</span><i class="cap-tick">' + D.icon('check') + '</i></button>';
         }).join('');
 
         root.insertAdjacentHTML('beforeend', ''
@@ -128,8 +128,8 @@
           + '<div class="cap-log" aria-hidden="true"><b>AUDIT LOG</b><div class="cap-lines"></div></div>'
           + '<div class="cap-meter"><span>' + D.esc(L.human) + '</span><b class="cap-pct">0%</b><i><s></s><u></u></i><em>' + D.esc(L.humanNote) + '</em><strong class="cap-verdict"></strong></div>'
           + '<div class="cap-card">'
-          +   '<div class="cap-box"><button type="button" class="cap-check" aria-label="' + D.esc(L.check) + '"><i class="cap-spin"></i><i class="cap-ok">✓</i></button>'
-          +     '<span class="cap-check-l">' + D.esc(L.check) + '</span><span class="cap-brand"><i>◈</i>' + D.esc(L.brand) + '<small>Privacy · Terms · Compliance</small></span></div>'
+          +   '<div class="cap-box"><button type="button" class="cap-check" aria-label="' + D.esc(L.check) + '"><i class="cap-spin"></i><i class="cap-ok">' + D.icon('check') + '</i></button>'
+          +     '<span class="cap-check-l">' + D.esc(L.check) + '</span><span class="cap-brand"><i>' + D.icon('gem') + '</i>' + D.esc(L.brand) + '<small>Privacy · Terms · Compliance</small></span></div>'
           +   '<div class="cap-chal">'
           +     '<div class="cap-head"><small>' + D.esc(L.eyebrow) + ' · ' + D.esc(L.title) + '</small><span>' + D.esc(L.select) + '</span><b>' + D.esc(G.label) + '</b></div>'
           +     '<div class="cap-grid">' + tiles + '</div>'
@@ -253,7 +253,7 @@
             note('verdict: ' + why, pass ? 'ok' : 'bad');
             if (pass) {
                 au.sfx('pass'); au.cue('passed');
-                $('.cap-result .cap-mark').textContent = '✓';
+                $('.cap-result .cap-mark').innerHTML = D.icon('check');
                 res.querySelector('b').textContent = L.passT;
                 res.querySelector('span').textContent = '';
                 res.querySelector('em').textContent = '+' + D.fmt(gain) + ' E  ·  +' + reward.data + ' DATA';
@@ -262,7 +262,7 @@
             } else {
                 au.sfx('fail'); au.cue('failed');
                 G.correct.forEach(function (i) { if (selected.indexOf(i) >= 0) root.querySelector('.cap-tile[data-i="' + i + '"]').classList.add('bad'); });
-                $('.cap-result .cap-mark').textContent = '✗';
+                $('.cap-result .cap-mark').innerHTML = D.icon('cross');
                 res.querySelector('b').textContent = outcome === 'warn' ? L.warnT : L.failT;
                 res.querySelector('span').textContent = outcome === 'warn' ? L.warnB : '';
                 res.querySelector('em').textContent = outcome === 'tax' ? L.taxT + ': ' + L.taxB : '';

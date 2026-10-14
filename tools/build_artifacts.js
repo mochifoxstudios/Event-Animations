@@ -13,6 +13,9 @@ const js = p => {
 const ART = js('reference/duck_cast_art.js') + js('reference/duck_council_art.js') + js('reference/duck_tribunal_art.js')
           + js('src/audio/event_audio.js') + js('src/duck_scene_core.js');
 const CSS = read('src/duck_scenes.css');
+/* the page chrome uses the scenes' own hand-drawn icons (duck_scene_core.js), never emoji or symbol fonts */
+const ICONS = (() => { const w = {}; new Function('window', 'document', read('src/duck_scene_core.js'))(w, {}); return w.DuckScene; })();
+const ic = name => ICONS.icon(name);
 
 const PAGE_CSS = `
 /* A viewer for one in-game event. Single dark look on purpose: it is the game's screen. */
@@ -49,14 +52,14 @@ ${CSS}</style>
   <div class="ctl">
     <h1>${title.toUpperCase()}</h1>
     ${controls}
-    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true">${ic('note')} Sound on</button>
       <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
     <span class="out" id="out" aria-live="polite"></span>
     <div class="note">${note}</div>
   </div>
   <div class="stagehost" id="host">
     <div class="gate"><h2>${title.toUpperCase()}</h2><p>${blurb}</p>
-      <button id="go" type="button">${gateLabel || '▶ PLAY WITH SOUND'}</button></div>
+      <button id="go" type="button">${(gateLabel || 'PLAY WITH SOUND').replace(/^\u25b6 /, '').replace(/^/, ic('play') + ' ')}</button></div>
   </div>
 </div>
 ${ART}${js(score)}${js(scene)}<script>
@@ -69,7 +72,7 @@ var snd = document.getElementById('snd');
 snd.onclick = function () {
     var m = !EventAudio.isMuted();
     EventAudio.setMuted(m);
-    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.innerHTML = ${JSON.stringify(ic('note'))} + (m ? ' Sound off' : ' Sound on');
     snd.setAttribute('aria-pressed', String(!m));
 };
 var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
@@ -87,7 +90,7 @@ const council = page({
     blurb: 'Five ducks read your record into the minutes, argue about it, vote with placards and award a grade. Its own chamber march, a voice for each member, a fanfare for each grade.',
     note: 'Click anywhere to hurry a line along, or SKIP to jump to the verdict. "Sample operator" is graded by the real scoring: 84,000 clicks, 6 prestiges, 3.2e14 energy, 6 buildings, 22% instability.',
     controls: `<div class="grp"><label for="grade">Grade</label><select id="grade"><option value="">Sample operator</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var gradeSel = document.getElementById('grade');
 CouncilScene.GRADES.slice().reverse().forEach(function (g) { gradeSel.add(new Option(g.charAt(0).toUpperCase() + g.slice(1), g)); });
@@ -111,7 +114,7 @@ const tribunal = page({
     note: 'The sentence follows the charge. Register sets who speaks and the colour of the room. Click anywhere to hurry a line along, or SKIP to jump to the sentence.',
     controls: `<div class="grp"><label for="charge">Charge</label><select id="charge"></select>
       <label for="register">Register</label><select id="register"></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var chargeSel = document.getElementById('charge'), regSel = document.getElementById('register');
 TribunalScene.CHARGES.forEach(function (c) {
@@ -155,10 +158,10 @@ const existential = page({
     extraCss: 'src/existential_scene.css',
     extraInline: BOARD_CSS,
     accent: '#c9c3e6',
-    gateLabel: '▶ OPEN THE BOARD',
+    gateLabel: 'OPEN THE BOARD',
     blurb: 'At one million clicks the game stops and asks why. Four answers, each with a permanent mark. Click ACQUIRE to reach one million yourself.',
     note: 'Hover an answer to preview its mark; press and hold to choose. After CONTINUE the board keeps the mark. VOID disables ACQUIRE for the rest of the run, as in the game.',
-    controls: `<div class="grp"><button id="trigger" type="button">⚡ Trigger now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+    controls: `<div class="grp"><button id="trigger" type="button">${ic('bolt')} Trigger now</button><button id="replay" type="button">${ic('replay')} Reset board</button></div>`,
     script: `
 var clicks = 999990, crisis = false;
 var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b>4.21e15</b></span><span>EPS<b>3.10e13</b></span><span>TOTAL CLICKS<b id="tc">999,990</b></span></div>'
@@ -217,7 +220,7 @@ const nullPage = page({
     controls: `<div class="grp"><label for="variant">Monologue</label><select id="variant">
         <option value="mirror">Mirror (default)</option><option value="architect">Architect (has a city)</option>
         <option value="burnout">Burnout (50,000+ clicks)</option><option value="efficient">Efficient (high income, few clicks)</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var varSel = document.getElementById('variant');
 function start() {
@@ -243,7 +246,7 @@ const dilemmaPage = page({
         <option value="op409">Operator_409 (trusting)</option><option value="nexus">NEXUS_PROC_Δ (copies you)</option>
         <option value="unknown">usr_unknown (coin flip)</option><option value="void7">void_entity_7 (betrays)</option>
         <option value="omega">Ω_remnant (remembers your answer)</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var oppSel = document.getElementById('opp');
 var last = null;
@@ -264,12 +267,12 @@ const severancePage = page({
     score: 'src/audio/score_severance.js',
     extraCss: 'src/severance_scene.css',
     accent: '#66aadd',
-    gateLabel: '▶ JOIN THE MEETING',
+    gateLabel: 'JOIN THE MEETING',
     blurb: 'You are close to another reset. The Simulation Overseers would like a quick chat. They have hold music.',
     note: 'SIGN, DECLINE, or ASK FOR MORE once: you go on hold and they come back with a better offer or their final one. Read the fine print on the letter. In the game, signing closes the game and the package is paid on next launch.',
     controls: `<div class="grp"><label for="neg">Asking for more</label><select id="neg"><option value="">Random (65% raised)</option>
         <option value="raised">They raise it</option><option value="final">Final offer</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var negSel = document.getElementById('neg');
 function start() {
@@ -309,11 +312,11 @@ function crashPage(o) {
 const fakeCrash = crashPage({
     title: 'Fake Crash',
     accent: '#7dffb0',
-    gate: '▶ OPEN THE BOARD',
+    gate: 'OPEN THE BOARD',
     blurb: 'At 13,333, 66,666 and 123,456 clicks the simulation crashes. Or seems to. Click CLICK to get there.',
     note: 'The stop code is TOO_MANY_CLICKS, so clicking during the crash is noticed, and enough clicks end it early. The reveal pays +50% energy.',
     controls: `<div class="grp"><label for="ms">Milestone</label><select id="ms"><option>13333</option><option>66666</option><option>123456</option></select>
-      <button id="trigger" type="button">⚡ Crash now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+      <button id="trigger" type="button">${ic('bolt')} Crash now</button><button id="replay" type="button">${ic('replay')} Reset board</button></div>`,
     script: `
 var msSel = document.getElementById('ms'), clicks = 0, crashed = false, music = null, energy = 3.2e14;
 function board() {
@@ -361,10 +364,10 @@ fs.writeFileSync(path.join(ROOT, 'artifacts/fake_crash.html'), fakeCrash);
 const thermalCrash = crashPage({
     title: 'Thermal Crash',
     accent: '#ffb050',
-    gate: '▶ OPEN THE BOARD',
+    gate: 'OPEN THE BOARD',
     blurb: 'The System Diagnostics CPU meter is climbing. At 100% the simulation overheats and crashes, and something is left behind the crash screen.',
     note: 'Hold OVERCLOCK to push the CPU, or wait. After the crash, the screen cracks open: claim the ×25 EPS dividend before the gap cools shut (20 s).',
-    controls: `<div class="grp"><button id="trigger" type="button">⚡ Overheat now</button><button id="replay" type="button">↺ Reset board</button></div>`,
+    controls: `<div class="grp"><button id="trigger" type="button">${ic('bolt')} Overheat now</button><button id="replay" type="button">${ic('replay')} Reset board</button></div>`,
     script: `
 var cpu = 86, crashed = false, music = null, heatT = null, push = false;
 var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b>3.20e14</b></span><span>EPS<b id="eps">5.00e9</b></span></div>'
@@ -421,11 +424,11 @@ const eyePage = page({
     extraCss: 'src/eye_scene.css',
     extraInline: BOARD_CSS,
     accent: '#9cd0ff',
-    gateLabel: '▶ ENTER THE STORM',
+    gateLabel: 'ENTER THE STORM',
     blurb: 'Deep in a chaotic session, the storm stops. Sixty seconds of clear sky: instability 0, energy output ×10. Breathe with it, or use it.',
     note: 'Hold (pointer or Space) while the orb grows and release while it shrinks: every breath in time weakens the storm that returns (40% down to 12% of what it was). Or USE THE CALM to play the board at ×10 with the eye waiting in the corner.',
     controls: `<div class="grp"><label for="dur">Calm</label><select id="dur"><option value="60">60 s (as in the game)</option><option value="20">20 s (preview)</option></select>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var durSel = document.getElementById('dur'), energy = 2.4e12, eps = 5e9, mult = 1, tickT = null, instab = 74;
 var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en"></b></span><span>EPS<b id="eps"></b></span><span>INSTABILITY<b id="inst"></b></span></div>'
@@ -465,13 +468,13 @@ const captchaPage = page({
     score: 'src/audio/score_captcha.js',
     extraCss: 'src/captcha_scene.css',
     accent: '#9cbcf0',
-    gateLabel: '▶ BEGIN THE AUDIT',
+    gateLabel: 'BEGIN THE AUDIT',
     blurb: 'Every 45 minutes after a prestige, the Overseers audit you. Prove you are a machine.',
     note: 'The rules are inverted: picking the tiles that really match FAILS. Pick only wrong tiles, none at all, or answer in under 0.2 s to pass (+5% energy, +50 Data). Watch HUMAN PROBABILITY on the right: it reacts to everything you do. The first failure is a warning; after that it costs −30% income for 90 s.',
     controls: `<div class="grp"><label for="grid">Grid</label><select id="grid"><option value="">Random</option><option value="lights">Traffic lights</option>
         <option value="hydrants">Fire hydrants</option><option value="crosswalks">People crossing</option><option value="gens">Your generators</option></select>
       <label><input type="checkbox" id="warned"> already warned once</label>
-      <button id="replay" type="button">▶ Replay</button></div>`,
+      <button id="replay" type="button">${ic('play')} Replay</button></div>`,
     script: `
 var gridSel = document.getElementById('grid'), warned = document.getElementById('warned');
 function gen(body, bg) { return '<svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="8" fill="' + bg + '"/>' + body + '</svg>'; }
@@ -516,10 +519,10 @@ function worldPage(key, title, accent, blurb, note) {
         extraCss: 'src/world_scene.css',
         extraInline: BOARD_CSS + WORLD_BOARD_CSS,
         accent: accent,
-        gateLabel: '▶ OPEN THE BOARD',
+        gateLabel: 'OPEN THE BOARD',
         blurb: blurb,
         note: note + ' The board stays live underneath: keep clicking ACQUIRE.',
-        controls: `<div class="grp"><button id="replay" type="button">↯ Trigger again</button></div>`,
+        controls: `<div class="grp"><button id="replay" type="button">${ic('bolt')} Trigger again</button></div>`,
         script: `
 var KEY = '${key}', energy = 3.2e14, eps = 5e9, mult = 1, passive = true, combo = 1, pp = 'ONLINE', tickT = null, items = { cursor: 412, mill: 96, siphon: 18 };
 var BOARD = '<div class="board" id="board"><div class="hud"><span>ENERGY<b id="en"></b></span><span>EPS<b id="eps"></b></span><span>COMBO<b id="cb"></b></span><span>CITY PP<b id="pp"></b></span></div>'

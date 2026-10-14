@@ -16,6 +16,7 @@
    edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
    the sizes below mean the same thing on every monitor. */
 .dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-ic { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; overflow: visible; }
 .dks-fit.dks-see { background: transparent; }                                       /* a scene drawn over the live game */
 .dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
 
@@ -294,6 +295,7 @@
 .dks-skip {
     position: absolute;
     top: 10px; right: 14px;
+    z-index: 50;                                       /* above any full-screen layer a scene adds later */
     font: inherit;
     font-size: calc(0.5 * var(--r));
     letter-spacing: 3px;
@@ -335,7 +337,7 @@
 /* the medal and ruling */
 .dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
-.dks-medal svg { width: 100%; height: 100%; }
+.dks-medal > svg { width: 100%; height: 100%; }
 .dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
 .dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
 .dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }

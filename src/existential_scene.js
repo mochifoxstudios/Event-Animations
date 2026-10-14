@@ -20,7 +20,7 @@
                      ring cracking, and silence.
      6 THE MARK      what the player keeps, stated once. CONTINUE.
 
-   ⭐ PATHS ARE DATA. opts.paths replaces or extends them; each names its gift,
+   PATHS ARE DATA. opts.paths replaces or extends them; each names its gift,
    its mark text and which built-in mark it uses (vignette · shift · figure ·
    drain · none). opts.question and opts.whispers change the words.
 
@@ -32,16 +32,16 @@
     var D = window.DuckScene;
 
     var PATHS = [
-        { key: 'POWER',   glyph: '↯', label: 'POWER',   desc: 'Numbers. Growing. Forever.',
+        { key: 'POWER',   glyph: 'bolt', label: 'POWER',   desc: 'Numbers. Growing. Forever.',
           gift: '×1.5', giftSub: 'INCOME · PERMANENT', mark: 'vignette', color: '#ff4a3a',
           markText: 'A faint crimson guilt lines your vision. It will not leave.' },
-        { key: 'NUMBERS', glyph: '∞', label: 'NUMBERS', desc: 'The count is all that matters.',
+        { key: 'NUMBERS', glyph: 'infinity', label: 'NUMBERS', desc: 'The count is all that matters.',
           gift: '×2', giftSub: 'ENERGY DOUBLED', mark: 'shift', color: '#8f8fff',
           markText: 'The simulation has fractured. Alignment is permanently off by 2 pixels. You did this.' },
-        { key: 'FUN',     glyph: '◈', label: 'FUN',     desc: 'It was always about this.',
+        { key: 'FUN',     glyph: 'gem', label: 'FUN',     desc: 'It was always about this.',
           gift: '+25', giftSub: 'FRAGMENTS · CORRECT ANSWER', mark: 'figure', color: '#7fdc8a',
           markText: 'A figure watches from below. It has always been there.' },
-        { key: 'VOID',    glyph: '✕', label: 'VOID',    desc: 'The flesh is a bottleneck.',
+        { key: 'VOID',    glyph: 'cross', label: 'VOID',    desc: 'The flesh is a bottleneck.',
           gift: '×3', giftSub: 'PASSIVE FOREVER · ACQUIRE DISABLED', mark: 'drain', color: '#a4a4b4',
           markText: 'Colour drains from the simulation. The numbers remain. Colour was never the point.' }
     ];
@@ -96,11 +96,18 @@
                     var ang = Math.atan2(p.y - H / 2, p.x - W / 2), sp = m === 'numbers' ? rnd(4, 12) : rnd(0.4, 1.2);
                     p.vx = Math.cos(ang) * sp; p.vy = Math.sin(ang) * sp; p.ta = m === 'numbers' ? rnd(0.3, 0.7) : rnd(0.12, 0.28);
                 }
-                if (m === 'fun' || m === 'fun-p') { color = '127,220,138'; chars = '◈◇✦'; p.ch = chars.charAt((Math.random() * 3) | 0); p.vy = rnd(0.4, 1.8); p.vx = rnd(-0.6, 0.6); p.vr = rnd(-0.04, 0.04); p.ta = m === 'fun' ? rnd(0.3, 0.7) : rnd(0.1, 0.3); }
+                if (m === 'fun' || m === 'fun-p') { color = '127,220,138'; chars = 'GDS'; p.ch = chars.charAt((Math.random() * 3) | 0); p.vy = rnd(0.4, 1.8); p.vx = rnd(-0.6, 0.6); p.vr = rnd(-0.04, 0.04); p.ta = m === 'fun' ? rnd(0.3, 0.7) : rnd(0.1, 0.3); }
                 if (m === 'void' || m === 'void-p') { color = '160,160,175'; p.vx = 0; p.vy = m === 'void' ? 0.2 : 0; p.ta = m === 'void' ? 0 : rnd(0.04, 0.12); }
                 if (m === 'off') p.ta = 0;
             });
             if (reduced) draw(true);
+        }
+        function shape(k, r) {
+            g.beginPath();
+            if (k === 'S') { g.moveTo(0, -r); g.quadraticCurveTo(r * 0.12, -r * 0.12, r, 0); g.quadraticCurveTo(r * 0.12, r * 0.12, 0, r); g.quadraticCurveTo(-r * 0.12, r * 0.12, -r, 0); g.quadraticCurveTo(-r * 0.12, -r * 0.12, 0, -r); g.fill(); return; }
+            g.moveTo(0, -r); g.lineTo(r, 0); g.lineTo(0, r); g.lineTo(-r, 0); g.closePath();
+            g.lineWidth = Math.max(1.5, r * 0.18); g.strokeStyle = g.fillStyle; g.stroke();
+            if (k === 'G') { var q = r * 0.45; g.beginPath(); g.moveTo(0, -q); g.lineTo(q, 0); g.lineTo(0, q); g.lineTo(-q, 0); g.closePath(); g.fill(); }
         }
         function step() {
             g.clearRect(0, 0, W, H);
@@ -123,8 +130,8 @@
                 g.translate(p.x, p.y);
                 if (p.rot) g.rotate(p.rot);
                 g.fillStyle = 'rgba(' + color + ',' + p.a.toFixed(3) + ')';
-                g.font = (p.size | 0) + 'px "Courier New", monospace';
-                g.fillText(p.ch, 0, 0);
+                if (mode === 'fun' || mode === 'fun-p') shape(p.ch, p.size * 0.42);     // drawn, not typed: gem · diamond · sparkle
+                else { g.font = (p.size | 0) + 'px "Courier New", monospace'; g.fillText(p.ch, 0, 0); }
                 g.restore();
             }
         }
@@ -194,7 +201,7 @@
 
         var cards = paths.map(function (p, i) {
             var c = D.h('button', 'exs-card',
-                '<span class="exs-fill"></span><span class="g">' + D.esc(p.glyph || '·') + '</span>'
+                '<span class="exs-fill"></span><span class="g">' + D.glyph(p.glyph || '·') + '</span>'
               + '<span class="l">' + D.esc(p.label) + '</span><span class="d">' + D.esc(p.desc) + '</span>');
             c.type = 'button';
             c.style.setProperty('--c', p.color || '#c9c3e6');
@@ -427,7 +434,7 @@
         }
         function burst(into, count) {
             for (var k = 0; k < count; k++) {
-                var s = D.h('span', 'exs-shard', '◈');
+                var s = D.h('span', 'exs-shard', D.icon('gem'));
                 var ang = (k / count) * Math.PI * 2 + Math.random() * 0.4;
                 var r = 260 + Math.random() * 520;
                 s.style.setProperty('--dx', Math.cos(ang) * r + 'px');

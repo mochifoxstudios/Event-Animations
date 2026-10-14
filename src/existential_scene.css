@@ -66,7 +66,7 @@
     transition: transform 0.5s cubic-bezier(.2,1.3,.4,1), opacity 0.6s, border-color 0.3s, box-shadow 0.3s;
 }
 .exs-choices.dks-on .exs-card { animation: exs-card-in 0.9s cubic-bezier(.2,1.2,.4,1) both; animation-delay: calc(var(--i) * 140ms); }
-.exs-card .g { font-size: 120px; line-height: 1; color: var(--c); text-shadow: 0 0 40px var(--c); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
+.exs-card .g { font-size: 120px; line-height: 1; color: var(--c); filter: drop-shadow(0 0 22px var(--c)); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
 .exs-card .l { font-size: 30px; font-weight: 900; letter-spacing: 10px; color: var(--c); }
 .exs-card .d { font-size: 18px; letter-spacing: 1px; color: #a8a3bd; }
 .exs-card:hover, .exs-card:focus-visible { transform: translateY(-12px); border-color: var(--c); box-shadow: 0 30px 80px -30px var(--c); outline: none; }
@@ -137,7 +137,7 @@
 .exs-mark-figure .exs-figure { opacity: 0.9; transform: translateY(8%); }
 .exs-mark-shift .exs-cam { transform: translate(2px, 2px); }
 
-.exs-shard { position: absolute; left: 50%; top: 540px; color: #7fdc8a; font-size: 40px; pointer-events: none; text-shadow: 0 0 20px #7fdc8a; animation: exs-shard 1.9s cubic-bezier(.2,.8,.3,1) both; opacity: 0; }
+.exs-shard { position: absolute; left: 50%; top: 540px; color: #7fdc8a; font-size: 40px; line-height: 1; pointer-events: none; filter: drop-shadow(0 0 10px #7fdc8a); animation: exs-shard 1.9s cubic-bezier(.2,.8,.3,1) both; opacity: 0; }
 
 /* ── on a page's board: the mark after the scene has gone ──────────────── */
 .exs-scar-vignette { box-shadow: inset 0 0 160px rgba(255, 30, 0, 0.2); }

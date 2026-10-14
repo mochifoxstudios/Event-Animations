@@ -50,7 +50,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-chip { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; position: relative; }
 .wx-chip em { font-style: normal; font-size: 14px; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); }
 .wx-chip b { font-size: 30px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
-.wx-chip .wx-lock { position: absolute; right: -34px; top: 22px; font-style: normal; font-size: 22px; }
+.wx-chip .wx-lock { position: absolute; right: -34px; top: 22px; font-style: normal; font-size: 22px; color: #ffcc66; }
 .wx-time { display: flex; align-items: baseline; gap: 2px; min-width: 90px; justify-content: flex-end; }
 .wx-time b { font-size: 46px; font-weight: 900; color: var(--wx); font-variant-numeric: tabular-nums; }
 .wx-time span { font-size: 18px; color: rgba(255, 255, 255, 0.6); }
@@ -62,24 +62,24 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-spark { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--wx); box-shadow: 0 0 10px var(--wx); animation: wx-spark 0.7s ease-out forwards; }
 .wx-float { position: absolute; transform: translate(-50%, -50%); font-size: 30px; font-weight: 900; color: #fff; text-shadow: 0 0 14px var(--wx); animation: wx-floatup 1.2s ease-out forwards; }
 
-/* ↯ QUANTUM SURGE */
+/* QUANTUM SURGE */
 .wx-ring { position: absolute; left: 860px; top: 460px; width: 200px; height: 200px; border-radius: 50%; border: 6px solid var(--wx); box-shadow: 0 0 40px var(--wx), inset 0 0 40px var(--wx); animation: wx-ring 1.3s ease-out both; }
 .wx-ring:nth-child(2) { animation-delay: 0.15s; } .wx-ring:nth-child(3) { animation-delay: 0.3s; }
 .wx-surge .wx-amb { box-shadow: inset 0 0 160px -20px rgba(68, 255, 204, 0.55); animation: wx-glow 1.4s ease-in-out infinite; }
 .wx-streak { position: absolute; bottom: -140px; width: 3px; height: 140px; border-radius: 2px; background: linear-gradient(transparent, var(--wx)); animation: wx-rise linear infinite; opacity: 0.8; }
 
-/* ◎ DATA STORM */
+/* DATA STORM */
 .wx-static { position: absolute; left: 0; right: 0; top: 0; height: 1080px; background: repeating-linear-gradient(rgba(170, 170, 255, 0.25) 0 2px, transparent 2px 7px, rgba(255, 255, 255, 0.12) 7px 8px, transparent 8px 15px);
     animation: wx-sweep 0.9s ease-out both; }
 .wx-orb { position: absolute; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border-radius: 50%; border: 2px solid rgba(190, 190, 255, 0.95); cursor: pointer; pointer-events: auto;
     background: radial-gradient(circle, #e0e0ff 0%, #9a9aff 35%, rgba(80, 80, 220, 0.35) 100%); box-shadow: 0 0 26px rgba(150, 150, 255, 0.95);
     display: flex; align-items: center; justify-content: center; color: #fff; animation: wx-orb 9s ease-out forwards; transition: opacity 0.4s; }
-.wx-orb i { font-style: normal; font-size: 30px; text-shadow: 0 0 8px #33f; }
+.wx-orb i { font-style: normal; font-size: 30px; line-height: 1; filter: drop-shadow(0 0 4px #33f); }
 .wx-orb:hover, .wx-orb:focus-visible { outline: none; box-shadow: 0 0 40px #fff; }
 .wx-orb.wx-gone { opacity: 0; pointer-events: none; }
 .wx-spark-storm { background: #bbbbff; }
 
-/* ⊘ WALKER STRIKE */
+/* WALKER STRIKE */
 .wx-red { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(255, 30, 60, 0.45)); animation: wx-fadein 0.3s both; }
 .wx-stamp { position: absolute; left: 0; right: 0; top: 420px; text-align: center; font-size: 170px; font-weight: 900; letter-spacing: 30px; color: transparent; -webkit-text-stroke: 6px #ff5566; transform: rotate(-6deg); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-tint { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(40, 0, 10, 0.08), rgba(60, 0, 15, 0.45)); transition: opacity 1s; }
@@ -94,20 +94,20 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-striker:nth-child(even) .wx-sign { transform: rotate(5deg); animation-delay: 0.3s; }
 .wx-striker:hover .wx-sign, .wx-striker:focus-visible .wx-sign { background: #fff; outline: none; }
 .wx-striker:focus-visible { outline: 3px solid #ff5566; outline-offset: 4px; }
-.wx-cup { position: absolute; left: 92px; top: 150px; font-style: normal; font-size: 40px; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
+.wx-cup { position: absolute; left: 92px; top: 150px; font-style: normal; font-size: 40px; color: #f4ecd8; opacity: 0; transform: scale(0.3); transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.6,.5,1); }
 .wx-striker.wx-ok { pointer-events: none; transform: translateX(700px); opacity: 0; }
 .wx-striker.wx-ok .wx-cup { opacity: 1; transform: none; }
 .wx-striker.wx-ok .wx-sign { animation: none; opacity: 0; transform: rotate(70deg) translateY(60px); }
 
-/* ≋ MOMENTUM CASCADE */
-.wx-chev { position: absolute; top: -160px; font-style: normal; font-size: 130px; font-weight: 900; color: var(--wx); text-shadow: 0 0 30px var(--wx); animation: wx-fall 1.3s cubic-bezier(.5,0,.8,.6) both; }
+/* MOMENTUM CASCADE */
+.wx-chev { position: absolute; top: -160px; font-style: normal; font-size: 130px; line-height: 1; color: var(--wx); filter: drop-shadow(0 0 16px var(--wx)); animation: wx-fall 1.3s cubic-bezier(.5,0,.8,.6) both; }
 .wx-cascade .wx-amb { box-shadow: inset 0 0 140px -30px rgba(255, 170, 68, 0.6); animation: wx-glow 0.4s ease-in-out infinite; }
 .wx-spark-cascade { background: #ffcc66; box-shadow: 0 0 12px #ff8a20; }
 
-/* ☠ CORRUPT PACKET */
+/* CORRUPT PACKET */
 .wx-blk { position: absolute; background: #ff3366; mix-blend-mode: screen; opacity: 0; animation: wx-glitch 0.12s steps(2) 8 both; }
 .wx-blk:nth-child(3n) { background: #33ffee; } .wx-blk:nth-child(3n+1) { background: #fff; }
-.wx-skull { position: absolute; left: 0; right: 0; top: 340px; text-align: center; font-size: 300px; line-height: 1; color: var(--wx); text-shadow: 0 0 60px var(--wx); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
+.wx-skull { position: absolute; left: 0; right: 0; top: 340px; text-align: center; font-size: 300px; line-height: 1; color: var(--wx); filter: drop-shadow(0 0 30px var(--wx)); animation: wx-slam 0.5s cubic-bezier(.3,1.6,.5,1) both; }
 .wx-burst { position: absolute; left: 0; right: 0; top: 720px; text-align: center; font-size: 96px; font-weight: 900; color: #fff; text-shadow: 0 0 40px var(--wx); animation: wx-burst 2.2s ease-out forwards; }
 .wx-card { position: absolute; left: 60px; top: 330px; width: 600px; padding: 22px 26px; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 14px 20px; align-items: center;
     background: rgba(20, 0, 8, 0.94); border: 2px solid var(--wx); border-radius: 12px; box-shadow: 0 0 40px -6px var(--wx); animation: wx-in 0.35s both; transition: opacity 0.8s, border-color 0.3s; }
@@ -122,7 +122,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-card.wx-lost b { color: #ff6a80; animation: wx-shake 0.1s steps(2) 6; }
 .wx-card.wx-fade { opacity: 0; }
 
-/* ❄ TIME FREEZE */
+/* TIME FREEZE */
 .wx-flash { position: absolute; inset: 0; background: #dff4ff; animation: wx-flashout 0.8s ease-out both; }
 .wx-frost { position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 52%, transparent 55%, rgba(190, 230, 255, 0.35) 75%, rgba(225, 245, 255, 0.75) 100%);
     animation: wx-frost 1.4s ease-out both; transition: opacity 1s; }
@@ -130,7 +130,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .wx-flake { position: absolute; top: -60px; font-style: normal; font-size: 26px; color: rgba(230, 245, 255, 0.75); animation: wx-snow linear infinite; }
 .wx-spark-ice { background: #e8f8ff; box-shadow: 0 0 12px #88ddff; border-radius: 2px; }
 
-/* ⌫ MEMORY PURGE */
+/* MEMORY PURGE */
 .wx-del { position: absolute; left: 0; right: 0; top: 380px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .wx-num { font-family: 'Courier New', monospace; font-size: 150px; font-weight: 900; color: #fff; text-shadow: 0 0 40px var(--wx); min-height: 170px; }
 .wx-line { display: flex; align-items: center; gap: 10px; }
@@ -213,6 +213,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
    edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
    the sizes below mean the same thing on every monitor. */
 .dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-ic { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; overflow: visible; }
 .dks-fit.dks-see { background: transparent; }                                       /* a scene drawn over the live game */
 .dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
 
@@ -491,6 +492,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-skip {
     position: absolute;
     top: 10px; right: 14px;
+    z-index: 50;                                       /* above any full-screen layer a scene adds later */
     font: inherit;
     font-size: calc(0.5 * var(--r));
     letter-spacing: 3px;
@@ -532,7 +534,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 /* the medal and ruling */
 .dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
-.dks-medal svg { width: 100%; height: 100%; }
+.dks-medal > svg { width: 100%; height: 100%; }
 .dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
 .dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
 .dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
@@ -682,15 +684,15 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 <div class="viewer">
   <div class="ctl">
     <h1>CORRUPT PACKET</h1>
-    <div class="grp"><button id="replay" type="button">↯ Trigger again</button></div>
-    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+    <div class="grp"><button id="replay" type="button"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" fill="currentColor"/></svg> Trigger again</button></div>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5.5l11-2.5v13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="6.5" cy="18" r="2.8" fill="currentColor"/><circle cx="17.5" cy="16" r="2.8" fill="currentColor"/></svg> Sound on</button>
       <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
     <span class="out" id="out" aria-live="polite"></span>
     <div class="note">Hit QUARANTINE within 3 seconds to lose only half as many. The board stays live underneath: keep clicking ACQUIRE.</div>
   </div>
   <div class="stagehost" id="host">
     <div class="gate"><h2>CORRUPT PACKET</h2><p>A corrupt packet: a burst of 30 seconds of output, but one generator starts corrupting.</p>
-      <button id="go" type="button">▶ OPEN THE BOARD</button></div>
+      <button id="go" type="button"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16l13-8z" fill="currentColor"/></svg> OPEN THE BOARD</button></div>
   </div>
 </div>
 <script>
@@ -1659,7 +1661,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             osc('square', mf(m + 24), t, t + 0.02, cg);
         };
         /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
-           ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
+           Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
            and under a minor or a hollow chord that third was measured clashing (C♯ against
            an F major 7's C; a C♯ turning VOID's open fifth into A major). */
         I.warm = function (t, m, dur, v, bus, slideTo) {
@@ -1875,6 +1877,46 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         return Math.round(n).toLocaleString('en-US');
     };
 
+    /* ── ICONS ───────────────────────────────────────────────────────────────
+       Every symbol in every event is one of these hand-drawn SVGs (24×24, drawn in
+       currentColor, sized by font-size like text). No emoji and no symbol fonts: they
+       render differently, or as colour emoji, from one system to the next. */
+    D.ICONS = {
+        bolt: '<path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" fill="currentColor"/>',
+        replay: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M3.5 3.5v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        play: '<path d="M7 4v16l13-8z" fill="currentColor"/>',
+        skip: '<path d="M3 5v14l8.5-7zM12 5v14l8.5-7z" fill="currentColor"/>',
+        note: '<path d="M9 18V5.5l11-2.5v13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="6.5" cy="18" r="2.8" fill="currentColor"/><circle cx="17.5" cy="16" r="2.8" fill="currentColor"/>',
+        waves: '<path d="M3 7q3-3 6 0t6 0 6 0M3 12q3-3 6 0t6 0 6 0M3 17q3-3 6 0t6 0 6 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        ban: '<circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><path d="M5.8 18.2 18.2 5.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/>',
+        erase: '<path d="M9 5h11.5v14H9l-6.5-7z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="m12 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        diamond: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        gem: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 7.5 16.5 12 12 16.5 7.5 12z" fill="currentColor"/>',
+        sparkle: '<path d="M12 1.5c.9 6.4 3.6 9.6 10.5 10.5-6.9.9-9.6 4.1-10.5 10.5-.9-6.4-3.6-9.6-10.5-10.5 6.9-.9 9.6-4.1 10.5-10.5z" fill="currentColor"/>',
+        eye: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.6" fill="currentColor"/>',
+        target: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+        dot: '<circle cx="12" cy="12" r="6" fill="currentColor"/>',
+        halfLeft: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
+        halfTop: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 1 18 0z" fill="currentColor"/>',
+        halfBottom: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 0 18 0z" fill="currentColor"/>',
+        cross: '<path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        check: '<path d="m4 12.5 5 5L20 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        warning: '<path d="M12 3 22 20H2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="M12 9.5v4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/>',
+        hex: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        hexFill: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="currentColor"/>',
+        snowflake: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5M3.7 10.4l3.4-.9-.9-3.4M20.3 13.6l-3.4.9.9 3.4M6.2 17.9l.9-3.4-3.4-.9M17.8 6.1l-.9 3.4 3.4.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>',
+        skull: '<path fill-rule="evenodd" fill="currentColor" d="M12 2a8.5 8.5 0 0 0-8.5 8.5c0 3 1.4 5.2 3.5 6.5V21h2.2v-2h1.6v2h2.4v-2h1.6v2H17v-4c2.1-1.3 3.5-3.5 3.5-6.5A8.5 8.5 0 0 0 12 2zM8.6 8.6a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zm6.8 0a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zM12 13.4l1.3 2.4h-2.6z"/>',
+        cup: '<path d="M4 9h12v5.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="currentColor"/><path d="M16 11h1.5a2.6 2.6 0 0 1 0 5.2H16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M8 2.5c-1 1.4 1 2.4 0 4.2M12 2.5c-1 1.4 1 2.4 0 4.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/><path d="M3 21.5h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
+        lock: '<rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        infinity: '<path d="M12 12c-2.2-3-4.2-4.6-6.2-4.6a4.6 4.6 0 0 0 0 9.2c2 0 4-1.6 6.2-4.6s4.2-4.6 6.2-4.6a4.6 4.6 0 0 1 0 9.2c-2 0-4-1.6-6.2-4.6z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3"/>'
+    };
+    D.icon = function (name, cls) {
+        var b = D.ICONS[name];
+        return b ? '<svg class="dks-ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + b + '</svg>' : '';
+    };
+    /* an icon name, or (for data from the game) plain text */
+    D.glyph = function (g) { return D.ICONS[g] ? D.icon(g) : D.esc(g || ''); };
+
     /* restart a class-driven animation: removing and re-adding a class that is already there does nothing */
     D.replay = function (el, cls) {
         el.classList.remove(cls);
@@ -1958,7 +2000,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             var furn = '';
             if (kind === 'tribunal' && window.TribunalArt) furn = TribunalArt.stall(i);
             if (kind === 'council' && window.CouncilArt) furn = CouncilArt.seat(i);
-            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">◒</span>';
+            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">' + D.icon('halfBottom') + '</span>';
             var seat = D.h('div', 'dks-seat dks-seat-' + i,
                 '<div class="dks-furn">' + furn + '</div>'
               + '<div class="dks-duck"><div class="dks-face"><div class="dks-bob">' + cast + '</div></div></div>'
@@ -2100,7 +2142,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         root.setAttribute('aria-modal', 'true');
         var log = D.h('div', 'dks-sr');
         log.setAttribute('aria-live', 'polite');
-        var skipBtn = D.h('button', 'dks-skip', 'SKIP ▸▸');
+        var skipBtn = D.h('button', 'dks-skip', 'SKIP ' + D.icon('skip'));
         skipBtn.type = 'button';
         skipBtn.title = 'Skip to the verdict';
         var hint = D.h('div', 'dks-hint', 'click to hurry them along');
@@ -2157,7 +2199,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
     var S = {};
 
-    /* ↯ QUANTUM SURGE — A major */
+    /* QUANTUM SURGE — A major */
     S.surge = { bpm: 128, voices: [],
         cues: {
             main: function (A, t, s, bar) {
@@ -2176,7 +2218,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ◎ DATA STORM — C minor; catching climbs the pentatonic */
+    /* DATA STORM — C minor; catching climbs the pentatonic */
     var CATCH = [60, 63, 65, 67, 70, 72, 75, 77, 79, 82, 84];
     S.storm = { bpm: 116, voices: [],
         cues: {
@@ -2199,7 +2241,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ⊘ WALKER STRIKE — D minor march, then D major when it is settled */
+    /* WALKER STRIKE — D minor march, then D major when it is settled */
     var CHANT = [{ f: 180, type: 'sawtooth', formant: 900, q: 3, up: 1.1, down: 0.9, len: 0.16, gain: 0.2 },
                  { f: 240, type: 'sawtooth', formant: 1100, q: 3, up: 1.1, down: 0.9, len: 0.16, gain: 0.18 }];
     S.strike = { bpm: 104, voices: CHANT,
@@ -2222,7 +2264,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ≋ MOMENTUM CASCADE — B♭ major; the clicks are the tune */
+    /* MOMENTUM CASCADE — B♭ major; the clicks are the tune */
     var RUN = [70, 72, 74, 77, 79, 82, 84, 86, 89, 91];
     S.cascade = { bpm: 150, voices: [],
         cues: {
@@ -2242,7 +2284,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ☠ CORRUPT PACKET — E♭ minor */
+    /* CORRUPT PACKET — E♭ minor */
     S.corrupt = { bpm: 110, voices: [],
         cues: {
             main: function (A, t, s, bar) {
@@ -2263,7 +2305,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ❄ TIME FREEZE — F♯ major music box */
+    /* TIME FREEZE — F♯ major music box */
     var ICE = [78, 80, 82, 85, 87, 90, 92, 94, 97];
     S.freeze = { bpm: 72, voices: [],
         cues: {
@@ -2282,7 +2324,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
     };
 
-    /* ⌫ MEMORY PURGE — C♯ minor */
+    /* MEMORY PURGE — C♯ minor */
     S.purge = { bpm: 124, voices: [],
         cues: {
             main: function (A, t, s, bar) {
@@ -2317,23 +2359,23 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
      · RUNS with its own effect on the board and its own music;
      · ENDS with the banner reporting what came of it, then leaves.
 
-     ↯ QUANTUM SURGE     +300% output for 20 s. Energy streams up the edges; the
+     QUANTUM SURGE       +300% output for 20 s. Energy streams up the edges; the
                          banner counts the extra.
-     ◎ DATA STORM        7 orbs drift over the board for 14 s. Catch them; every
+     DATA STORM          7 orbs drift over the board for 14 s. Catch them; every
                          catch is the next note up.
-     ⊘ WALKER STRIKE     City PP stops for 16 s. Strikers march in with signs.
+     WALKER STRIKE       City PP stops for 16 s. Strikers march in with signs.
                          NEW: click one to talk them down (coffee); settle all
                          six and the strike ends early.
-     ≋ MOMENTUM CASCADE  combo locked at ×4 for 10 s. Your clicks play the tune.
-     ☠ CORRUPT PACKET    a burst of 30 s of output, but ~5% of one generator is
+     MOMENTUM CASCADE  combo locked at ×4 for 10 s. Your clicks play the tune.
+     CORRUPT PACKET      a burst of 30 s of output, but ~5% of one generator is
                          corrupted. NEW: QUARANTINE within 3 s and you lose half.
-     ❄ TIME FREEZE       12 s: passive income stops, only clicks count. Frost
+     TIME FREEZE         12 s: passive income stops, only clicks count. Frost
                          grows in; every click is a crystal.
-     ⌫ MEMORY PURGE      energy halved (the number is visibly deleted), then
+     MEMORY PURGE        energy halved (the number is visibly deleted), then
                          output ×2 for 30 s. NEW: every click restores a 1% fragment
                          of what was purged, up to half; a bar shows what you won back.
 
-   ⭐ All of it is data: opts.event, opts.dur, opts.lines, opts.signs, opts.victim,
+   All of it is data: opts.event, opts.dur, opts.lines, opts.signs, opts.victim,
       opts.orbs, and the callbacks below. See docs/WORLD_EVENTS.md.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
@@ -2344,14 +2386,14 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     var WALKER = '<svg viewBox="0 0 60 120" aria-hidden="true"><circle cx="30" cy="16" r="9" class="wx-wk"/><path d="M30 26v38M30 64l-12 40M30 64l12 40M30 36l-16 16M30 36l14-12" class="wx-wkl"/></svg>';
 
     var EVENTS = {
-        surge: { icon: '↯', label: 'QUANTUM SURGE', color: '#44ffcc', dur: 20, detail: 'ANOMALOUS OUTPUT · +300% throughput', mult: 3 },
-        storm: { icon: '◎', label: 'DATA STORM', color: '#aaaaff', dur: 14, detail: 'PACKET BREACH · absorb stray data', orbs: 7 },
-        strike: { icon: '⊘', label: 'WALKER STRIKE', color: '#ff5566', dur: 16, detail: 'SUBJECT UNREST · City PP offline',
+        surge: { icon: 'bolt', label: 'QUANTUM SURGE', color: '#44ffcc', dur: 20, detail: 'ANOMALOUS OUTPUT · +300% throughput', mult: 3 },
+        storm: { icon: 'target', label: 'DATA STORM', color: '#aaaaff', dur: 14, detail: 'PACKET BREACH · absorb stray data', orbs: 7 },
+        strike: { icon: 'ban', label: 'WALKER STRIKE', color: '#ff5566', dur: 16, detail: 'SUBJECT UNREST · City PP offline',
                   signs: ['ON STRIKE', 'FAIR CYCLES', 'WE ARE NOT NPCs', 'REST IS A RIGHT', 'NO MORE LOOPS', 'PP ≠ PEOPLE'] },
-        cascade: { icon: '≋', label: 'MOMENTUM CASCADE', color: '#ffaa44', dur: 10, detail: 'Rapid clicking detected · combo locked at OVERDRIVE ×4' },
-        corrupt: { icon: '☠', label: 'CORRUPT PACKET', color: '#ff3366', dur: 12, detail: 'RISK EVENT · +500% output, one asset corrupting', window: 3 },
-        freeze: { icon: '❄', label: 'TIME FREEZE', color: '#88ddff', dur: 12, detail: 'TEMPORAL ANOMALY · only clicks register' },
-        purge: { icon: '⌫', label: 'MEMORY PURGE', color: '#33c8ff', dur: 30, detail: 'RISK EVENT · energy halved, output ×2 · click to recover fragments', sting: 2800, fragment: 0.01, cap: 0.5 }
+        cascade: { icon: 'waves', label: 'MOMENTUM CASCADE', color: '#ffaa44', dur: 10, detail: 'Rapid clicking detected · combo locked at OVERDRIVE ×4' },
+        corrupt: { icon: 'skull', label: 'CORRUPT PACKET', color: '#ff3366', dur: 12, detail: 'RISK EVENT · +500% output, one asset corrupting', window: 3 },
+        freeze: { icon: 'snowflake', label: 'TIME FREEZE', color: '#88ddff', dur: 12, detail: 'TEMPORAL ANOMALY · only clicks register' },
+        purge: { icon: 'erase', label: 'MEMORY PURGE', color: '#33c8ff', dur: 30, detail: 'RISK EVENT · energy halved, output ×2 · click to recover fragments', sting: 2800, fragment: 0.01, cap: 0.5 }
     };
 
     /* play(host, opts) → { done: Promise<result>, click(clientX, clientY), close() }
@@ -2390,7 +2432,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
         root.insertAdjacentHTML('beforeend', ''
           + '<div class="wx-sting"></div><div class="wx-amb"></div><div class="wx-fx"></div><div class="wx-play"></div>'
-          + '<div class="wx-banner"><i class="wx-icon">' + E.icon + '</i><div class="wx-txt"><b>' + D.esc(E.label) + '</b><span>' + D.esc(E.detail) + '</span></div>'
+          + '<div class="wx-banner"><i class="wx-icon">' + D.glyph(E.icon) + '</i><div class="wx-txt"><b>' + D.esc(E.label) + '</b><span>' + D.esc(E.detail) + '</span></div>'
           +   '<div class="wx-chip"></div><div class="wx-time"><b>' + dur + '</b><span>s</span></div><div class="wx-bar"><s></s></div></div>');
         var $ = function (s) { return root.querySelector(s); };
         var sting = $('.wx-sting'), amb = $('.wx-amb'), fx = $('.wx-fx'), playL = $('.wx-play'), chip = $('.wx-chip');
@@ -2520,7 +2562,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 for (var i = 0; i < n; i++) ctx.later(function () {
                     var x, y, k = 0;
                     do { x = rnd(160, 1760); y = rnd(420, 980); k++; } while (k < 30 && Math.hypot(x - 960, y - 560) < 300);   // low enough to drift up without reaching the banner
-                    var o = D.h('button', 'wx-orb', '<i>↯</i>');
+                    var o = D.h('button', 'wx-orb', '<i>' + D.icon('bolt') + '</i>');
                     o.type = 'button';
                     o.setAttribute('aria-label', 'Catch data packet');
                     o.style.left = x + 'px'; o.style.top = y + 'px';
@@ -2564,7 +2606,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 ctx.amb.innerHTML = '<i class="wx-tint"></i>';
                 ctx.setChip('<em>CITY PP</em><b class="wx-pp">OFFLINE</b>');
                 signs.forEach(function (text, i) {
-                    var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">☕</i>');
+                    var w = D.h('button', 'wx-striker', '<span class="wx-sign">' + D.esc(text) + '</span>' + WALKER + '<i class="wx-cup">' + D.icon('cup') + '</i>');
                     w.type = 'button';
                     w.setAttribute('aria-label', 'Talk to the striker holding "' + text + '"');
                     w.style.left = (200 + i * (1520 / n)).toFixed(0) + 'px';
@@ -2598,9 +2640,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         cascade: {
             setup: function (ctx) {
                 var h = '';
-                for (var i = 0; i < 14; i++) h += '<i class="wx-chev" style="left:' + (i * 140 + 20) + 'px;animation-delay:' + (i % 7) * 0.07 + 's">≋</i>';
+                for (var i = 0; i < 14; i++) h += '<i class="wx-chev" style="left:' + (i * 140 + 20) + 'px;animation-delay:' + (i % 7) * 0.07 + 's">' + D.icon('waves') + '</i>';
                 ctx.sting.innerHTML = h;
-                ctx.setChip('<em>COMBO</em><b class="wx-combo">×4 OVERDRIVE</b><i class="wx-lock">🔒</i>');
+                ctx.setChip('<em>COMBO</em><b class="wx-combo">×4 OVERDRIVE</b><i class="wx-lock">' + D.icon('lock') + '</i>');
                 ctx.result.cascadeClicks = 0;
             },
             click: function (ctx, pt, n) {
@@ -2621,7 +2663,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 ctx.result.burst = burstE; ctx.result.victim = v.name; ctx.result.lost = lost; ctx.result.saved = 0;
                 var blocks = '';
                 for (var i = 0; i < 18; i++) blocks += '<i class="wx-blk" style="left:' + rnd(0, 1800).toFixed(0) + 'px;top:' + rnd(0, 1000).toFixed(0) + 'px;width:' + rnd(60, 360).toFixed(0) + 'px;height:' + rnd(8, 60).toFixed(0) + 'px;animation-delay:' + rnd(0, 0.5).toFixed(2) + 's"></i>';
-                ctx.sting.innerHTML = blocks + '<b class="wx-skull">☠</b>';
+                ctx.sting.innerHTML = blocks + '<b class="wx-skull">' + D.icon('skull') + '</b>';
                 ctx.setChip('<em>BURST</em><b>+' + D.esc(D.fmt(burstE)) + ' E</b>');
                 ctx.later(function () {
                     ctx.au.sfx('burst');
@@ -2632,7 +2674,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 /* the quarantine: a few seconds to save half */
                 ctx.later(function () {
                     var win = ctx.E.window;
-                    var card = D.h('div', 'wx-card', '<div><em>⚠ CORRUPTING</em><b>' + D.esc(v.name) + ' ×' + lost + '</b></div>'
+                    var card = D.h('div', 'wx-card', '<div><em>' + D.icon('warning') + ' CORRUPTING</em><b>' + D.esc(v.name) + ' ×' + lost + '</b></div>'
                         + '<button type="button" class="wx-q">QUARANTINE</button><i class="wx-qbar"><s style="transition-duration:' + win + 's"></s></i>');
                     ctx.play.appendChild(card);
                     var btn = card.querySelector('.wx-q'), done = false;
@@ -2643,7 +2685,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                         ctx.result.saved = keep;
                         ctx.result.lost = lost - keep;
                         card.classList.add(saved ? 'wx-saved' : 'wx-lost');
-                        card.querySelector('em').textContent = saved ? '✓ QUARANTINED · ' + keep + ' saved' : '☠ CORRUPTED';
+                        card.querySelector('em').innerHTML = saved ? D.icon('check') + ' QUARANTINED · ' + keep + ' saved' : D.icon('skull') + ' CORRUPTED';
                         card.querySelector('b').textContent = v.name + ' ×' + (lost - keep);
                         btn.disabled = true;
                         ctx.au.sfx(saved ? 'quarantine' : 'corrupt');
@@ -2665,7 +2707,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             setup: function (ctx) {
                 ctx.sting.innerHTML = '<i class="wx-flash"></i>';
                 var h = '<i class="wx-frost"></i>';
-                if (!ctx.reduced) for (var i = 0; i < 30; i++) h += '<i class="wx-flake" style="left:' + rnd(0, 1900).toFixed(0) + 'px;animation-delay:' + (-rnd(0, 8)).toFixed(1) + 's;animation-duration:' + rnd(6, 11).toFixed(1) + 's">❄</i>';
+                if (!ctx.reduced) for (var i = 0; i < 30; i++) h += '<i class="wx-flake" style="left:' + rnd(0, 1900).toFixed(0) + 'px;animation-delay:' + (-rnd(0, 8)).toFixed(1) + 's;animation-duration:' + rnd(6, 11).toFixed(1) + 's">' + D.icon('snowflake') + '</i>';
                 ctx.amb.innerHTML = h;
                 ctx.setChip('<em>PASSIVE INCOME</em><b class="wx-fz">PAUSED</b>');
                 ctx.result.frozenClicks = 0;
@@ -2684,7 +2726,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             setup: function (ctx) {
                 var e0 = ctx.energy, half = Math.floor(e0 / 2), lost = e0 - half;
                 ctx.result.lost = lost; ctx.result.recovered = 0;
-                ctx.sting.innerHTML = '<div class="wx-del"><div class="wx-line"><span class="wx-num">' + D.esc(D.fmt(e0)) + '</span><i class="wx-caret"></i></div><em>⌫ −50%</em></div>';
+                ctx.sting.innerHTML = '<div class="wx-del"><div class="wx-line"><span class="wx-num">' + D.esc(D.fmt(e0)) + '</span><i class="wx-caret"></i></div><em>' + D.icon('erase') + ' −50%</em></div>';
                 ctx.setChip('<em>OUTPUT</em><b>×2</b>');
                 ctx.amb.innerHTML = '<i class="wx-scan"></i>';
                 ctx.play.insertAdjacentHTML('beforeend', '<div class="wx-rec"><span>RECOVERED · click to restore fragments</span><i><s></s></i><b class="wx-recv">0 / ' + D.esc(D.fmt(lost)) + '</b></div>');
@@ -2747,7 +2789,7 @@ var snd = document.getElementById('snd');
 snd.onclick = function () {
     var m = !EventAudio.isMuted();
     EventAudio.setMuted(m);
-    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.innerHTML = "<svg class=\"dks-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 18V5.5l11-2.5v13\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.8\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"16\" r=\"2.8\" fill=\"currentColor\"/></svg>" + (m ? ' Sound off' : ' Sound on');
     snd.setAttribute('aria-pressed', String(!m));
 };
 var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,

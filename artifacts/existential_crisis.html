@@ -90,7 +90,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     transition: transform 0.5s cubic-bezier(.2,1.3,.4,1), opacity 0.6s, border-color 0.3s, box-shadow 0.3s;
 }
 .exs-choices.dks-on .exs-card { animation: exs-card-in 0.9s cubic-bezier(.2,1.2,.4,1) both; animation-delay: calc(var(--i) * 140ms); }
-.exs-card .g { font-size: 120px; line-height: 1; color: var(--c); text-shadow: 0 0 40px var(--c); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
+.exs-card .g { font-size: 120px; line-height: 1; color: var(--c); filter: drop-shadow(0 0 22px var(--c)); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1); }
 .exs-card .l { font-size: 30px; font-weight: 900; letter-spacing: 10px; color: var(--c); }
 .exs-card .d { font-size: 18px; letter-spacing: 1px; color: #a8a3bd; }
 .exs-card:hover, .exs-card:focus-visible { transform: translateY(-12px); border-color: var(--c); box-shadow: 0 30px 80px -30px var(--c); outline: none; }
@@ -161,7 +161,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .exs-mark-figure .exs-figure { opacity: 0.9; transform: translateY(8%); }
 .exs-mark-shift .exs-cam { transform: translate(2px, 2px); }
 
-.exs-shard { position: absolute; left: 50%; top: 540px; color: #7fdc8a; font-size: 40px; pointer-events: none; text-shadow: 0 0 20px #7fdc8a; animation: exs-shard 1.9s cubic-bezier(.2,.8,.3,1) both; opacity: 0; }
+.exs-shard { position: absolute; left: 50%; top: 540px; color: #7fdc8a; font-size: 40px; line-height: 1; pointer-events: none; filter: drop-shadow(0 0 10px #7fdc8a); animation: exs-shard 1.9s cubic-bezier(.2,.8,.3,1) both; opacity: 0; }
 
 /* ── on a page's board: the mark after the scene has gone ──────────────── */
 .exs-scar-vignette { box-shadow: inset 0 0 160px rgba(255, 30, 0, 0.2); }
@@ -224,6 +224,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
    edges. --r / --vh / --vw are the canvas's own rem and viewport units, so
    the sizes below mean the same thing on every monitor. */
 .dks-fit { position: absolute; inset: 0; overflow: hidden; overflow: clip; background: #000; }   /* clip: focus must never scroll the frame */
+.dks-ic { display: inline-block; width: 1em; height: 1em; vertical-align: -0.14em; overflow: visible; }
 .dks-fit.dks-see { background: transparent; }                                       /* a scene drawn over the live game */
 .dks-fit > .dks { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; min-height: 0; transform-origin: 0 0; }
 
@@ -502,6 +503,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 .dks-skip {
     position: absolute;
     top: 10px; right: 14px;
+    z-index: 50;                                       /* above any full-screen layer a scene adds later */
     font: inherit;
     font-size: calc(0.5 * var(--r));
     letter-spacing: 3px;
@@ -543,7 +545,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 /* the medal and ruling */
 .dks-verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .dks-medal { width: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); height: clamp(calc(3.4 * var(--r)), calc(9 * var(--vh)), calc(4.6 * var(--r))); color: var(--grade, var(--dks-ink)); }
-.dks-medal svg { width: 100%; height: 100%; }
+.dks-medal > svg { width: 100%; height: 100%; }
 .dks-verdict.dks-on .dks-medal { animation: dks-medal 0.6s cubic-bezier(.2,1.5,.4,1) both; }
 .dks-grade-label { margin-top: 4px; font-size: calc(0.8 * var(--r)); letter-spacing: 3px; font-weight: 900; color: var(--grade); }
 .dks-reward { margin-top: 3px; font-size: calc(0.58 * var(--r)); letter-spacing: 2px; color: var(--grade); opacity: 0.85; }
@@ -693,15 +695,15 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 <div class="viewer">
   <div class="ctl">
     <h1>EXISTENTIAL CRISIS</h1>
-    <div class="grp"><button id="trigger" type="button">⚡ Trigger now</button><button id="replay" type="button">↺ Reset board</button></div>
-    <div class="grp"><button id="snd" type="button" aria-pressed="true">♪ Sound on</button>
+    <div class="grp"><button id="trigger" type="button"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" fill="currentColor"/></svg> Trigger now</button><button id="replay" type="button"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M3.5 3.5v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/></svg> Reset board</button></div>
+    <div class="grp"><button id="snd" type="button" aria-pressed="true"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5.5l11-2.5v13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="6.5" cy="18" r="2.8" fill="currentColor"/><circle cx="17.5" cy="16" r="2.8" fill="currentColor"/></svg> Sound on</button>
       <label><input type="checkbox" id="safe"> safe mode (no motion)</label></div>
     <span class="out" id="out" aria-live="polite"></span>
     <div class="note">Hover an answer to preview its mark; press and hold to choose. After CONTINUE the board keeps the mark. VOID disables ACQUIRE for the rest of the run, as in the game.</div>
   </div>
   <div class="stagehost" id="host">
     <div class="gate"><h2>EXISTENTIAL CRISIS</h2><p>At one million clicks the game stops and asks why. Four answers, each with a permanent mark. Click ACQUIRE to reach one million yourself.</p>
-      <button id="go" type="button">▶ OPEN THE BOARD</button></div>
+      <button id="go" type="button"><svg class="dks-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16l13-8z" fill="currentColor"/></svg> OPEN THE BOARD</button></div>
   </div>
 </div>
 <script>
@@ -1670,7 +1672,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             osc('square', mf(m + 24), t, t + 0.02, cg);
         };
         /* soft pad: two detuned sines and one quiet triangle, plus a sine an octave down.
-           ⚠ Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
+           Mostly SINE on purpose: a triangle's 5th overtone is a major third two octaves up,
            and under a minor or a hollow chord that third was measured clashing (C♯ against
            an F major 7's C; a C♯ turning VOID's open fifth into A major). */
         I.warm = function (t, m, dur, v, bus, slideTo) {
@@ -1886,6 +1888,46 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         return Math.round(n).toLocaleString('en-US');
     };
 
+    /* ── ICONS ───────────────────────────────────────────────────────────────
+       Every symbol in every event is one of these hand-drawn SVGs (24×24, drawn in
+       currentColor, sized by font-size like text). No emoji and no symbol fonts: they
+       render differently, or as colour emoji, from one system to the next. */
+    D.ICONS = {
+        bolt: '<path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" fill="currentColor"/>',
+        replay: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M3.5 3.5v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        play: '<path d="M7 4v16l13-8z" fill="currentColor"/>',
+        skip: '<path d="M3 5v14l8.5-7zM12 5v14l8.5-7z" fill="currentColor"/>',
+        note: '<path d="M9 18V5.5l11-2.5v13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="6.5" cy="18" r="2.8" fill="currentColor"/><circle cx="17.5" cy="16" r="2.8" fill="currentColor"/>',
+        waves: '<path d="M3 7q3-3 6 0t6 0 6 0M3 12q3-3 6 0t6 0 6 0M3 17q3-3 6 0t6 0 6 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        ban: '<circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/><path d="M5.8 18.2 18.2 5.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/>',
+        erase: '<path d="M9 5h11.5v14H9l-6.5-7z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="m12 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        diamond: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        gem: '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 7.5 16.5 12 12 16.5 7.5 12z" fill="currentColor"/>',
+        sparkle: '<path d="M12 1.5c.9 6.4 3.6 9.6 10.5 10.5-6.9.9-9.6 4.1-10.5 10.5-.9-6.4-3.6-9.6-10.5-10.5 6.9-.9 9.6-4.1 10.5-10.5z" fill="currentColor"/>',
+        eye: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.6" fill="currentColor"/>',
+        target: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="4.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+        dot: '<circle cx="12" cy="12" r="6" fill="currentColor"/>',
+        halfLeft: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
+        halfTop: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 1 18 0z" fill="currentColor"/>',
+        halfBottom: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 12a9 9 0 0 0 18 0z" fill="currentColor"/>',
+        cross: '<path d="M5.5 5.5l13 13M18.5 5.5l-13 13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        check: '<path d="m4 12.5 5 5L20 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>',
+        warning: '<path d="M12 3 22 20H2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/><path d="M12 9.5v4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/>',
+        hex: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>',
+        hexFill: '<path d="M12 2.5 20.2 7.25v9.5L12 21.5l-8.2-4.75v-9.5z" fill="currentColor"/>',
+        snowflake: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5M3.7 10.4l3.4-.9-.9-3.4M20.3 13.6l-3.4.9.9 3.4M6.2 17.9l.9-3.4-3.4-.9M17.8 6.1l-.9 3.4 3.4.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>',
+        skull: '<path fill-rule="evenodd" fill="currentColor" d="M12 2a8.5 8.5 0 0 0-8.5 8.5c0 3 1.4 5.2 3.5 6.5V21h2.2v-2h1.6v2h2.4v-2h1.6v2H17v-4c2.1-1.3 3.5-3.5 3.5-6.5A8.5 8.5 0 0 0 12 2zM8.6 8.6a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zm6.8 0a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4zM12 13.4l1.3 2.4h-2.6z"/>',
+        cup: '<path d="M4 9h12v5.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="currentColor"/><path d="M16 11h1.5a2.6 2.6 0 0 1 0 5.2H16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M8 2.5c-1 1.4 1 2.4 0 4.2M12 2.5c-1 1.4 1 2.4 0 4.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/><path d="M3 21.5h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
+        lock: '<rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>',
+        infinity: '<path d="M12 12c-2.2-3-4.2-4.6-6.2-4.6a4.6 4.6 0 0 0 0 9.2c2 0 4-1.6 6.2-4.6s4.2-4.6 6.2-4.6a4.6 4.6 0 0 1 0 9.2c-2 0-4-1.6-6.2-4.6z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3"/>'
+    };
+    D.icon = function (name, cls) {
+        var b = D.ICONS[name];
+        return b ? '<svg class="dks-ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + b + '</svg>' : '';
+    };
+    /* an icon name, or (for data from the game) plain text */
+    D.glyph = function (g) { return D.ICONS[g] ? D.icon(g) : D.esc(g || ''); };
+
     /* restart a class-driven animation: removing and re-adding a class that is already there does nothing */
     D.replay = function (el, cls) {
         el.classList.remove(cls);
@@ -1969,7 +2011,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
             var furn = '';
             if (kind === 'tribunal' && window.TribunalArt) furn = TribunalArt.stall(i);
             if (kind === 'council' && window.CouncilArt) furn = CouncilArt.seat(i);
-            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">◒</span>';
+            var cast = window.DuckCast ? DuckCast.duck(i, 'dks-cast') : '<span class="dks-fallback">' + D.icon('halfBottom') + '</span>';
             var seat = D.h('div', 'dks-seat dks-seat-' + i,
                 '<div class="dks-furn">' + furn + '</div>'
               + '<div class="dks-duck"><div class="dks-face"><div class="dks-bob">' + cast + '</div></div></div>'
@@ -2111,7 +2153,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         root.setAttribute('aria-modal', 'true');
         var log = D.h('div', 'dks-sr');
         log.setAttribute('aria-live', 'polite');
-        var skipBtn = D.h('button', 'dks-skip', 'SKIP ▸▸');
+        var skipBtn = D.h('button', 'dks-skip', 'SKIP ' + D.icon('skip'));
         skipBtn.type = 'button';
         skipBtn.title = 'Skip to the verdict';
         var hint = D.h('div', 'dks-hint', 'click to hurry them along');
@@ -2178,7 +2220,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         [67, _, _, _, 71, _, 74, _, 79, _, _, _, 78, _, _, _],
         [76, _, _, _, 73, _, 69, _, 73, _, 76, _, _, _, _, _]
     ];
-    /* D natural minor: Dm · B♭ · Gm · Am, voice-led around D4. ⚠ Am, not A major: the
+    /* D natural minor: Dm · B♭ · Gm · Am, voice-led around D4. Am, not A major: the
        major V's C♯ was measured clashing with whichever answer the player hovered. */
     var MINOR = [[38, 57, 62, 65], [34, 58, 62, 65], [31, 58, 62, 67], [33, 57, 60, 64]];
     var CHORDS = [[26, 38, 45, 50], [53, 57, 60, 64], [62, 66, 69, 76], [38, 45, 52]];
@@ -2360,7 +2402,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                      ring cracking, and silence.
      6 THE MARK      what the player keeps, stated once. CONTINUE.
 
-   ⭐ PATHS ARE DATA. opts.paths replaces or extends them; each names its gift,
+   PATHS ARE DATA. opts.paths replaces or extends them; each names its gift,
    its mark text and which built-in mark it uses (vignette · shift · figure ·
    drain · none). opts.question and opts.whispers change the words.
 
@@ -2372,16 +2414,16 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
     var D = window.DuckScene;
 
     var PATHS = [
-        { key: 'POWER',   glyph: '↯', label: 'POWER',   desc: 'Numbers. Growing. Forever.',
+        { key: 'POWER',   glyph: 'bolt', label: 'POWER',   desc: 'Numbers. Growing. Forever.',
           gift: '×1.5', giftSub: 'INCOME · PERMANENT', mark: 'vignette', color: '#ff4a3a',
           markText: 'A faint crimson guilt lines your vision. It will not leave.' },
-        { key: 'NUMBERS', glyph: '∞', label: 'NUMBERS', desc: 'The count is all that matters.',
+        { key: 'NUMBERS', glyph: 'infinity', label: 'NUMBERS', desc: 'The count is all that matters.',
           gift: '×2', giftSub: 'ENERGY DOUBLED', mark: 'shift', color: '#8f8fff',
           markText: 'The simulation has fractured. Alignment is permanently off by 2 pixels. You did this.' },
-        { key: 'FUN',     glyph: '◈', label: 'FUN',     desc: 'It was always about this.',
+        { key: 'FUN',     glyph: 'gem', label: 'FUN',     desc: 'It was always about this.',
           gift: '+25', giftSub: 'FRAGMENTS · CORRECT ANSWER', mark: 'figure', color: '#7fdc8a',
           markText: 'A figure watches from below. It has always been there.' },
-        { key: 'VOID',    glyph: '✕', label: 'VOID',    desc: 'The flesh is a bottleneck.',
+        { key: 'VOID',    glyph: 'cross', label: 'VOID',    desc: 'The flesh is a bottleneck.',
           gift: '×3', giftSub: 'PASSIVE FOREVER · ACQUIRE DISABLED', mark: 'drain', color: '#a4a4b4',
           markText: 'Colour drains from the simulation. The numbers remain. Colour was never the point.' }
     ];
@@ -2436,11 +2478,18 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                     var ang = Math.atan2(p.y - H / 2, p.x - W / 2), sp = m === 'numbers' ? rnd(4, 12) : rnd(0.4, 1.2);
                     p.vx = Math.cos(ang) * sp; p.vy = Math.sin(ang) * sp; p.ta = m === 'numbers' ? rnd(0.3, 0.7) : rnd(0.12, 0.28);
                 }
-                if (m === 'fun' || m === 'fun-p') { color = '127,220,138'; chars = '◈◇✦'; p.ch = chars.charAt((Math.random() * 3) | 0); p.vy = rnd(0.4, 1.8); p.vx = rnd(-0.6, 0.6); p.vr = rnd(-0.04, 0.04); p.ta = m === 'fun' ? rnd(0.3, 0.7) : rnd(0.1, 0.3); }
+                if (m === 'fun' || m === 'fun-p') { color = '127,220,138'; chars = 'GDS'; p.ch = chars.charAt((Math.random() * 3) | 0); p.vy = rnd(0.4, 1.8); p.vx = rnd(-0.6, 0.6); p.vr = rnd(-0.04, 0.04); p.ta = m === 'fun' ? rnd(0.3, 0.7) : rnd(0.1, 0.3); }
                 if (m === 'void' || m === 'void-p') { color = '160,160,175'; p.vx = 0; p.vy = m === 'void' ? 0.2 : 0; p.ta = m === 'void' ? 0 : rnd(0.04, 0.12); }
                 if (m === 'off') p.ta = 0;
             });
             if (reduced) draw(true);
+        }
+        function shape(k, r) {
+            g.beginPath();
+            if (k === 'S') { g.moveTo(0, -r); g.quadraticCurveTo(r * 0.12, -r * 0.12, r, 0); g.quadraticCurveTo(r * 0.12, r * 0.12, 0, r); g.quadraticCurveTo(-r * 0.12, r * 0.12, -r, 0); g.quadraticCurveTo(-r * 0.12, -r * 0.12, 0, -r); g.fill(); return; }
+            g.moveTo(0, -r); g.lineTo(r, 0); g.lineTo(0, r); g.lineTo(-r, 0); g.closePath();
+            g.lineWidth = Math.max(1.5, r * 0.18); g.strokeStyle = g.fillStyle; g.stroke();
+            if (k === 'G') { var q = r * 0.45; g.beginPath(); g.moveTo(0, -q); g.lineTo(q, 0); g.lineTo(0, q); g.lineTo(-q, 0); g.closePath(); g.fill(); }
         }
         function step() {
             g.clearRect(0, 0, W, H);
@@ -2463,8 +2512,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
                 g.translate(p.x, p.y);
                 if (p.rot) g.rotate(p.rot);
                 g.fillStyle = 'rgba(' + color + ',' + p.a.toFixed(3) + ')';
-                g.font = (p.size | 0) + 'px "Courier New", monospace';
-                g.fillText(p.ch, 0, 0);
+                if (mode === 'fun' || mode === 'fun-p') shape(p.ch, p.size * 0.42);     // drawn, not typed: gem · diamond · sparkle
+                else { g.font = (p.size | 0) + 'px "Courier New", monospace'; g.fillText(p.ch, 0, 0); }
                 g.restore();
             }
         }
@@ -2534,7 +2583,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
 
         var cards = paths.map(function (p, i) {
             var c = D.h('button', 'exs-card',
-                '<span class="exs-fill"></span><span class="g">' + D.esc(p.glyph || '·') + '</span>'
+                '<span class="exs-fill"></span><span class="g">' + D.glyph(p.glyph || '·') + '</span>'
               + '<span class="l">' + D.esc(p.label) + '</span><span class="d">' + D.esc(p.desc) + '</span>');
             c.type = 'button';
             c.style.setProperty('--c', p.color || '#c9c3e6');
@@ -2767,7 +2816,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Courier New', mono
         }
         function burst(into, count) {
             for (var k = 0; k < count; k++) {
-                var s = D.h('span', 'exs-shard', '◈');
+                var s = D.h('span', 'exs-shard', D.icon('gem'));
                 var ang = (k / count) * Math.PI * 2 + Math.random() * 0.4;
                 var r = 260 + Math.random() * 520;
                 s.style.setProperty('--dx', Math.cos(ang) * r + 'px');
@@ -2805,7 +2854,7 @@ var snd = document.getElementById('snd');
 snd.onclick = function () {
     var m = !EventAudio.isMuted();
     EventAudio.setMuted(m);
-    snd.textContent = m ? '♪ Sound off' : '♪ Sound on';
+    snd.innerHTML = "<svg class=\"dks-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 18V5.5l11-2.5v13\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.8\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"16\" r=\"2.8\" fill=\"currentColor\"/></svg>" + (m ? ' Sound off' : ' Sound on');
     snd.setAttribute('aria-pressed', String(!m));
 };
 var SAMPLE = { totalClicks: 84000, prestige: { count: 6 }, energy: 3.2e14, city: { slots: [1,1,1,1,1,0,1] }, instability: 22,
