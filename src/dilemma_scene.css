@@ -33,12 +33,12 @@
 .pd-tag { font-size: 26px; line-height: 1.3; letter-spacing: 4px; color: #9a8a7c; }
 .pd-name { font-size: 44px; line-height: 1.2; letter-spacing: 1px; color: #fff; font-weight: 900; overflow-wrap: anywhere; }
 .pd-them .pd-name { color: #ffc0c6; letter-spacing: 0; }
-/* label and value share a row when they fit, and stack when they do not */
-.pd-stat { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 16px; row-gap: 2px; font-size: 26px; letter-spacing: 2px; color: #a8988a; text-align: left; }
-.pd-stat b { font-size: 48px; line-height: 1.2; letter-spacing: 0; color: #f2e6da; }
-.pd-trust { flex: 1 0 100%; height: 8px; margin-top: 4px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; }
+/* label above value, always: the long values ("first contact", "4 of 8 shared") need the full width */
+.pd-stat { display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: 26px; line-height: 1.3; letter-spacing: 2px; color: #a8988a; text-align: left; }
+.pd-stat b { font-size: 48px; line-height: 1.15; letter-spacing: 0; color: #f2e6da; }
+.pd-trust { align-self: stretch; height: 8px; margin-top: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; }
 .pd-trust s { display: block; height: 100%; background: linear-gradient(90deg, var(--steal), var(--amber), var(--share)); transform-origin: left; text-decoration: none; }
-.pd-them > .pd-tag, .pd-them > .pd-name { padding: 0 72px; }
+.pd-them > .pd-tag, .pd-them > .pd-name { padding-right: 64px; }
 .pd-avatar { position: absolute; right: 22px; top: 20px; width: 58px; height: 72px; color: #ffc0c6; opacity: 0.8; }
 .pd-avatar svg { width: 100%; height: 100%; }
 .pd-screen { fill: rgba(255, 74, 90, 0.08); }

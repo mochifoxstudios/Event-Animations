@@ -64,7 +64,7 @@
 .eos-sync { position: absolute; left: -120px; right: -120px; top: 108px; font-style: normal; font-size: 52px; line-height: 1.2; font-weight: 900; letter-spacing: 6px; color: #fff; text-shadow: 0 0 20px #3a8ad0, 0 0 4px #0a3350; opacity: 0; }
 .eos-sync.on { animation: eos-sync 1.4s ease-out both; }
 .eos-phase { margin-top: 4px; font-size: 48px; line-height: 1.2; letter-spacing: 6px; font-weight: 400; opacity: 0; }
-.eos-hint { margin-top: 4px; max-width: 640px; font-size: 34px; line-height: 1.3; letter-spacing: 0.5px; color: var(--calm-mid); opacity: 0; }
+.eos-hint { margin-top: 4px; max-width: 640px; font-size: 34px; line-height: 1.3; letter-spacing: 0.5px; text-wrap: balance; color: var(--calm-mid); opacity: 0; }
 .eos-s-calm .eos-phase, .eos-s-calm .eos-hint { opacity: 1; transition: opacity 0.6s; }
 .eos-time { margin-top: auto; margin-bottom: 70px; display: flex; align-items: baseline; gap: 4px; color: #1a5577; }
 .eos-time b { font-size: 64px; font-weight: 900; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
@@ -80,7 +80,7 @@
 .eos-stat b.eos-bump { animation: eos-bump 0.5s cubic-bezier(.3,1.6,.5,1); }
 .eos-stat s { font-size: 32px; color: rgba(234, 223, 245, 0.55); }
 .eos-instab { color: #9cd0ff !important; }
-.eos-left p { margin: 6px 0 0; font-size: 34px; line-height: 1.35; color: rgba(234, 223, 245, 0.88); }
+.eos-left p { margin: 6px 0 0; font-size: 34px; line-height: 1.35; color: rgba(234, 223, 245, 0.88); text-wrap: balance; }
 .eos-left p strong { color: #9cd0ff; }
 .eos-use { font: inherit; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 12px; padding: 24px 30px; font-size: 34px; font-weight: 800; letter-spacing: 3px; color: #e6f2fc;
     background: rgba(156, 208, 255, 0.08); border: 2px solid rgba(156, 208, 255, 0.55); border-radius: 12px; cursor: pointer; text-align: left; }
@@ -97,16 +97,16 @@
 .dks.eos.eos-is-mini { pointer-events: none; }
 .eos-is-mini .eos-sky, .eos-is-mini .eos-walls, .eos-is-mini .eos-rain, .eos-is-mini .eos-eye, .eos-is-mini .eos-ring, .eos-is-mini .eos-in,
 .eos-is-mini .eos-left, .eos-is-mini .eos-right, .eos-is-mini .eos-alarm { opacity: 0 !important; transition: opacity 0.4s !important; }
-.eos-mini { position: absolute; right: 40px; bottom: 40px; width: 420px; padding: 22px; box-sizing: border-box; border-radius: 16px; background: rgba(230, 242, 252, 0.95); color: var(--calm);
+.eos-mini { position: absolute; right: 24px; bottom: 28px; width: 400px; padding: 20px; box-sizing: border-box; border-radius: 16px; background: rgba(230, 242, 252, 0.95); color: var(--calm);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(156, 208, 255, 0.4); display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; transform: translateY(20px); pointer-events: none;
     transition: opacity 0.4s, transform 0.4s; z-index: 7; }
-.eos-mini svg { position: absolute; left: 50%; top: 22px; width: 170px; height: 170px; margin-left: -85px; transform: rotate(-90deg); }
+.eos-mini svg { position: absolute; left: 50%; top: 20px; width: 170px; height: 170px; margin-left: -85px; transform: rotate(-90deg); }
 .eos-mini-fg { stroke: #2a6fa8; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 276.5; }
 .eos-mini .eos-ring-bg { stroke: rgba(10, 51, 80, 0.12); stroke-width: 7; }
 .eos-mini-t { height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .eos-mini-t b { font-size: 60px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
 .eos-mini-t span { margin-top: 4px; font-size: 28px; letter-spacing: 2px; color: var(--calm-mid); }
-.eos-back { font: inherit; width: 100%; font-size: 30px; font-weight: 800; letter-spacing: 2px; padding: 16px 12px; color: var(--calm); background: transparent; border: 1.5px solid var(--calm-mid); border-radius: 8px; cursor: pointer; }
+.eos-back { font: inherit; width: 100%; font-size: 30px; font-weight: 800; letter-spacing: 2px; padding: 14px 10px; text-wrap: balance; color: var(--calm); background: transparent; border: 1.5px solid var(--calm-mid); border-radius: 8px; cursor: pointer; }
 .eos-back:hover, .eos-back:focus-visible { background: rgba(42, 102, 136, 0.12); outline: none; }
 .eos-is-mini .eos-mini { opacity: 1; transform: none; pointer-events: auto; }
 
