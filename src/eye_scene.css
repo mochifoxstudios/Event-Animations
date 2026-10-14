@@ -81,7 +81,7 @@
 .eos-stat s { font-size: 32px; color: rgba(234, 223, 245, 0.55); }
 .eos-instab { color: #9cd0ff !important; }
 .eos-left p { margin: 6px 0 0; font-size: 34px; line-height: 1.35; color: rgba(234, 223, 245, 0.88); text-wrap: balance; }
-.eos-left p strong { color: #9cd0ff; }
+.eos-left p strong { display: block; margin-top: 4px; color: #9cd0ff; text-wrap: balance; }
 .eos-use { font: inherit; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 12px; padding: 24px 30px; font-size: 34px; font-weight: 800; letter-spacing: 3px; color: #e6f2fc;
     background: rgba(156, 208, 255, 0.08); border: 2px solid rgba(156, 208, 255, 0.55); border-radius: 12px; cursor: pointer; text-align: left; }
 .eos-use small { font-size: 28px; font-weight: 400; letter-spacing: 1px; color: rgba(230, 242, 252, 0.75); }
